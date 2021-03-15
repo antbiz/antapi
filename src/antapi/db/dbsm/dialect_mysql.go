@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"antapi/pkg/dbsm/types"
+	"antapi/db/types"
 )
 
 // MySQLDialect Implementation of Dialect for MySQL databases.

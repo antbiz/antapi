@@ -1,9 +1,10 @@
 package dbsm
 
 import (
-	"antapi/pkg/dbsm/types"
 	"database/sql"
 	"strings"
+
+	"antapi/db/types"
 )
 
 // Sync .
