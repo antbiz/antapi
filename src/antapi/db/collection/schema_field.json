@@ -28,7 +28,7 @@
       "is_multiple": false
     },
     {
-      "type": "UUID",
+      "type": "Uuid",
       "title": "Pid",
       "name": "pid",
       "description": "",
