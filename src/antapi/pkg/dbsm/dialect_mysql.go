@@ -11,8 +11,9 @@ import (
 
 // MySQLDialect Implementation of Dialect for MySQL databases.
 type MySQLDialect struct {
-	DBName  string
-	Charset string
+	DBName      string
+	StoreEngine string
+	Charset     string
 }
 
 func (dialect *MySQLDialect) DBType() types.DBType {
@@ -34,40 +35,47 @@ func (dialect *MySQLDialect) GetQuoter() Quoter {
 func (dialect *MySQLDialect) SQLType(column *Column) string {
 	var res string
 	switch t := column.Type; t {
-	case types.Bool:
-		res = types.TinyInt
-		column.Size = 1
-	case types.Serial:
-		column.IsAutoIncrement = true
-		column.IsPrimaryKey = true
-		column.Nullable = false
-		res = types.Int
-	case types.BigInt:
-		column.Size = 20
-		res = types.BigInt
-	case types.BigSerial:
-		column.IsAutoIncrement = true
-		column.IsPrimaryKey = true
-		column.Nullable = false
-		res = types.BigInt
-	case types.Bytea:
-		res = types.Blob
-	case types.TimeStampz:
-		res = types.Char
-		column.Size = 64
-	case types.NVarchar:
-		res = types.Varchar
-	case types.Uuid:
-		res = types.Varchar
-		column.Size = 40
-	case types.Json:
-		res = types.Text
-	default:
-		res = t
-	}
-
-	if res == types.Varchar && column.Size == 0 {
+	case types.Data:
 		column.Size = 255
+		res = "VARCHAR"
+	case types.Color, types.Email, types.Tel, types.Password:
+		column.Size = 100
+		res = "VARCHAR"
+	case types.URL, types.Text, types.JSON:
+		res = "TEXT"
+	case types.LongText, types.RichText, types.Markdown, types.Code, types.HTML:
+		res = "LONGTEXT"
+	case types.Signature:
+		res = "BLOB"
+	case types.File, types.Enum, types.Array:
+		column.Size = 1024
+		res = "VARCHAR"
+	case types.UUID:
+		column.Size = 40
+		res = "VARCHAR"
+	case types.Int:
+		res = "INT"
+	case types.BigInt, types.Money:
+		res = "BIGINT"
+	case types.Float:
+		res = "FLOAT"
+	case types.Date:
+		res = "DATE"
+	case types.DateTime:
+		res = "DATETIME"
+	case types.Time:
+		res = "TIME"
+	case types.TimeStamp:
+		res = "TIMESTAMP"
+	case types.Year:
+		res = "YEAR"
+	case types.Bool:
+		res = "TINYINT"
+		column.Size = 1
+	case types.Connect:
+		return ""
+	default:
+		return "TEXT"
 	}
 
 	if column.Precision > 0 {
@@ -79,10 +87,8 @@ func (dialect *MySQLDialect) SQLType(column *Column) string {
 }
 
 func (dialect *MySQLDialect) GetIndexes(tx *sql.Tx, tableName string) (map[string]*Index, error) {
-	rows, err := tx.Query(
-		"SELECT `INDEX_NAME`, `NON_UNIQUE`, `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`STATISTICS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ?",
-		dialect.DBName, tableName,
-	)
+	sql := fmt.Sprintf("SELECT `INDEX_NAME`, `NON_UNIQUE`, `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`STATISTICS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s'", dialect.DBName, tableName)
+	rows, err := tx.Query(sql)
 	if err != nil {
 		return nil, err
 	}
@@ -142,10 +148,8 @@ func (dialect *MySQLDialect) DropIndexSQL(tableName string, index *Index) string
 }
 
 func (dialect *MySQLDialect) GetTables(tx *sql.Tx) ([]*Table, error) {
-	rows, err := tx.Query(
-		"SELECT `TABLE_NAME`, `ENGINE`, `AUTO_INCREMENT`, `TABLE_COMMENT` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = ? AND (`ENGINE` = 'MyISAM' OR `ENGINE` = 'InnoDB' OR `ENGINE` = 'TokuDB')",
-		dialect.DBName,
-	)
+	sql := fmt.Sprintf("SELECT `TABLE_NAME`, `ENGINE`, `AUTO_INCREMENT`, `TABLE_COMMENT` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = '%s' AND (`ENGINE` = 'MyISAM' OR `ENGINE` = 'InnoDB' OR `ENGINE` = 'TokuDB')", dialect.DBName)
+	rows, err := tx.Query(sql)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +189,8 @@ func (dialect *MySQLDialect) GetTables(tx *sql.Tx) ([]*Table, error) {
 }
 
 func (dialect *MySQLDialect) IsTableExist(tx *sql.Tx, tableName string) bool {
-	return tx.QueryRow("SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = ? and `TABLE_NAME` = ?", dialect.DBName, tableName) != nil
+	sql := fmt.Sprintf("SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = '%s' and `TABLE_NAME` = '%s'", dialect.DBName, tableName)
+	return tx.QueryRow(sql) != nil
 }
 
 func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
@@ -212,6 +217,10 @@ func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
 	}
 	sql += ")"
 
+	var storeEngine = table.StoreEngine
+	if len(storeEngine) == 0 {
+		storeEngine = dialect.StoreEngine
+	}
 	if len(table.StoreEngine) != 0 {
 		sql += " ENGINE=" + table.StoreEngine
 	}
@@ -241,10 +250,10 @@ func (dialect *MySQLDialect) GetColumns(tx *sql.Tx, tableName string) ([]*Column
 	sql := "SELECT `COLUMN_NAME`, `IS_NULLABLE`, `COLUMN_DEFAULT`, `COLUMN_TYPE`," +
 		" `COLUMN_KEY`, `EXTRA`, `COLUMN_COMMENT`, " +
 		alreadyQuoted + " AS NEEDS_QUOTE " +
-		"FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ?" +
+		fmt.Sprintf("FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s'", dialect.DBName, tableName) +
 		" ORDER BY `COLUMNS`.ORDINAL_POSITION"
 
-	rows, err := tx.Query(sql, dialect.DBName, tableName)
+	rows, err := tx.Query(sql)
 	if err != nil {
 		return nil, err
 	}
@@ -301,11 +310,7 @@ func (dialect *MySQLDialect) GetColumns(tx *sql.Tx, tableName string) ([]*Column
 		}
 		col.Size = len1
 		col.Precision = len2
-		if _, ok := types.SqlTypes[colType]; ok {
-			col.Type = colType
-		} else {
-			return nil, fmt.Errorf("Unknown colType %v", colType)
-		}
+		col.Type = colType
 
 		if colKey == "PRI" {
 			col.IsPrimaryKey = true
@@ -318,13 +323,6 @@ func (dialect *MySQLDialect) GetColumns(tx *sql.Tx, tableName string) ([]*Column
 			col.IsAutoIncrement = true
 		}
 
-		if !col.DefaultIsEmpty {
-			if !alreadyQuoted && types.IsText(col.Type) {
-				col.Default = "'" + col.Default + "'"
-			} else if types.IsTime(col.Type) && !alreadyQuoted && col.Default != "CURRENT_TIMESTAMP" {
-				col.Default = "'" + col.Default + "'"
-			}
-		}
 		cols = append(cols, col)
 	}
 	return cols, nil

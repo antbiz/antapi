@@ -64,20 +64,20 @@ func sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
 
 				needModifyCol := false
 				colType := dialect.SQLType(col)
-				oricolType := dialect.SQLType(oriCol)
+				oricolType := oriCol.Type
 				if colType != oricolType {
-					if colType == types.Text && strings.HasPrefix(oricolType, types.Varchar) {
+					if colType == types.Text && strings.HasPrefix(oricolType, "VARCHAR") {
 						if dialect.DBType() == types.MYSQL || dialect.DBType() == types.POSTGRES {
 							needModifyCol = true
 						}
-					} else if strings.HasPrefix(oricolType, types.Varchar) && strings.HasPrefix(colType, types.Varchar) {
+					} else if strings.HasPrefix(oricolType, "VARCHAR") && strings.HasPrefix(colType, "VARCHAR") {
 						if dialect.DBType() == types.MYSQL {
 							if oriCol.Size < col.Size {
 								needModifyCol = true
 							}
 						}
 					}
-				} else if colType == types.Varchar {
+				} else if colType == "VARCHAR" {
 					if dialect.DBType() == types.MYSQL {
 						if oriCol.Size < col.Size {
 							needModifyCol = true
