@@ -5,7 +5,7 @@
   "description": "file collection",
   "fields": [
     {
-      "type": "",
+      "type": "Data",
       "title": "Name",
       "name": "name",
       "description": "",
@@ -28,7 +28,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Int",
       "title": "Size",
       "name": "size",
       "description": "",

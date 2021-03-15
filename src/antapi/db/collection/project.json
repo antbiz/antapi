@@ -5,7 +5,7 @@
   "description": "project collection",
   "fields": [
     {
-      "type": "",
+      "type": "Data",
       "title": "Title",
       "name": "title",
       "description": "",
@@ -28,7 +28,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Data",
       "title": "Name",
       "name": "name",
       "description": "",
@@ -51,7 +51,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Text",
       "title": "Description",
       "name": "description",
       "description": "",
@@ -74,7 +74,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "File",
       "title": "Cover",
       "name": "cover",
       "description": "",
@@ -97,7 +97,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Bool",
       "title": "Is Public",
       "name": "is_public",
       "description": "",

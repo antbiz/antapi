@@ -27,8 +27,6 @@ const (
 	HTML      string = "HTML"
 	Signature string = "Signature"
 	File      string = "File"
-	Media     string = "Media"
-	Image     string = "Image"
 	Enum      string = "Enum"
 	JSON      string = "Json"
 	UUID      string = "UUID"

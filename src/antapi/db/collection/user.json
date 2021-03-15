@@ -5,7 +5,7 @@
   "description": "user collection",
   "fields": [
     {
-      "type": "",
+      "type": "Data",
       "title": "Username",
       "name": "username",
       "description": "",
@@ -28,7 +28,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Tel",
       "title": "Mobile",
       "name": "mobile",
       "description": "",
@@ -51,7 +51,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Email",
       "title": "Email",
       "name": "email",
       "description": "",
@@ -74,7 +74,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Password",
       "title": "Password",
       "name": "password",
       "description": "",
@@ -97,7 +97,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Data",
       "title": "Salt",
       "name": "salt",
       "description": "",
@@ -120,7 +120,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Data",
       "title": "Nickname",
       "name": "nickname",
       "description": "",
@@ -143,7 +143,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "File",
       "title": "Avatar",
       "name": "avatar",
       "description": "",
@@ -166,7 +166,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Enum",
       "title": "Gender",
       "name": "gender",
       "description": "",
@@ -189,7 +189,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Bool",
       "title": "Is Enabled",
       "name": "is_enabled",
       "description": "",
@@ -212,7 +212,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Bool",
       "title": "Is SysUser",
       "name": "is_sysuser",
       "description": "",

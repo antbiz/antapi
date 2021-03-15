@@ -5,7 +5,7 @@
   "description": "role collection",
   "fields": [
     {
-      "type": "",
+      "type": "Data",
       "title": "Name",
       "name": "name",
       "description": "",
@@ -28,7 +28,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Text",
       "title": "Description",
       "name": "description",
       "description": "",

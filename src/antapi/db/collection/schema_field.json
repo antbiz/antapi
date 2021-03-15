@@ -5,7 +5,7 @@
   "description": "schema field collection",
   "fields": [
     {
-      "type": "",
+      "type": "Int",
       "title": "Index",
       "name": "idx",
       "description": "",
@@ -28,7 +28,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "UUID",
       "title": "Pid",
       "name": "pid",
       "description": "",
@@ -51,7 +51,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Data",
       "title": "Type",
       "name": "type",
       "description": "",
@@ -74,7 +74,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Data",
       "title": "Title",
       "name": "title",
       "description": "",
@@ -97,7 +97,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Data",
       "title": "Name",
       "name": "name",
       "description": "",
@@ -120,7 +120,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Text",
       "title": "Description",
       "name": "description",
       "description": "",
@@ -143,7 +143,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Bool",
       "title": "Is Required",
       "name": "is_required",
       "description": "",
@@ -166,7 +166,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Bool",
       "title": "Is Hidden",
       "name": "is_hidden",
       "description": "",
@@ -212,7 +212,7 @@
       "is_multiple": false
     },
     {
-      "type": "",
+      "type": "Bool",
       "title": "Is Private",
       "name": "is_private",
       "description": "",
@@ -236,7 +236,7 @@
     },
     {
 
-      "type": "",
+      "type": "Bool",
       "title": "Is Encrypted",
       "name": "is_encrypted",
       "description": "",
@@ -260,7 +260,7 @@
     },
     {
 
-      "type": "",
+      "type": "Bool",
       "title": "Can Sort",
       "name": "can_sort",
       "description": "",
@@ -284,7 +284,7 @@
     },
     {
 
-      "type": "",
+      "type": "Data",
       "title": "Default",
       "name": "default",
       "description": "",
@@ -308,7 +308,7 @@
     },
     {
 
-      "type": "",
+      "type": "Data",
       "title": "Connect Collection",
       "name": "connect_collection",
       "description": "",
@@ -332,7 +332,7 @@
     },
     {
 
-      "type": "",
+      "type": "Data",
       "title": "Connect Field",
       "name": "connect_field",
       "description": "",
@@ -356,7 +356,7 @@
     },
     {
 
-      "type": "",
+      "type": "Bool",
       "title": "Connect Many",
       "name": "connect_many",
       "description": "",
@@ -380,7 +380,7 @@
     },
     {
 
-      "type": "",
+      "type": "Int",
       "title": "Min",
       "name": "min",
       "description": "",
@@ -404,7 +404,7 @@
     },
     {
 
-      "type": "",
+      "type": "Int",
       "title": "Max",
       "name": "max",
       "description": "",
@@ -428,7 +428,7 @@
     },
     {
 
-      "type": "",
+      "type": "Text",
       "title": "Validator",
       "name": "validator",
       "description": "",
@@ -452,7 +452,7 @@
     },
     {
 
-      "type": "",
+      "type": "Text",
       "title": "Style",
       "name": "style",
       "description": "",
@@ -476,7 +476,7 @@
     },
     {
 
-      "type": "",
+      "type": "Data",
       "title": "Enum Type",
       "name": "enum_type",
       "description": "",
@@ -500,7 +500,7 @@
     },
     {
 
-      "type": "",
+      "type": "Json",
       "title": "Enum Options",
       "name": "enum_options",
       "description": "",
@@ -524,7 +524,7 @@
     },
     {
 
-      "type": "",
+      "type": "Bool",
       "title": "Is Multiple",
       "name": "is_multiple",
       "description": "",
