@@ -19,9 +19,9 @@
 
 # Database.
 [db]
-    # upper支持的数据库：cockroachdb/mongo/mssql/mysql/postgresql/ql/sqlite
+    # mongo/mssql/mysql/postgres/sqlite
     Driver = "mysql"
-    Link = "mysql:root:12345678@tcp(127.0.0.1:3306)/antapi"
+    DSN = "mysql:root:12345678@tcp(127.0.0.1:3306)/antapi"
     [db.logger]
         Path   = "../../logs/antapi/database"
         Level  = "all"

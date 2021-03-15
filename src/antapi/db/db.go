@@ -21,11 +21,11 @@ var (
 
 func init() {
 	driver := gstr.ToLower(g.Cfg().GetString("db.Driver"))
-	link := g.Cfg().GetString("db.Link")
+	dsn := g.Cfg().GetString("db.DSN")
 	DBType = types.DBType(driver)
 	switch DBType {
 	case types.MYSQL:
-		if mysqlURL, err := mysql.ParseURL(link); err != nil {
+		if mysqlURL, err := mysql.ParseURL(dsn); err != nil {
 			panic(err)
 		} else {
 			if DB, err = mysql.Open(mysqlURL); err != nil {
@@ -33,7 +33,7 @@ func init() {
 			}
 		}
 	case types.POSTGRES:
-		if pgsqlURL, err := postgresql.ParseURL(link); err != nil {
+		if pgsqlURL, err := postgresql.ParseURL(dsn); err != nil {
 			panic(err)
 		} else {
 			if DB, err = mysql.Open(pgsqlURL); err != nil {
@@ -41,7 +41,7 @@ func init() {
 			}
 		}
 	case types.MSSQL:
-		if mssqlURL, err := mssql.ParseURL(link); err != nil {
+		if mssqlURL, err := mssql.ParseURL(dsn); err != nil {
 			panic(err)
 		} else {
 			if DB, err = mysql.Open(mssqlURL); err != nil {
@@ -49,7 +49,7 @@ func init() {
 			}
 		}
 	case types.SQLITE:
-		if sqliteURL, err := sqlite.ParseURL(link); err != nil {
+		if sqliteURL, err := sqlite.ParseURL(dsn); err != nil {
 			panic(err)
 		} else {
 			if DB, err = mysql.Open(sqliteURL); err != nil {
@@ -57,7 +57,7 @@ func init() {
 			}
 		}
 	case types.MONGO:
-		if mongoURL, err := mongo.ParseURL(link); err != nil {
+		if mongoURL, err := mongo.ParseURL(dsn); err != nil {
 			panic(err)
 		} else {
 			if DB, err = mongo.Open(mongoURL); err != nil {
