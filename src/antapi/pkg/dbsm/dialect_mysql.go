@@ -1,18 +1,19 @@
-package gdbsm
+package dbsm
 
 import (
+	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
 
-	"antapi/pkg/gdbsm/types"
-
-	"github.com/gogf/gf/database/gdb"
-	"github.com/gogf/gf/frame/g"
+	"antapi/pkg/dbsm/types"
 )
 
 // MySQLDialect Implementation of Dialect for MySQL databases.
-type MySQLDialect struct{}
+type MySQLDialect struct {
+	DBName  string
+	Charset string
+}
 
 func (dialect *MySQLDialect) DBType() types.DBType {
 	return types.MYSQL
@@ -77,10 +78,10 @@ func (dialect *MySQLDialect) SQLType(column *Column) string {
 	return res
 }
 
-func (dialect *MySQLDialect) GetIndexes(tx *gdb.TX, tableName string) (map[string]*Index, error) {
+func (dialect *MySQLDialect) GetIndexes(tx *sql.Tx, tableName string) (map[string]*Index, error) {
 	rows, err := tx.Query(
 		"SELECT `INDEX_NAME`, `NON_UNIQUE`, `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`STATISTICS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ?",
-		g.DB().GetConfig().Name, tableName,
+		dialect.DBName, tableName,
 	)
 	if err != nil {
 		return nil, err
@@ -121,7 +122,7 @@ func (dialect *MySQLDialect) GetIndexes(tx *gdb.TX, tableName string) (map[strin
 }
 
 func (dialect *MySQLDialect) IndexCheckSQL(tableName, idxName string) string {
-	return fmt.Sprintf("SELECT `INDEX_NAME` FROM `INFORMATION_SCHEMA`.`STATISTICS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s' AND `INDEX_NAME` = '%s'", g.DB().GetConfig().Name, tableName, idxName)
+	return fmt.Sprintf("SELECT `INDEX_NAME` FROM `INFORMATION_SCHEMA`.`STATISTICS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s' AND `INDEX_NAME` = '%s'", dialect.DBName, tableName, idxName)
 }
 
 func (dialect *MySQLDialect) CreateIndexSQL(tableName string, index *Index) string {
@@ -140,10 +141,10 @@ func (dialect *MySQLDialect) DropIndexSQL(tableName string, index *Index) string
 	return fmt.Sprintf("DROP INDEX `%s` ON %s", quote(index.XName(tableName)), quote(tableName))
 }
 
-func (dialect *MySQLDialect) GetTables(tx *gdb.TX) ([]*Table, error) {
+func (dialect *MySQLDialect) GetTables(tx *sql.Tx) ([]*Table, error) {
 	rows, err := tx.Query(
 		"SELECT `TABLE_NAME`, `ENGINE`, `AUTO_INCREMENT`, `TABLE_COMMENT` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = ? AND (`ENGINE` = 'MyISAM' OR `ENGINE` = 'InnoDB' OR `ENGINE` = 'TokuDB')",
-		g.DB().GetConfig().Name,
+		dialect.DBName,
 	)
 	if err != nil {
 		return nil, err
@@ -183,12 +184,8 @@ func (dialect *MySQLDialect) GetTables(tx *gdb.TX) ([]*Table, error) {
 	return tables, nil
 }
 
-func (dialect *MySQLDialect) IsTableExist(tx *gdb.TX, tableName string) (bool, error) {
-	if count, err := tx.GetCount("SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = ? and `TABLE_NAME` = ?", g.DB().GetConfig().Name, tableName); err != nil {
-		return false, err
-	} else {
-		return count > 0, nil
-	}
+func (dialect *MySQLDialect) IsTableExist(tx *sql.Tx, tableName string) bool {
+	return tx.QueryRow("SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = ? and `TABLE_NAME` = ?", dialect.DBName, tableName) != nil
 }
 
 func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
@@ -221,7 +218,7 @@ func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
 
 	var charset = table.Charset
 	if len(charset) == 0 {
-		charset = g.DB().GetConfig().Charset
+		charset = dialect.Charset
 	}
 	if len(charset) != 0 {
 		sql += " DEFAULT CHARSET " + charset
@@ -234,7 +231,7 @@ func (dialect *MySQLDialect) DropTableSQL(tableName string) string {
 	return fmt.Sprintf("DROP TABLE IF EXISTS `%s`", tableName)
 }
 
-func (dialect *MySQLDialect) GetColumns(tx *gdb.TX, tableName string) ([]*Column, error) {
+func (dialect *MySQLDialect) GetColumns(tx *sql.Tx, tableName string) ([]*Column, error) {
 	alreadyQuoted := "(INSTR(VERSION(), 'maria') > 0 && " +
 		"(SUBSTRING_INDEX(VERSION(), '.', 1) > 10 || " +
 		"(SUBSTRING_INDEX(VERSION(), '.', 1) = 10 && " +
@@ -247,7 +244,7 @@ func (dialect *MySQLDialect) GetColumns(tx *gdb.TX, tableName string) ([]*Column
 		"FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = ? AND `TABLE_NAME` = ?" +
 		" ORDER BY `COLUMNS`.ORDINAL_POSITION"
 
-	rows, err := tx.Query(sql, g.DB().GetConfig().Name, tableName)
+	rows, err := tx.Query(sql, dialect.DBName, tableName)
 	if err != nil {
 		return nil, err
 	}
@@ -333,13 +330,9 @@ func (dialect *MySQLDialect) GetColumns(tx *gdb.TX, tableName string) ([]*Column
 	return cols, nil
 }
 
-func (dialect *MySQLDialect) IsColumnExist(tx *gdb.TX, tableName string, colName string) (bool, error) {
-	sql := fmt.Sprintf("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s' AND `COLUMN_NAME` = '%s'", g.DB().GetConfig().Name, tableName, colName)
-	if count, err := tx.GetCount(sql); err != nil {
-		return false, err
-	} else {
-		return count > 0, nil
-	}
+func (dialect *MySQLDialect) IsColumnExist(tx *sql.Tx, tableName string, colName string) bool {
+	sql := fmt.Sprintf("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s' AND `COLUMN_NAME` = '%s'", dialect.DBName, tableName, colName)
+	return tx.QueryRow(sql) != nil
 }
 
 func (dialect *MySQLDialect) AddColumnSQL(tableName string, col *Column) string {

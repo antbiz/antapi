@@ -1,60 +1,23 @@
-package gdbsm
+package dbsm
 
 import (
-	"antapi/pkg/gdbsm/types"
-	"fmt"
+	"antapi/pkg/dbsm/types"
+	"database/sql"
 	"strings"
-
-	"github.com/gogf/gf/database/gdb"
-	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/util/gutil"
 )
 
 // Sync .
-func Sync(dialect Dialect, tables []*Table) error {
-	if tx, err := g.DB().Begin(); err != nil {
+func Sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
+	if err := sync(tx, dialect, tables); err != nil {
+		tx.Rollback()
 		return err
-	} else {
-		if err = sync(tx, dialect, tables); err != nil {
-			tx.Rollback()
-			return err
-		}
-		tx.Commit()
 	}
+	tx.Commit()
 	return nil
 }
 
-// SyncFromJsonSchema .
-func SyncFromJsonSchema(dialect Dialect, jsonSchema string) error {
-	if j, err := gjson.DecodeToJson(jsonSchema); err != nil {
-		return err
-	} else {
-		tables := make([]*Table, 0)
-		columns := make([]*Column, 0)
-		for _, colName := range gutil.Keys(j.GetMap("schema.properties")) {
-			columns = append(columns, &Column{
-				Name:            colName,
-				Type:            j.GetString(fmt.Sprintf("schema.properties.%s.db:type", colName)),
-				Size:            j.GetInt(fmt.Sprintf("schema.properties.%s.db:size", colName)),
-				Precision:       j.GetInt(fmt.Sprintf("schema.properties.%s.db:precision", colName)),
-				Default:         j.GetString(fmt.Sprintf("schema.properties.%s.db:default", colName)),
-				IndexName:       j.GetString(fmt.Sprintf("schema.properties.%s.db:indexName", colName)),
-				Nullable:        j.GetBool(fmt.Sprintf("schema.properties.%s.db:nullable", colName)),
-				IsUnique:        j.GetBool(fmt.Sprintf("schema.properties.%s.db:isUnique", colName)),
-				IsAutoIncrement: j.GetBool(fmt.Sprintf("schema.properties.%s.db:isAutoIncrement", colName)),
-				IsPrimaryKey:    j.GetBool(fmt.Sprintf("schema.properties.%s.db:isPrimaryKey", colName)),
-				Comment:         j.GetString(fmt.Sprintf("schema.properties.%s.db:comment", colName)),
-			})
-		}
-		table := NewTable(j.GetString("schema.db:tableName"), columns)
-		tables = append(tables, table)
-		return Sync(dialect, tables)
-	}
-}
-
 // sync .
-func sync(tx *gdb.TX, dialect Dialect, tables []*Table) error {
+func sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
 	oriTables, err := dialect.GetTables(tx)
 	if err != nil {
 		return err

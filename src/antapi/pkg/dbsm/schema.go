@@ -1,4 +1,4 @@
-package gdbsm
+package dbsm
 
 import (
 	"fmt"

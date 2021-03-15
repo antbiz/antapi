@@ -1,10 +1,9 @@
-package gdbsm
+package dbsm
 
 import (
-	"antapi/pkg/gdbsm/types"
+	"antapi/pkg/dbsm/types"
+	"database/sql"
 	"strings"
-
-	"github.com/gogf/gf/database/gdb"
 )
 
 // Dialect represents a kind of database
@@ -14,17 +13,17 @@ type Dialect interface {
 	GetQuoter() Quoter
 	SQLType(column *Column) string
 
-	GetIndexes(tx *gdb.TX, tableName string) (map[string]*Index, error)
+	GetIndexes(tx *sql.Tx, tableName string) (map[string]*Index, error)
 	CreateIndexSQL(tableName string, index *Index) string
 	DropIndexSQL(tableName string, index *Index) string
 
-	GetTables(tx *gdb.TX) ([]*Table, error)
-	IsTableExist(tx *gdb.TX, tableName string) (bool, error)
+	GetTables(tx *sql.Tx) ([]*Table, error)
+	IsTableExist(tx *sql.Tx, tableName string) bool
 	CreateTableSQL(table *Table) string
 	DropTableSQL(tableName string) string
 
-	GetColumns(tx *gdb.TX, tableName string) ([]*Column, error)
-	IsColumnExist(tx *gdb.TX, tableName string, colName string) (bool, error)
+	GetColumns(tx *sql.Tx, tableName string) ([]*Column, error)
+	IsColumnExist(tx *sql.Tx, tableName string, colName string) bool
 	AddColumnSQL(tableName string, col *Column) string
 	ModifyColumnSQL(tableName string, col *Column) string
 }

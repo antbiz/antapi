@@ -1,4 +1,4 @@
-package gdbsm
+package dbsm
 
 func findWord(v string, start int) int {
 	for j := start; j < len(v); j++ {
