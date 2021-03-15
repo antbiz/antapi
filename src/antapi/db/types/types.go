@@ -29,7 +29,7 @@ const (
 	File      string = "File"
 	Enum      string = "Enum"
 	JSON      string = "Json"
-	UUID      string = "UUID"
+	UUID      string = "Uuid"
 	Int       string = "Int"
 	BigInt    string = "BigInt"
 	Float     string = "Float"
