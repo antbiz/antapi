@@ -1,0 +1,31 @@
+{
+  "title": "Permission",
+  "name": "permission",
+  "project_name": "system",
+  "description": "permission collection",
+  "fields": [
+    {
+      "type": "",
+      "title": "Project Name",
+      "name": "project_name",
+      "description": "",
+      "is_required": true,
+      "is_hidden": false,
+      "is_unique": false,
+      "is_private": false,
+      "is_encrypted": false,
+      "can_sort": false,
+      "default": "",
+      "connect_collection": "",
+      "connect_field": "",
+      "connect_many": false,
+      "min": 0,
+      "max": 0,
+      "validator": "",
+      "style": "",
+      "enum_type": "",
+      "enum_options": "",
+      "is_multiple": false
+    }
+  ]
+}
