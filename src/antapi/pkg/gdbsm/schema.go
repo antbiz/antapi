@@ -71,7 +71,7 @@ func (table *Table) UpdateWithCols(columns []*Column) {
 			}
 
 			if index, ok := table.Indexes[idxName]; ok {
-				index.Cols = append(index.Cols, idxName)
+				index.Cols = append(index.Cols, col.Name)
 			} else {
 				index := &Index{
 					Name:     col.IndexName,

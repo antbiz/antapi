@@ -7,9 +7,12 @@
 .settings/
 .vscode/
 vender/
-logs/
+log/
 composer.lock
 gitpush.sh
+bin/
 cbuild
 */.DS_Store
+main
 .vscode
+go.sum

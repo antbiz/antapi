@@ -136,7 +136,7 @@ func sync(tx *gdb.TX, dialect Dialect, tables []*Table) error {
 			for name, index := range table.Indexes {
 				var oriIndex *Index
 				for oriname, oriindex := range oriTable.Indexes {
-					if index.Equal(oriIndex) {
+					if index.Equal(oriindex) {
 						oriIndex = oriindex
 						foundIndexNames[oriname] = true
 						break

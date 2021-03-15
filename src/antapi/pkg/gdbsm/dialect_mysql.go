@@ -314,7 +314,7 @@ func (dialect *MySQLDialect) GetColumns(tx *gdb.TX, tableName string) ([]*Column
 			col.IsPrimaryKey = true
 		}
 		if colKey == "UNI" {
-			// col.is
+			col.IsUnique = true
 		}
 
 		if extra == "auto_increment" {
