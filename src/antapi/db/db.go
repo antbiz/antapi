@@ -1,37 +1,30 @@
 package db
 
 import (
+	"antapi/db/types"
 	"fmt"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/text/gstr"
 	upperdb "github.com/upper/db/v4"
-	"github.com/upper/db/v4/adapter/cockroachdb"
 	"github.com/upper/db/v4/adapter/mongo"
 	"github.com/upper/db/v4/adapter/mssql"
 	"github.com/upper/db/v4/adapter/mysql"
 	"github.com/upper/db/v4/adapter/postgresql"
-	"github.com/upper/db/v4/adapter/ql"
 	"github.com/upper/db/v4/adapter/sqlite"
 )
 
 var (
-	DB             upperdb.Session
-	UseCockroachdb bool
-	UseMongo       bool
-	UseMssql       bool
-	UseMysql       bool
-	UsePostgresql  bool
-	UseQl          bool
-	UseSqlite      bool
+	DB     upperdb.Session
+	DBType types.DBType
 )
 
 func init() {
 	driver := gstr.ToLower(g.Cfg().GetString("db.Driver"))
 	link := g.Cfg().GetString("db.Link")
-	switch driver {
-	case "mysql":
-		UseMysql = true
+	DBType = types.DBType(driver)
+	switch DBType {
+	case types.MYSQL:
 		if mysqlURL, err := mysql.ParseURL(link); err != nil {
 			panic(err)
 		} else {
@@ -39,8 +32,7 @@ func init() {
 				panic(err)
 			}
 		}
-	case "postgresql":
-		UsePostgresql = true
+	case types.POSTGRES:
 		if pgsqlURL, err := postgresql.ParseURL(link); err != nil {
 			panic(err)
 		} else {
@@ -48,8 +40,7 @@ func init() {
 				panic(err)
 			}
 		}
-	case "mssql":
-		UseMssql = true
+	case types.MSSQL:
 		if mssqlURL, err := mssql.ParseURL(link); err != nil {
 			panic(err)
 		} else {
@@ -57,8 +48,7 @@ func init() {
 				panic(err)
 			}
 		}
-	case "sqlite":
-		UseSqlite = true
+	case types.SQLITE:
 		if sqliteURL, err := sqlite.ParseURL(link); err != nil {
 			panic(err)
 		} else {
@@ -66,26 +56,7 @@ func init() {
 				panic(err)
 			}
 		}
-	case "ql":
-		UseQl = true
-		if qlURL, err := ql.ParseURL(link); err != nil {
-			panic(err)
-		} else {
-			if DB, err = mysql.Open(qlURL); err != nil {
-				panic(err)
-			}
-		}
-	case "cockroachdb":
-		UseCockroachdb = true
-		if cockroachdbURL, err := cockroachdb.ParseURL(link); err != nil {
-			panic(err)
-		} else {
-			if DB, err = cockroachdb.Open(cockroachdbURL); err != nil {
-				panic(err)
-			}
-		}
-	case "mongo":
-		UseMongo = true
+	case types.MONGO:
 		if mongoURL, err := mongo.ParseURL(link); err != nil {
 			panic(err)
 		} else {

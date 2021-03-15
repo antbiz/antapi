@@ -8,7 +8,8 @@ const (
 	SQLITE   DBType = "sqlite3"
 	MYSQL    DBType = "mysql"
 	MSSQL    DBType = "mssql"
-	ORACLE   DBType = "oracle"
+	MONGO    DBType = "mongo"
+	// ORACLE   DBType = "oracle"
 )
 
 // Supported field types

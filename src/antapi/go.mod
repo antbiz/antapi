@@ -5,4 +5,4 @@ require (
 	github.com/upper/db/v4 v4.1.0
 )
 
-go 1.11
+go 1.16
