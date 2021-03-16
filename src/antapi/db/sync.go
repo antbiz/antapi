@@ -26,7 +26,7 @@ func JSONCollection2TableSchema(collection *gjson.Json) *dbsm.Table {
 		if field.GetBool("create_index") {
 			col.IndexName = col.Name
 		}
-		if col.Name == "_id" {
+		if col.Name == "id" {
 			col.IsAutoIncrement = true
 			col.IsPrimaryKey = true
 		}
