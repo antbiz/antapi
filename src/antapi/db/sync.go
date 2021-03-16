@@ -2,7 +2,6 @@ package db
 
 import (
 	"antapi/db/dbsm"
-	"antapi/db/types"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -39,11 +38,6 @@ func JSONCollection2TableSchema(collection *gjson.Json) *dbsm.Table {
 
 // SyncCollections : 同步collections
 func SyncCollections() error {
-	// MongDB need not to create table
-	if DBType == types.MONGO {
-		return nil
-	}
-
 	collectionFilePath := fmt.Sprintf("%s/db/collection", gfile.MainPkgPath())
 	collectionFileNames, err := gfile.DirNames(collectionFilePath)
 	if err != nil {
