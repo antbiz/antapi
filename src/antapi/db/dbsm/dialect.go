@@ -1,10 +1,9 @@
 package dbsm
 
 import (
+	"antapi/db/dbsm/types"
 	"database/sql"
 	"strings"
-
-	"antapi/db/types"
 )
 
 // Dialect represents a kind of database

@@ -1,10 +1,9 @@
 package dbsm
 
 import (
+	"antapi/db/dbsm/types"
 	"database/sql"
 	"strings"
-
-	"antapi/db/types"
 )
 
 // Sync .
@@ -67,7 +66,7 @@ func sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
 				colType := dialect.SQLType(col)
 				oricolType := oriCol.Type
 				if colType != oricolType {
-					if colType == types.Text && strings.HasPrefix(oricolType, "VARCHAR") {
+					if colType == types.TEXT && strings.HasPrefix(oricolType, "VARCHAR") {
 						if dialect.DBType() == types.MYSQL || dialect.DBType() == types.POSTGRES {
 							needModifyCol = true
 						}

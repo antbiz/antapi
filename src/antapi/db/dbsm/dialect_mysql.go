@@ -1,12 +1,11 @@
 package dbsm
 
 import (
+	"antapi/db/dbsm/types"
 	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
-
-	"antapi/db/types"
 )
 
 // MySQLDialect Implementation of Dialect for MySQL databases.
@@ -35,47 +34,22 @@ func (dialect *MySQLDialect) GetQuoter() Quoter {
 func (dialect *MySQLDialect) SQLType(column *Column) string {
 	var res string
 	switch t := column.Type; t {
-	case types.Data:
+	case types.VARCHAR:
 		column.Size = 255
-		res = "VARCHAR"
-	case types.Color, types.Email, types.Tel, types.Password:
-		column.Size = 100
-		res = "VARCHAR"
-	case types.URL, types.Text, types.JSON:
-		res = "TEXT"
-	case types.LongText, types.RichText, types.Markdown, types.Code, types.HTML:
-		res = "LONGTEXT"
-	case types.Signature:
-		res = "BLOB"
-	case types.File, types.Enum, types.Array:
+	case types.SMALLTEXT:
+		column.Size = 512
+	case types.MEDIUMTEXT:
 		column.Size = 1024
-		res = "VARCHAR"
 	case types.UUID:
 		column.Size = 40
+		column.IsUnique = true
+		column.IsPrimaryKey = true
 		res = "VARCHAR"
-	case types.Int:
-		res = "INT"
-	case types.BigInt, types.Money:
-		res = "BIGINT"
-	case types.Float:
-		res = "FLOAT"
-	case types.Date:
-		res = "DATE"
-	case types.DateTime:
-		res = "DATETIME"
-	case types.Time:
-		res = "TIME"
-	case types.TimeStamp:
-		res = "TIMESTAMP"
-	case types.Year:
-		res = "YEAR"
-	case types.Bool:
+	case types.BOOL:
 		res = "TINYINT"
 		column.Size = 1
-	case types.Connect:
-		return ""
 	default:
-		return "TEXT"
+		res = t
 	}
 
 	if column.Precision > 0 {

@@ -1,7 +1,7 @@
 package boot
 
 import (
-	"antapi/db"
+	"antapi/core/schema"
 	_ "antapi/packed"
 )
 
@@ -10,6 +10,6 @@ func init() {
 }
 
 func setUpDatabase() {
-	db.SyncCollections()
-	db.SyncDefaultsData()
+	schema.SyncCollections()
+	schema.SyncDefaultsData()
 }

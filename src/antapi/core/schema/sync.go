@@ -1,4 +1,4 @@
-package db
+package schema
 
 import (
 	"antapi/db/dbsm"
