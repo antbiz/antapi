@@ -34,6 +34,18 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (map[
 		obj.Set(field.RelatedCollection, relatedRecord.Map())
 	}
 
+	for _, field := range schema.GetTableFields() {
+		tableSchema, err := model.GetSchema(field.RelatedCollection)
+		if err != nil {
+			return nil, err
+		}
+		tableRecords, err := db.Table(field.RelatedCollection).Fields(tableSchema.GetTableFieldNames()).Order("idx asc").Where("pid", obj.Get("id")).All()
+		if err != nil {
+			return nil, err
+		}
+		obj.Set(field.RelatedCollection, tableRecords.List())
+	}
+
 	return obj.MapStrAny(), nil
 }
 
@@ -75,6 +87,31 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		for i := 0; i < recordsLen; i++ {
 			relatedId := objs.GetString(fmt.Sprintf("%d.%s", i, field.Name))
 			if err := objs.Set(fmt.Sprintf("%d.%s", i, field.RelatedCollection), relatedObjs[relatedId]); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	for _, field := range schema.GetTableFields() {
+		childSchema, err := model.GetSchema(field.RelatedCollection)
+		if err != nil {
+			return nil, err
+		}
+		childRecords, err := db.Table(field.RelatedCollection).Fields(childSchema.GetPublicFieldNames()).Order("idx asc").Where("pid", objIds).All()
+		if err != nil {
+			return nil, err
+		}
+
+		var mapObjChildRecords map[string][]string
+		for _, relatedRecord := range childRecords {
+			recordObj := relatedRecord.GMap()
+			pid := recordObj.GetVar("pid").String()
+			mapObjChildRecords[pid] = append(mapObjChildRecords[pid], relatedRecord.Json())
+		}
+
+		for i := 0; i < recordsLen; i++ {
+			pid := objs.GetString(fmt.Sprintf("%d.id", i))
+			if err := objs.Set(fmt.Sprintf("%d.%s", i, field.Name), mapObjChildRecords[pid]); err != nil {
 				return nil, err
 			}
 		}

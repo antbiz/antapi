@@ -79,8 +79,8 @@ const (
 	TimeStamp FieldType = "TimeStamp"
 	Year      FieldType = "Year"
 	Bool      FieldType = "Bool"
-	Array     FieldType = "Array"
 	Link      FieldType = "Link"
+	Table     FieldType = "Table"
 )
 
 // TODO: 缓存
@@ -101,7 +101,7 @@ func GetSchema(collectionName string) (*Schema, error) {
 func (schema *Schema) GetPublicFieldNames() []string {
 	var fieldNames []string
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden {
+		if field.IsPrivate || field.IsHidden || FieldType(field.Type) == Table {
 			continue
 		}
 		fieldNames = append(fieldNames, field.Name)
@@ -149,7 +149,7 @@ func (schema *Schema) GetRequiredFields() []*SchemaField {
 	return fields
 }
 
-// GetLinkFieldNames : 获取所有link字段名
+// GetLinkFieldNames : 获取所有Link类型字段名
 func (schema *Schema) GetLinkFieldNames() []string {
 	var fieldNames []string
 	for _, field := range schema.Fields {
@@ -163,7 +163,7 @@ func (schema *Schema) GetLinkFieldNames() []string {
 	return fieldNames
 }
 
-// GetLinkFields : 获取所有link字段
+// GetLinkFields : 获取所有Link类型字段
 func (schema *Schema) GetLinkFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
@@ -171,6 +171,34 @@ func (schema *Schema) GetLinkFields() []*SchemaField {
 			continue
 		}
 		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Link {
+			fields = append(fields, field)
+		}
+	}
+	return fields
+}
+
+// GetLinkFieldNames : 获取所有Table类型字段名
+func (schema *Schema) GetTableFieldNames() []string {
+	var fieldNames []string
+	for _, field := range schema.Fields {
+		if field.IsPrivate || field.IsHidden {
+			continue
+		}
+		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Table {
+			fieldNames = append(fieldNames, field.Name)
+		}
+	}
+	return fieldNames
+}
+
+// GetLinkFields : 获取所有Table类型字段
+func (schema *Schema) GetTableFields() []*SchemaField {
+	fields := make([]*SchemaField, 0)
+	for _, field := range schema.Fields {
+		if field.IsPrivate || field.IsHidden {
+			continue
+		}
+		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Table {
 			fields = append(fields, field)
 		}
 	}
@@ -230,7 +258,7 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 		}
 	}
 
-	// 后台自定义校验
+	// 后台配置的校验规则
 	if len(field.Validator) > 0 {
 		return gvalid.Check(value, field.Validator, msg)
 	}
