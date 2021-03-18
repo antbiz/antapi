@@ -110,15 +110,15 @@ func (schema *Schema) GetPublicFieldNames() []string {
 }
 
 // GetPublicFields : 获取所有对外开放的字段
-func (schema *Schema) GetPublicFields() []string {
-	var fieldNames []string
+func (schema *Schema) GetPublicFields() []*SchemaField {
+	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		fieldNames = append(fieldNames, field.Name)
+		fields = append(fields, field)
 	}
-	return fieldNames
+	return fields
 }
 
 // GetRequiredFieldNames : 获取所有必填的字段名

@@ -9,6 +9,7 @@ import (
 )
 
 // UpdateOne : 更新单个数据
+// TODO: update时，子表的数据应该采用orm的save操作来完成。
 func UpdateOne(collectionName string, data interface{}) error {
 	db := g.DB()
 	oriObj, err := gjson.LoadJson(data)
