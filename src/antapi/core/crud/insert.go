@@ -24,7 +24,7 @@ func InsertList(collectionName string, data ...interface{}) error {
 	if err != nil {
 		return err
 	}
-	allData := make([]map[string]interface{}, 0)
+	contents := make([]map[string]interface{}, 0)
 
 	// 批量插入主体数据
 	for i := 0; i < len(data); i++ {
@@ -33,52 +33,52 @@ func InsertList(collectionName string, data ...interface{}) error {
 			return err
 		}
 
-		var newObj map[string]interface{}
+		var content map[string]interface{}
 		for _, field := range schema.GetPublicFields() {
 			val := oriObj.Get(field.Name)
 			if validErr := field.CheckFieldValue(val); validErr != nil {
 				return validErr.Current()
 			}
-			newObj[field.Name] = val
+			content[field.Name] = val
 		}
 
-		allData = append(allData, newObj)
+		contents = append(contents, content)
 	}
-	if _, err := db.Table(collectionName).Insert(allData); err != nil {
+	if _, err := db.Table(collectionName).Insert(contents); err != nil {
 		return err
 	}
 
 	// 批量插入子表数据
 	for _, field := range schema.GetTableFields() {
-		allTableData := make([]map[string]interface{}, 0)
+		tableContent := make([]map[string]interface{}, 0)
 		for i := 0; i < len(data); i++ {
 			oriObj, err := gjson.LoadJson(data)
 			if err != nil {
 				return err
 			}
+			tableRowsLen := len(oriObj.GetArray(field.Name))
+			if tableRowsLen == 0 {
+				continue
+			}
 			tableSchema, err := model.GetSchema(field.RelatedCollection)
 			if err != nil {
 				return err
 			}
-			childsLen := len(oriObj.GetArray(field.Name))
-			if childsLen == 0 {
-				continue
-			}
 
-			for i := 0; i < childsLen; i++ {
-				var newChildObj map[string]interface{}
+			for i := 0; i < tableRowsLen; i++ {
+				var tableRowContent map[string]interface{}
 				for _, tableField := range tableSchema.GetPublicFields() {
 					val := oriObj.Get(fmt.Sprintf("%s.%d.%s", field.Name, i, tableField.Name))
 					if validErr := field.CheckFieldValue(val); validErr != nil {
 						return validErr.Current()
 					}
-					newChildObj[tableField.Name] = val
+					tableRowContent[tableField.Name] = val
 				}
-				allTableData = append(allTableData, newChildObj)
+				tableContent = append(tableContent, tableRowContent)
 			}
 		}
 
-		if _, err := db.Table(field.RelatedCollection).Insert(allTableData); err != nil {
+		if _, err := db.Table(field.RelatedCollection).Insert(tableContent); err != nil {
 			return err
 		}
 	}
