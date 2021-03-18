@@ -16,7 +16,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (map[
 		return nil, err
 	}
 
-	record, err := db.Table(collectionName).Fields(schema.GetFieldNames()).Where(where, args...).One()
+	record, err := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...).One()
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (map[
 		if err != nil {
 			return nil, err
 		}
-		relatedRecord, err := db.Table(field.RelatedCollection).Fields(relatedSchema.GetFieldNames()).Where("id", obj.Get(field.Name)).One()
+		relatedRecord, err := db.Table(field.RelatedCollection).Fields(relatedSchema.GetPublicFieldNames()).Where("id", obj.Get(field.Name)).One()
 		if err != nil {
 			return nil, err
 		}
@@ -45,7 +45,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		return nil, err
 	}
 
-	orm := db.Table(collectionName).Fields(schema.GetFieldNames()).Where(where, args...)
+	orm := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...)
 	if pageNum > 0 && pageSize > 0 {
 		orm = orm.Limit((pageNum-1)*pageSize, pageSize)
 	}
@@ -67,7 +67,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 			return nil, err
 		}
 
-		relatedRecords, err := db.Table(field.RelatedCollection).Fields(relatedSchema.GetFieldNames()).Where("id", objIds).All()
+		relatedRecords, err := db.Table(field.RelatedCollection).Fields(relatedSchema.GetPublicFieldNames()).Where("id", objIds).All()
 		if err != nil {
 			return nil, err
 		}

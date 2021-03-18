@@ -1,6 +1,13 @@
 package model
 
-import "github.com/gogf/gf/frame/g"
+import (
+	"fmt"
+	"strings"
+
+	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/util/gvalid"
+)
 
 // Schema .
 type Schema struct {
@@ -48,7 +55,7 @@ const (
 	String    FieldType = "String"
 	Color     FieldType = "Color"
 	Email     FieldType = "Email"
-	Tel       FieldType = "Tel"
+	Phone     FieldType = "Phone"
 	URL       FieldType = "Url"
 	Password  FieldType = "Password"
 	Text      FieldType = "Text"
@@ -90,8 +97,20 @@ func GetSchema(collectionName string) (*Schema, error) {
 	return schema, nil
 }
 
-// GetFieldNames : 获取所有对外开放的字段名
-func (schema *Schema) GetFieldNames() []string {
+// GetPublicFieldNames : 获取所有对外开放的字段名
+func (schema *Schema) GetPublicFieldNames() []string {
+	var fieldNames []string
+	for _, field := range schema.Fields {
+		if field.IsPrivate || field.IsHidden {
+			continue
+		}
+		fieldNames = append(fieldNames, field.Name)
+	}
+	return fieldNames
+}
+
+// GetPublicFields : 获取所有对外开放的字段
+func (schema *Schema) GetPublicFields() []string {
 	var fieldNames []string
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
@@ -156,4 +175,65 @@ func (schema *Schema) GetLinkFields() []*SchemaField {
 		}
 	}
 	return fields
+}
+
+// CheckFieldValue : 校验字段值的合法性
+// TODO: 错误信息支持多语言
+func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
+	var (
+		err  *gvalid.Error
+		rule string
+		msg  string = fmt.Sprintf("%s格式不正确：%v", field.Title, value)
+	)
+
+	// 检验必填
+	if field.IsRequired {
+		if err = gvalid.Check(value, "required", fmt.Sprintf("%s不能为空", field.Title)); err != nil {
+			return err
+		}
+	}
+
+	// 通过字段类型做校验
+	switch FieldType(field.Type) {
+	case Email:
+		rule = "email"
+	case Phone:
+		rule = "phone"
+	case URL:
+		rule = "url"
+	case Date:
+		rule = "date"
+	case JSON:
+		rule = "json"
+	case Int:
+		rule = "integer"
+	case Float:
+		rule = "float"
+	case Bool:
+		rule = "boolean"
+	case Enum:
+		var enumOptions []string
+		if len(field.EnumOptions) > 0 {
+			if j, err := gjson.LoadContent(fmt.Sprintf(`{"options":%s}`, field.EnumOptions)); err == nil {
+				for i := 0; i < len(j.GetArray("options")); i++ {
+					enumOptions = append(enumOptions, j.GetString(fmt.Sprintf("%d.value", i)))
+				}
+			}
+		}
+		enumOptionsStr := strings.Join(enumOptions, ",")
+		rule = fmt.Sprintf("in:%s", enumOptionsStr)
+		msg = fmt.Sprintf("%s不存在于%s", field.Title, enumOptionsStr)
+	}
+	if len(rule) > 0 {
+		if err = gvalid.Check(value, rule, msg); err != nil {
+			return err
+		}
+	}
+
+	// 后台自定义校验
+	if len(field.Validator) > 0 {
+		return gvalid.Check(value, field.Validator, msg)
+	}
+
+	return nil
 }
