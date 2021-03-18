@@ -1,7 +1,7 @@
 package dbsm
 
 import (
-	"antapi/db/dbsm/types"
+	"antapi/pkg/dbsm/types"
 	"database/sql"
 	"strings"
 )

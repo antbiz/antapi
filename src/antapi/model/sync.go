@@ -1,7 +1,7 @@
-package schema
+package model
 
 import (
-	"antapi/db/dbsm"
+	"antapi/pkg/dbsm"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"

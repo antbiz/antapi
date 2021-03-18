@@ -1,16 +1,17 @@
-package schema
+package crud
 
 import (
+	"antapi/model"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 )
 
-// GetValue : 获取单个数据
-func GetValue(collectionName string, where interface{}, args ...interface{}) (map[string]interface{}, error) {
+// GetOne : 获取单个数据
+func GetOne(collectionName string, where interface{}, args ...interface{}) (map[string]interface{}, error) {
 	db := g.DB()
-	schema, err := GetSchema(collectionName)
+	schema, err := model.GetSchema(collectionName)
 	if err != nil {
 		return nil, err
 	}
@@ -22,7 +23,7 @@ func GetValue(collectionName string, where interface{}, args ...interface{}) (ma
 	obj := record.GMap()
 
 	for _, field := range schema.GetBelongsToFields() {
-		relatedSchema, err := GetSchema(field.RelatedCollection)
+		relatedSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
 			return nil, err
 		}
@@ -34,7 +35,7 @@ func GetValue(collectionName string, where interface{}, args ...interface{}) (ma
 	}
 
 	for _, field := range schema.GetHasManyFields() {
-		relatedSchema, err := GetSchema(field.RelatedCollection)
+		relatedSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
 			return nil, err
 		}
@@ -51,16 +52,16 @@ func GetValue(collectionName string, where interface{}, args ...interface{}) (ma
 // GetList : 获取列表数据
 func GetList(collectionName string, pageNum, pageSize int, where interface{}, args ...interface{}) ([]map[string]interface{}, error) {
 	db := g.DB()
-	schema, err := GetSchema(collectionName)
+	schema, err := model.GetSchema(collectionName)
 	if err != nil {
 		return nil, err
 	}
 
-	model := db.Table(collectionName).Fields(schema.GetFieldNames()).Where(where, args...)
+	orm := db.Table(collectionName).Fields(schema.GetFieldNames()).Where(where, args...)
 	if pageNum > 0 && pageSize > 0 {
-		model = model.Limit((pageNum-1)*pageSize, pageSize)
+		orm = orm.Limit((pageNum-1)*pageSize, pageSize)
 	}
-	records, err := model.All()
+	records, err := orm.All()
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +74,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	}
 
 	for _, field := range schema.GetBelongsToFields() {
-		relatedSchema, err := GetSchema(field.RelatedCollection)
+		relatedSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
 			return nil, err
 		}
@@ -92,7 +93,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	}
 
 	for _, field := range schema.GetHasManyFields() {
-		relatedSchema, err := GetSchema(field.RelatedCollection)
+		relatedSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
 			return nil, err
 		}
