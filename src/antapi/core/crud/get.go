@@ -22,7 +22,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (map[
 	}
 	obj := record.GMap()
 
-	for _, field := range schema.GetBelongsToFields() {
+	for _, field := range schema.GetLinkFields() {
 		relatedSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
 			return nil, err
@@ -32,18 +32,6 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (map[
 			return nil, err
 		}
 		obj.Set(field.RelatedCollection, relatedRecord.Map())
-	}
-
-	for _, field := range schema.GetHasManyFields() {
-		relatedSchema, err := model.GetSchema(field.RelatedCollection)
-		if err != nil {
-			return nil, err
-		}
-		relatedRecords, err := db.Table(field.RelatedCollection).Fields(relatedSchema.GetFieldNames()).Order("idx asc").Where("pid", obj.Get("id")).All()
-		if err != nil {
-			return nil, err
-		}
-		obj.Set(field.RelatedCollection, relatedRecords.List())
 	}
 
 	return obj.MapStrAny(), nil
@@ -73,7 +61,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		objIds = append(objIds, objs.GetString(fmt.Sprintf("%d.id", i)))
 	}
 
-	for _, field := range schema.GetBelongsToFields() {
+	for _, field := range schema.GetLinkFields() {
 		relatedSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
 			return nil, err
@@ -87,31 +75,6 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		for i := 0; i < recordsLen; i++ {
 			relatedId := objs.GetString(fmt.Sprintf("%d.%s", i, field.Name))
 			if err := objs.Set(fmt.Sprintf("%d.%s", i, field.RelatedCollection), relatedObjs[relatedId]); err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	for _, field := range schema.GetHasManyFields() {
-		relatedSchema, err := model.GetSchema(field.RelatedCollection)
-		if err != nil {
-			return nil, err
-		}
-		relatedRecords, err := db.Table(field.RelatedCollection).Fields(relatedSchema.GetFieldNames()).Order("idx asc").Where("pid", objIds).All()
-		if err != nil {
-			return nil, err
-		}
-
-		var mapObjRelatedRecords map[string][]string
-		for _, relatedRecord := range relatedRecords {
-			recordObj := relatedRecord.GMap()
-			pid := recordObj.GetVar("pid").String()
-			mapObjRelatedRecords[pid] = append(mapObjRelatedRecords[pid], relatedRecord.Json())
-		}
-
-		for i := 0; i < recordsLen; i++ {
-			pid := objs.GetString(fmt.Sprintf("%d.id", i))
-			if err := objs.Set(fmt.Sprintf("%d.%s", i, field.Name), mapObjRelatedRecords[pid]); err != nil {
 				return nil, err
 			}
 		}

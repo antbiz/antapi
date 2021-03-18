@@ -73,8 +73,7 @@ const (
 	Year      FieldType = "Year"
 	Bool      FieldType = "Bool"
 	Array     FieldType = "Array"
-	BelongsTo FieldType = "BelongsTo"
-	HasMany   FieldType = "HasMany"
+	Link      FieldType = "Link"
 )
 
 // TODO: 缓存
@@ -91,15 +90,11 @@ func GetSchema(collectionName string) (*Schema, error) {
 	return schema, nil
 }
 
-// IsInstanceField : 是否为实例字段(实例字段：将存在collection的表列中)
-func IsInstanceField(field *SchemaField) bool {
-	return FieldType(field.Type) == HasMany
-}
-
+// GetFieldNames : 获取所有对外开放的字段名
 func (schema *Schema) GetFieldNames() []string {
 	var fieldNames []string
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden || !IsInstanceField(field) {
+		if field.IsPrivate || field.IsHidden {
 			continue
 		}
 		fieldNames = append(fieldNames, field.Name)
@@ -107,6 +102,7 @@ func (schema *Schema) GetFieldNames() []string {
 	return fieldNames
 }
 
+// GetRequiredFieldNames : 获取所有必填的字段名
 func (schema *Schema) GetRequiredFieldNames() []string {
 	var fieldNames []string
 	for _, field := range schema.Fields {
@@ -120,6 +116,7 @@ func (schema *Schema) GetRequiredFieldNames() []string {
 	return fieldNames
 }
 
+// GetRequiredFields : 获取所有必填的字段
 func (schema *Schema) GetRequiredFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
@@ -133,52 +130,28 @@ func (schema *Schema) GetRequiredFields() []*SchemaField {
 	return fields
 }
 
-func (schema *Schema) GetBelongsToFieldNames() []string {
+// GetLinkFieldNames : 获取所有link字段名
+func (schema *Schema) GetLinkFieldNames() []string {
 	var fieldNames []string
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == BelongsTo {
+		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Link {
 			fieldNames = append(fieldNames, field.Name)
 		}
 	}
 	return fieldNames
 }
 
-func (schema *Schema) GetBelongsToFields() []*SchemaField {
+// GetLinkFields : 获取所有link字段
+func (schema *Schema) GetLinkFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == BelongsTo {
-			fields = append(fields, field)
-		}
-	}
-	return fields
-}
-
-func (schema *Schema) GetHasManyFieldNames() []string {
-	var fieldNames []string
-	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden {
-			continue
-		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == HasMany {
-			fieldNames = append(fieldNames, field.Name)
-		}
-	}
-	return fieldNames
-}
-
-func (schema *Schema) GetHasManyFields() []*SchemaField {
-	fields := make([]*SchemaField, 0)
-	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden {
-			continue
-		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == HasMany {
+		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Link {
 			fields = append(fields, field)
 		}
 	}
