@@ -1,11 +1,12 @@
 package crud
 
-// DeleteOne : 删除单个数据
-func DeleteOne() {
+import "github.com/gogf/gf/frame/g"
 
-}
-
-// DeleteList : 删除多个数据
-func DeleteList() {
-
+// Delete : 删除指定数据
+func Delete(collectionName string, where interface{}, args ...interface{}) error {
+	db := g.DB()
+	if _, err := db.Table(collectionName).Where(where, args...).Delete(); err != nil {
+		return err
+	}
+	return nil
 }
