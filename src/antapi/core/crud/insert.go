@@ -11,11 +11,11 @@ import (
 
 // InsertOne : 插入单个数据，返回插入的主体id
 func InsertOne(collectionName string, data interface{}) (string, error) {
-	if res, err := InsertList(collectionName, data); err != nil {
+	res, err := InsertList(collectionName, data)
+	if err != nil {
 		return "", nil
-	} else {
-		return res[0], nil
 	}
+	return res[0], nil
 }
 
 // InsertList : 插入多个数据，返回一组插入的主体id
