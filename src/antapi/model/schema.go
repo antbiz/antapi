@@ -22,8 +22,9 @@ type Schema struct {
 // SchemaField .
 type SchemaField struct {
 	ID                  string
-	Index               int
+	Idx                 int
 	Pid                 string
+	Pcn                 string
 	Type                string
 	Title               string
 	Name                string
