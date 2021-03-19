@@ -6,6 +6,7 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 )
 
+// 勾子不对子表支持，批量操作时个别勾子不对子表数据起作用
 var (
 	AfterFindHooks map[string][]func(data *gjson.Json) error
 
@@ -21,11 +22,6 @@ var (
 	BeforeDeleteHooks map[string][]func(data *gjson.Json) error
 	AfterDeleteHooks  map[string][]func(data *gjson.Json) error
 )
-
-// RegisterAllHooks : 注册所有collection的勾子
-func RegisterAllHooks() {
-	registerBeforeSaveHooks("schema", schemahook.CheckFields)
-}
 
 func registerAfterFindHooks(collectionName string, hook ...func(data *gjson.Json) error) {
 	AfterFindHooks[collectionName] = append(AfterFindHooks[collectionName], hook...)
@@ -61,4 +57,9 @@ func registerBeforeDeleteHooks(collectionName string, hook ...func(data *gjson.J
 
 func registerAfterDeleteHooks(collectionName string, hook ...func(data *gjson.Json) error) {
 	AfterDeleteHooks[collectionName] = append(AfterDeleteHooks[collectionName], hook...)
+}
+
+// RegisterAllHooks : 注册所有collection的勾子
+func RegisterAllHooks() {
+	registerBeforeSaveHooks("schema", schemahook.CheckFields)
 }
