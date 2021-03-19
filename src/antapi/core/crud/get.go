@@ -39,7 +39,13 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (map[
 		if err != nil {
 			return nil, err
 		}
-		tableRecords, err := db.Table(field.RelatedCollection).Fields(tableSchema.GetTableFieldNames()).Order("idx asc").Where("pid", obj.Get("id")).All()
+		tableRecords, err := db.Table(field.RelatedCollection).
+			Fields(tableSchema.GetTableFieldNames()).
+			Order("idx asc").
+			Where("pid", obj.Get("id")).
+			Where("pcn", collectionName).
+			Where("pfd", field.Name).
+			All()
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +103,12 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		if err != nil {
 			return nil, err
 		}
-		childRecords, err := db.Table(field.RelatedCollection).Fields(childSchema.GetPublicFieldNames()).Order("idx asc").Where("pid", objIds).All()
+		childRecords, err := db.Table(field.RelatedCollection).
+			Fields(childSchema.GetPublicFieldNames()).
+			Order("idx asc").
+			Where("pcn", collectionName).
+			Where("pid", objIds).
+			All()
 		if err != nil {
 			return nil, err
 		}
@@ -106,12 +117,12 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		for _, relatedRecord := range childRecords {
 			recordObj := relatedRecord.GMap()
 			pid := recordObj.GetVar("pid").String()
-			mapObjChildRecords[pid] = append(mapObjChildRecords[pid], relatedRecord.Json())
+			mapObjChildRecords[fmt.Sprintf("%s@%s", pid, field.Name)] = append(mapObjChildRecords[pid], relatedRecord.Json())
 		}
 
 		for i := 0; i < recordsLen; i++ {
 			pid := objs.GetString(fmt.Sprintf("%d.id", i))
-			if err := objs.Set(fmt.Sprintf("%d.%s", i, field.Name), mapObjChildRecords[pid]); err != nil {
+			if err := objs.Set(fmt.Sprintf("%d.%s", i, field.Name), mapObjChildRecords[fmt.Sprintf("%s@%s", pid, field.Name)]); err != nil {
 				return nil, err
 			}
 		}

@@ -18,9 +18,10 @@ func CheckFields(data *gjson.Json) error {
 
 	var (
 		hasIdField  bool
+		hasPcnField bool
 		hasIdxField bool
 		hasPidField bool
-		hasPcnField bool
+		hasPfdField bool
 	)
 
 	getDataPathForField := func(i int, name string) string {
@@ -32,12 +33,14 @@ func CheckFields(data *gjson.Json) error {
 		switch fieldName {
 		case "id":
 			hasIdField = true
+		case "pcn":
+			hasPcnField = true
 		case "idx":
 			hasIdxField = true
 		case "pid":
 			hasPidField = true
-		case "pcn":
-			hasPcnField = true
+		case "pfd":
+			hasPfdField = true
 		}
 	}
 
@@ -52,6 +55,13 @@ func CheckFields(data *gjson.Json) error {
 		updateField(fieldsLen, "name", "id")
 	}
 	if isChildTable {
+		if !hasPcnField {
+			fieldsLen += 1
+			updateField(fieldsLen, "type", "String")
+			updateField(fieldsLen, "title", "Parent Collection")
+			updateField(fieldsLen, "name", "pcn")
+			updateField(fieldsLen, "can_index", true)
+		}
 		if !hasIdxField {
 			fieldsLen += 1
 			updateField(fieldsLen, "type", "Int")
@@ -65,11 +75,11 @@ func CheckFields(data *gjson.Json) error {
 			updateField(fieldsLen, "name", "pid")
 			updateField(fieldsLen, "can_index", true)
 		}
-		if !hasPcnField {
+		if !hasPfdField {
 			fieldsLen += 1
 			updateField(fieldsLen, "type", "String")
-			updateField(fieldsLen, "title", "Parent Collection")
-			updateField(fieldsLen, "name", "pcn")
+			updateField(fieldsLen, "title", "Parent Field")
+			updateField(fieldsLen, "name", "pfd")
 			updateField(fieldsLen, "can_index", true)
 		}
 	}

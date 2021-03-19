@@ -7,6 +7,7 @@ import (
 
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/util/guid"
 )
 
 // UpdateOne : 更新单个数据
@@ -51,6 +52,14 @@ func UpdateOne(collectionName string, data interface{}) error {
 		}
 
 		for i := 0; i < tableRowsLen; i++ {
+			oriObj.Set(fmt.Sprintf("%s.%d.pcn", field.Name, i), collectionName)
+			oriObj.Set(fmt.Sprintf("%s.%d.idx", field.Name, i), i)
+			oriObj.Set(fmt.Sprintf("%s.%d.pid", field.Name, i), id)
+			oriObj.Set(fmt.Sprintf("%s.%d.pfd", field.Name, i), field.Name)
+			if len(oriObj.GetString(fmt.Sprintf("%s.%d.%s", field.Name, i, "id"))) == 0 {
+				oriObj.Set(fmt.Sprintf("%s.%d.id", field.Name, i), guid.S())
+			}
+
 			var tableRowContent map[string]interface{}
 			for _, tableField := range tableSchema.GetPublicFields() {
 				val := oriObj.Get(fmt.Sprintf("%s.%d.%s", field.Name, i, tableField.Name))
