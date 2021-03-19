@@ -19,8 +19,10 @@ var (
 	BeforeInsertHooks map[string][]func(data *gjson.Json) error
 	AfterInsertHooks  map[string][]func(data *gjson.Json) error
 
+	// BeforeDeleteHooks 不关心子表数据
 	BeforeDeleteHooks map[string][]func(data *gjson.Json) error
-	AfterDeleteHooks  map[string][]func(data *gjson.Json) error
+	// AfterDeleteHooks 不关心子表数据
+	AfterDeleteHooks map[string][]func(data *gjson.Json) error
 )
 
 func registerAfterFindHooks(collectionName string, hook ...func(data *gjson.Json) error) {

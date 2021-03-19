@@ -31,7 +31,7 @@ func Delete(collectionName string, where interface{}, args ...interface{}) error
 		recordsGJsonSlice = append(recordsGJsonSlice, recordGJson)
 	}
 
-	// 执行BeforeDelete勾子
+	// 执行 BeforeDelete 勾子
 	for _, recordGJson := range recordsGJsonSlice {
 		for _, hook := range model.BeforeDeleteHooks[collectionName] {
 			if err := hook(recordGJson); err != nil {
@@ -52,7 +52,7 @@ func Delete(collectionName string, where interface{}, args ...interface{}) error
 		}
 	}
 
-	// 执行AfterDelete勾子
+	// 执行 AfterDelete 勾子
 	for _, recordGJson := range recordsGJsonSlice {
 		for _, hook := range model.AfterDeleteHooks[collectionName] {
 			if err := hook(recordGJson); err != nil {

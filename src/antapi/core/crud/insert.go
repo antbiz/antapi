@@ -20,7 +20,6 @@ func InsertOne(collectionName string, data interface{}) (string, error) {
 
 // InsertList : 插入多个数据，返回一组插入的主体id
 // TODO: 需要考虑子表数据校验的提示信息
-// TODO: 存在勾子的情况下应该循环插入，所以需要提前判断是批量插入还是循环插入
 func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 	dataLen := len(data)
 	if dataLen == 0 {
@@ -32,21 +31,41 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		return nil, nil
 	}
 	ids := make([]string, 0, dataLen)
-	contents := make([]map[string]interface{}, 0, dataLen)
 
-	// 批量插入主体数据
+	dataGJsonSlice := make([]*gjson.Json, 0, dataLen)
 	for i := 0; i < dataLen; i++ {
-		oriObj, err := gjson.LoadJson(data)
+		dataGJson, err := gjson.LoadJson(data[i])
 		if err != nil {
 			return nil, nil
 		}
+		dataGJsonSlice = append(dataGJsonSlice, dataGJson)
+	}
+
+	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
+	for _, dataGJson := range dataGJsonSlice {
+		for _, hook := range model.BeforeInsertHooks[collectionName] {
+			if err := hook(dataGJson); err != nil {
+				return nil, err
+			}
+		}
+		for _, hook := range model.BeforeSaveHooks[collectionName] {
+			if err := hook(dataGJson); err != nil {
+				return nil, err
+			}
+		}
+	}
+
+	// 批量插入主体数据
+	contents := make([]map[string]interface{}, 0, dataLen)
+	for i := 0; i < dataLen; i++ {
 		id := guid.S()
-		oriObj.Set("id", id)
 		ids = append(ids, id)
+		dataGJson := dataGJsonSlice[i]
+		dataGJson.Set("id", id)
 
 		var content map[string]interface{}
 		for _, field := range schema.GetPublicFields() {
-			val := oriObj.Get(field.Name)
+			val := dataGJson.Get(field.Name)
 			if validErr := field.CheckFieldValue(val); validErr != nil {
 				return nil, validErr.Current()
 			}
@@ -63,11 +82,8 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 	for _, field := range schema.GetTableFields() {
 		tableContent := make([]map[string]interface{}, 0)
 		for i := 0; i < dataLen; i++ {
-			oriObj, err := gjson.LoadJson(data)
-			if err != nil {
-				return nil, err
-			}
-			tableRowsLen := len(oriObj.GetArray(field.Name))
+			dataGJson := dataGJsonSlice[i]
+			tableRowsLen := len(dataGJson.GetArray(field.Name))
 			if tableRowsLen == 0 {
 				continue
 			}
@@ -79,7 +95,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 			for j := 0; j < tableRowsLen; j++ {
 				var tableRowContent map[string]interface{}
 				for _, tableField := range tableSchema.GetPublicFields() {
-					val := oriObj.Get(fmt.Sprintf("%s.%d.%s", field.Name, j, tableField.Name))
+					val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, j, tableField.Name))
 					if validErr := field.CheckFieldValue(val); validErr != nil {
 						return nil, validErr.Current()
 					}
@@ -90,13 +106,36 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 				tableRowContent["idx"] = j
 				tableRowContent["pid"] = ids[i]
 				tableRowContent["pfd"] = field.Name
+
+				// 更新 dataGJson 方便 执行 AfterInsertHooks 勾子的一些业务逻辑
+				for _, defaultField := range model.DefaultFieldNames {
+					dataGJson.Set(fmt.Sprintf("%s.%d.%s", field.Name, j, defaultField), tableRowContent[defaultField])
+				}
+
 				tableContent = append(tableContent, tableRowContent)
 			}
+
+			dataGJsonSlice[i] = dataGJson
 		}
 
 		if _, err := db.Table(field.RelatedCollection).Insert(tableContent); err != nil {
 			return nil, err
 		}
 	}
+
+	// 执行 AfterInsertHooks, AfterSaveHooks 勾子
+	for _, dataGJson := range dataGJsonSlice {
+		for _, hook := range model.AfterInsertHooks[collectionName] {
+			if err := hook(dataGJson); err != nil {
+				return nil, err
+			}
+		}
+		for _, hook := range model.AfterSaveHooks[collectionName] {
+			if err := hook(dataGJson); err != nil {
+				return nil, err
+			}
+		}
+	}
+
 	return ids, nil
 }

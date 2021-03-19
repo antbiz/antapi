@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/util/gvalid"
@@ -84,6 +85,10 @@ const (
 	Table     FieldType = "Table"
 )
 
+// DefaultFieldNames : 所有默认的字段
+var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd"}
+
+// GetSchema : 获取collection的schema
 // TODO: 缓存
 func GetSchema(collectionName string) (*Schema, error) {
 	db := g.DB()
@@ -100,7 +105,7 @@ func GetSchema(collectionName string) (*Schema, error) {
 
 // GetPublicFieldNames : 获取所有对外开放的字段名
 func (schema *Schema) GetPublicFieldNames() []string {
-	var fieldNames []string
+	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden || FieldType(field.Type) == Table {
 			continue
@@ -114,7 +119,7 @@ func (schema *Schema) GetPublicFieldNames() []string {
 func (schema *Schema) GetPublicFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden {
+		if field.IsPrivate || field.IsHidden || FieldType(field.Type) == Table {
 			continue
 		}
 		fields = append(fields, field)
@@ -124,7 +129,7 @@ func (schema *Schema) GetPublicFields() []*SchemaField {
 
 // GetRequiredFieldNames : 获取所有必填的字段名
 func (schema *Schema) GetRequiredFieldNames() []string {
-	var fieldNames []string
+	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
 			continue
@@ -152,7 +157,7 @@ func (schema *Schema) GetRequiredFields() []*SchemaField {
 
 // GetLinkFieldNames : 获取所有Link类型字段名
 func (schema *Schema) GetLinkFieldNames() []string {
-	var fieldNames []string
+	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
 			continue
@@ -178,9 +183,20 @@ func (schema *Schema) GetLinkFields() []*SchemaField {
 	return fields
 }
 
-// GetLinkFieldNames : 获取所有Table类型字段名
+// GetLinkCollectionNames : 获取所有Link类型字段关联的collection
+func (schema *Schema) GetLinkCollectionNames() []string {
+	collectionNames := garray.NewStrArray()
+	for _, field := range schema.GetLinkFields() {
+		if !collectionNames.Contains(field.RelatedCollection) {
+			collectionNames.Append(field.RelatedCollection)
+		}
+	}
+	return collectionNames.Slice()
+}
+
+// GetTableFieldNames : 获取所有Table类型字段名
 func (schema *Schema) GetTableFieldNames() []string {
-	var fieldNames []string
+	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
 		if field.IsPrivate || field.IsHidden {
 			continue
@@ -192,7 +208,7 @@ func (schema *Schema) GetTableFieldNames() []string {
 	return fieldNames
 }
 
-// GetLinkFields : 获取所有Table类型字段
+// GetTableFields : 获取所有Table类型字段
 func (schema *Schema) GetTableFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
@@ -204,6 +220,23 @@ func (schema *Schema) GetTableFields() []*SchemaField {
 		}
 	}
 	return fields
+}
+
+// GetTableCollectionNames : 获取所有Table类型字段关联的collection
+func (schema *Schema) GetTableCollectionNames() []string {
+	collectionNames := garray.NewStrArray()
+	for _, field := range schema.GetTableFields() {
+		if !collectionNames.Contains(field.RelatedCollection) {
+			collectionNames.Append(field.RelatedCollection)
+		}
+	}
+	return collectionNames.Slice()
+}
+
+// IsDefaultField : 是否为默认字段
+func (field *SchemaField) IsDefaultField() bool {
+	defaultFieldNames := garray.NewStrArrayFrom(DefaultFieldNames)
+	return defaultFieldNames.Contains(field.Name)
 }
 
 // CheckFieldValue : 校验字段值的合法性
