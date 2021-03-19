@@ -63,14 +63,18 @@ func UpdateOne(collectionName string, data interface{}) error {
 			return err
 		}
 
+		tableIds := make([]string, tableRowsLen)
 		for i := 0; i < tableRowsLen; i++ {
 			dataGJson.Set(fmt.Sprintf("%s.%d.pcn", field.Name, i), collectionName)
 			dataGJson.Set(fmt.Sprintf("%s.%d.idx", field.Name, i), i)
 			dataGJson.Set(fmt.Sprintf("%s.%d.pid", field.Name, i), id)
 			dataGJson.Set(fmt.Sprintf("%s.%d.pfd", field.Name, i), field.Name)
-			if len(dataGJson.GetString(fmt.Sprintf("%s.%d.%s", field.Name, i, "id"))) == 0 {
-				dataGJson.Set(fmt.Sprintf("%s.%d.id", field.Name, i), guid.S())
+			tableRowId := dataGJson.GetString(fmt.Sprintf("%s.%d.%s", field.Name, i, "id"))
+			if len(tableRowId) == 0 {
+				tableRowId = guid.S()
+				dataGJson.Set(fmt.Sprintf("%s.%d.id", field.Name, i), tableRowId)
 			}
+			tableIds = append(tableIds, tableRowId)
 
 			var tableRowContent map[string]interface{}
 			for _, tableField := range tableSchema.GetPublicFields() {
@@ -83,7 +87,18 @@ func UpdateOne(collectionName string, data interface{}) error {
 			tableContent = append(tableContent, tableRowContent)
 		}
 
+		// 执行save操作，如果存在则更新，否则插入
 		if _, err := db.Table(field.RelatedCollection).Save(tableContent); err != nil {
+			return err
+		}
+
+		// 自动处理需要删除的子表数据
+		if _, err := db.Table(field.RelatedCollection).
+			Where("id not in (?)", tableIds).
+			Where("pcn", collectionName).
+			Where("pid", id).
+			Where("pfd", field.Name).
+			Delete(); err != nil {
 			return err
 		}
 	}
