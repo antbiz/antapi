@@ -22,11 +22,16 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 	isChildTable := data.GetBool("is_child")
 
 	var (
-		hasIdField  bool
-		hasPcnField bool
-		hasIdxField bool
-		hasPidField bool
-		hasPfdField bool
+		hasIdField        bool
+		hasCreatedAtField bool
+		hasUpdatedAtField bool
+		hasDeletedAtField bool
+		hasCreatedByField bool
+		hasUpdatedByField bool
+		hasPcnField       bool
+		hasIdxField       bool
+		hasPidField       bool
+		hasPfdField       bool
 	)
 
 	getDataPathForField := func(i int, name string) string {
@@ -38,6 +43,16 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 		switch fieldName {
 		case "id":
 			hasIdField = true
+		case "created_at":
+			hasCreatedAtField = true
+		case "updated_at":
+			hasUpdatedAtField = true
+		case "deleted_at":
+			hasDeletedAtField = true
+		case "created_by":
+			hasCreatedByField = true
+		case "updated_by":
+			hasUpdatedByField = true
 		case "pcn":
 			hasPcnField = true
 		case "idx":
@@ -58,6 +73,38 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 		updateField(fieldsLen, "type", "UUID")
 		updateField(fieldsLen, "title", "ID")
 		updateField(fieldsLen, "name", "id")
+	}
+	if !hasCreatedAtField {
+		fieldsLen++
+		updateField(fieldsLen, "type", "DateTime")
+		updateField(fieldsLen, "title", "Created At")
+		updateField(fieldsLen, "name", "created_at")
+		updateField(fieldsLen, "can_index", true)
+	}
+	if !hasUpdatedAtField {
+		fieldsLen++
+		updateField(fieldsLen, "type", "DateTime")
+		updateField(fieldsLen, "title", "Updated At")
+		updateField(fieldsLen, "name", "updated_at")
+	}
+	if !hasDeletedAtField {
+		fieldsLen++
+		updateField(fieldsLen, "type", "DateTime")
+		updateField(fieldsLen, "title", "Deleted At")
+		updateField(fieldsLen, "name", "deleted_at")
+	}
+	if !hasCreatedByField {
+		fieldsLen++
+		updateField(fieldsLen, "type", "String")
+		updateField(fieldsLen, "title", "Created By")
+		updateField(fieldsLen, "name", "created_by")
+		updateField(fieldsLen, "can_index", true)
+	}
+	if !hasUpdatedByField {
+		fieldsLen++
+		updateField(fieldsLen, "type", "String")
+		updateField(fieldsLen, "title", "Updated By")
+		updateField(fieldsLen, "name", "updated_by")
 	}
 	if isChildTable {
 		if !hasPcnField {

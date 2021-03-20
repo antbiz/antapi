@@ -3,7 +3,6 @@ package crud
 import (
 	"antapi/hooks"
 	"antapi/logic"
-	"antapi/model"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -105,7 +104,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 				tableRowContent["pfd"] = field.Name
 
 				// 更新 dataGJson 方便 执行 AfterInsertHooks 勾子的一些业务逻辑
-				for _, defaultField := range model.DefaultFieldNames {
+				for _, defaultField := range []string{"pcn", "id", "idx", "pid", "pfd"} {
 					dataGJson.Set(fmt.Sprintf("%s.%d.%s", field.Name, j, defaultField), tableRowContent[defaultField])
 				}
 

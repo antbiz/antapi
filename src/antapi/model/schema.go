@@ -7,12 +7,18 @@ import (
 	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gvalid"
 )
 
 // Schema .
 type Schema struct {
 	ID          string
+	CreatedAt   *gtime.Time
+	UpdatedAt   *gtime.Time
+	DeletedAt   *gtime.Time
+	CreatedBy   string
+	UpdatedBy   string
 	Title       string
 	Name        string
 	ProjectName string
@@ -23,9 +29,15 @@ type Schema struct {
 // SchemaField .
 type SchemaField struct {
 	ID                  string
-	Idx                 int
-	Pid                 string
+	CreatedAt           *gtime.Time
+	UpdatedAt           *gtime.Time
+	DeletedAt           *gtime.Time
+	CreatedBy           string
+	UpdatedBy           string
 	Pcn                 string
+	Pid                 string
+	Idx                 int
+	Pfd                 string
 	Type                string
 	Title               string
 	Name                string
@@ -86,7 +98,7 @@ const (
 )
 
 // DefaultFieldNames : 所有默认的字段
-var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd"}
+// var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd", "created_at", "updated_at", "deleted_at", "created_by", "updated_by"}
 
 // GetSchema : 获取collection的schema
 // TODO: 缓存
@@ -245,12 +257,6 @@ func (schema *Schema) GetTableCollectionNames() []string {
 		}
 	}
 	return collectionNames.Slice()
-}
-
-// IsDefaultField : 是否为默认字段
-func (field *SchemaField) IsDefaultField() bool {
-	defaultFieldNames := garray.NewStrArrayFrom(DefaultFieldNames)
-	return defaultFieldNames.Contains(field.Name)
 }
 
 // CheckFieldValue : 校验字段值的合法性
