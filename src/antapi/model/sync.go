@@ -9,6 +9,17 @@ import (
 	"github.com/gogf/gf/os/glog"
 )
 
+// Sync : 同步collection和默认数据
+func Sync() error {
+	if err := SyncCollections(); err != nil {
+		return err
+	}
+	if err := SyncDefaultsData(); err != nil {
+		return err
+	}
+	return nil
+}
+
 // JSONCollection2TableSchema : collection数据转数据表机构
 func JSONCollection2TableSchema(collection *gjson.Json) *dbsm.Table {
 	tableName := collection.GetString("name")

@@ -1,7 +1,8 @@
 package crud
 
 import (
-	"antapi/model"
+	"antapi/hooks"
+	"antapi/logic"
 	"errors"
 	"fmt"
 
@@ -21,18 +22,15 @@ func UpdateOne(collectionName string, data interface{}) error {
 	if len(id) == 0 {
 		return errors.New("id is required")
 	}
-	schema, err := model.GetSchema(collectionName)
-	if err != nil {
-		return err
-	}
+	schema := logic.GetSchema(collectionName)
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
-	for _, hook := range model.GetBeforeUpdateHooksByCollectionName(collectionName) {
+	for _, hook := range hooks.GetBeforeUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
 	}
-	for _, hook := range model.GetBeforeSaveHooksByCollectionName(collectionName) {
+	for _, hook := range hooks.GetBeforeSaveHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
@@ -58,10 +56,7 @@ func UpdateOne(collectionName string, data interface{}) error {
 			continue
 		}
 		tableContent := make([]map[string]interface{}, 0)
-		tableSchema, err := model.GetSchema(field.RelatedCollection)
-		if err != nil {
-			return err
-		}
+		tableSchema := logic.GetSchema(field.RelatedCollection)
 
 		tableIds := make([]string, tableRowsLen)
 		for i := 0; i < tableRowsLen; i++ {
@@ -104,12 +99,12 @@ func UpdateOne(collectionName string, data interface{}) error {
 	}
 
 	// 执行 AfterUpdateHooks, AfterSaveHooks 勾子
-	for _, hook := range model.GetAfterUpdateHooksByCollectionName(collectionName) {
+	for _, hook := range hooks.GetAfterUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
 	}
-	for _, hook := range model.GetAfterSaveHooksByCollectionName(collectionName) {
+	for _, hook := range hooks.GetAfterSaveHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}

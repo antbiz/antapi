@@ -1,4 +1,4 @@
-package schema
+package logic
 
 import (
 	"errors"
@@ -7,8 +7,12 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 )
 
+type SchemaLogic struct{}
+
+var DefaultSchemaLogic = SchemaLogic{}
+
 // CheckFields : 校验collection的字段，并填充系统必要字段
-func CheckFields(data *gjson.Json) error {
+func (SchemaLogic) CheckFields(data *gjson.Json) error {
 	fieldsLen := len(data.GetArray("fields"))
 	if fieldsLen == 0 {
 		return errors.New("fields is required")
@@ -49,34 +53,34 @@ func CheckFields(data *gjson.Json) error {
 	}
 
 	if !hasIdField {
-		fieldsLen += 1
+		fieldsLen++
 		updateField(fieldsLen, "type", "UUID")
 		updateField(fieldsLen, "title", "ID")
 		updateField(fieldsLen, "name", "id")
 	}
 	if isChildTable {
 		if !hasPcnField {
-			fieldsLen += 1
+			fieldsLen++
 			updateField(fieldsLen, "type", "String")
 			updateField(fieldsLen, "title", "Parent Collection")
 			updateField(fieldsLen, "name", "pcn")
 			updateField(fieldsLen, "can_index", true)
 		}
 		if !hasIdxField {
-			fieldsLen += 1
+			fieldsLen++
 			updateField(fieldsLen, "type", "Int")
 			updateField(fieldsLen, "title", "Index")
 			updateField(fieldsLen, "name", "idx")
 		}
 		if !hasPidField {
-			fieldsLen += 1
+			fieldsLen++
 			updateField(fieldsLen, "type", "String")
 			updateField(fieldsLen, "title", "Parent ID")
 			updateField(fieldsLen, "name", "pid")
 			updateField(fieldsLen, "can_index", true)
 		}
 		if !hasPfdField {
-			fieldsLen += 1
+			fieldsLen++
 			updateField(fieldsLen, "type", "String")
 			updateField(fieldsLen, "title", "Parent Field")
 			updateField(fieldsLen, "name", "pfd")

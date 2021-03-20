@@ -1,7 +1,8 @@
 package crud
 
 import (
-	"antapi/model"
+	"antapi/hooks"
+	"antapi/logic"
 	"fmt"
 	"strings"
 
@@ -13,10 +14,7 @@ import (
 // GetOne : 获取单个数据
 func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjson.Json, error) {
 	db := g.DB()
-	schema, err := model.GetSchema(collectionName)
-	if err != nil {
-		return nil, err
-	}
+	schema := logic.GetSchema(collectionName)
 
 	record, err := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...).One()
 	if err != nil {
@@ -26,10 +24,8 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 
 	// 查询子表数据
 	for _, field := range schema.GetTableFields() {
-		tableSchema, err := model.GetSchema(field.RelatedCollection)
-		if err != nil {
-			return nil, err
-		}
+		tableSchema := logic.GetSchema(field.RelatedCollection)
+
 		tableRecords, err := db.Table(field.RelatedCollection).
 			Fields(tableSchema.GetTableFieldNames()).
 			Order("idx asc").
@@ -92,7 +88,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 	}
 
 	// 执行 AfterFindHooks 勾子
-	for _, hook := range model.GetAfterFindHooksByCollectionName(collectionName) {
+	for _, hook := range hooks.GetAfterFindHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return dataGJson, err
 		}
@@ -104,10 +100,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 // GetList : 获取列表数据
 func GetList(collectionName string, pageNum, pageSize int, where interface{}, args ...interface{}) (*gjson.Json, error) {
 	db := g.DB()
-	schema, err := model.GetSchema(collectionName)
-	if err != nil {
-		return nil, err
-	}
+	schema := logic.GetSchema(collectionName)
 
 	// 查询指定范围内主体数据list
 	orm := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...)
@@ -128,10 +121,8 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 
 	// 查询指定范围内子表数据，先批量获取然后再按属性分配
 	for _, tableCollectionName := range schema.GetTableCollectionNames() {
-		tableSchema, err := model.GetSchema(tableCollectionName)
-		if err != nil {
-			return nil, err
-		}
+		tableSchema := logic.GetSchema(tableCollectionName)
+
 		tableRecords, err := db.Table(tableCollectionName).
 			Fields(tableSchema.GetPublicFieldNames()).
 			Order("idx asc").
@@ -222,7 +213,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	// 执行 AfterFindHooks 勾子
 	for i := 0; i < recordsLen; i++ {
 		dataGJson := listDataGJson.GetJson(fmt.Sprintf("%d", i))
-		for _, hook := range model.GetAfterFindHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetAfterFindHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return dataGJson, err
 			}

@@ -1,6 +1,8 @@
 package crud
 
 import (
+	"antapi/hooks"
+	"antapi/logic"
 	"antapi/model"
 	"fmt"
 
@@ -26,10 +28,8 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		return nil, nil
 	}
 	db := g.DB()
-	schema, err := model.GetSchema(collectionName)
-	if err != nil {
-		return nil, nil
-	}
+	schema := logic.GetSchema(collectionName)
+
 	ids := make([]string, 0, dataLen)
 
 	dataGJsonSlice := make([]*gjson.Json, 0, dataLen)
@@ -43,12 +43,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
 	for _, dataGJson := range dataGJsonSlice {
-		for _, hook := range model.GetBeforeInsertHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetBeforeInsertHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
 		}
-		for _, hook := range model.GetBeforeSaveHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetBeforeSaveHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
@@ -87,10 +87,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 			if tableRowsLen == 0 {
 				continue
 			}
-			tableSchema, err := model.GetSchema(field.RelatedCollection)
-			if err != nil {
-				return nil, err
-			}
+			tableSchema := logic.GetSchema(field.RelatedCollection)
 
 			for j := 0; j < tableRowsLen; j++ {
 				var tableRowContent map[string]interface{}
@@ -125,12 +122,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 	// 执行 AfterInsertHooks, AfterSaveHooks 勾子
 	for _, dataGJson := range dataGJsonSlice {
-		for _, hook := range model.GetAfterInsertHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetAfterInsertHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
 		}
-		for _, hook := range model.GetAfterSaveHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetAfterSaveHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}

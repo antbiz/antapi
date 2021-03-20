@@ -1,8 +1,6 @@
-package model
+package hooks
 
 import (
-	schemahook "antapi/model/hooks/schema"
-
 	"github.com/gogf/gf/encoding/gjson"
 )
 
@@ -113,9 +111,4 @@ func GetAfterDeleteHooks() map[string][]func(data *gjson.Json) error {
 }
 func GetAfterDeleteHooksByCollectionName(collectionName string) []func(data *gjson.Json) error {
 	return afterDeleteHooks[collectionName]
-}
-
-// RegisterAllHooks : 注册所有collection的勾子
-func RegisterAllHooks() {
-	registerBeforeSaveHooks("schema", schemahook.CheckFields)
 }

@@ -1,7 +1,8 @@
 package crud
 
 import (
-	"antapi/model"
+	"antapi/hooks"
+	"antapi/logic"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -11,7 +12,7 @@ import (
 // Delete : 删除指定数据
 func Delete(collectionName string, where interface{}, args ...interface{}) error {
 	db := g.DB()
-	schema, err := model.GetSchema(collectionName)
+	schema := logic.GetSchema(collectionName)
 
 	// 查询需要删除的id
 	var delIds []string
@@ -33,7 +34,7 @@ func Delete(collectionName string, where interface{}, args ...interface{}) error
 
 	// 执行 BeforeDelete 勾子
 	for _, recordGJson := range recordsGJsonSlice {
-		for _, hook := range model.GetBeforeDeleteHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetBeforeDeleteHooksByCollectionName(collectionName) {
 			if err := hook(recordGJson); err != nil {
 				return err
 			}
@@ -54,7 +55,7 @@ func Delete(collectionName string, where interface{}, args ...interface{}) error
 
 	// 执行 AfterDelete 勾子
 	for _, recordGJson := range recordsGJsonSlice {
-		for _, hook := range model.GetAfterDeleteHooksByCollectionName(collectionName) {
+		for _, hook := range hooks.GetAfterDeleteHooksByCollectionName(collectionName) {
 			if err := hook(recordGJson); err != nil {
 				return err
 			}

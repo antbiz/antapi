@@ -6,10 +6,6 @@ import (
 )
 
 func init() {
-	setUpDatabase()
-}
-
-func setUpDatabase() {
-	model.SyncCollections()
-	model.SyncDefaultsData()
+	model.Sync()
+	model.RegisterAllHooks()
 }
