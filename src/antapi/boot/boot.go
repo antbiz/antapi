@@ -9,5 +9,5 @@ import (
 func init() {
 	model.Sync()
 	hooks.RegisterAllHooks()
-	loadData()
+	ServerBackground()
 }
