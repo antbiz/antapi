@@ -27,12 +27,12 @@ func UpdateOne(collectionName string, data interface{}) error {
 	}
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
-	for _, hook := range model.BeforeUpdateHooks[collectionName] {
+	for _, hook := range model.GetBeforeUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
 	}
-	for _, hook := range model.BeforeSaveHooks[collectionName] {
+	for _, hook := range model.GetBeforeSaveHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
@@ -104,12 +104,12 @@ func UpdateOne(collectionName string, data interface{}) error {
 	}
 
 	// 执行 AfterUpdateHooks, AfterSaveHooks 勾子
-	for _, hook := range model.AfterUpdateHooks[collectionName] {
+	for _, hook := range model.GetAfterUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
 	}
-	for _, hook := range model.AfterSaveHooks[collectionName] {
+	for _, hook := range model.GetAfterSaveHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}

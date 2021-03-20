@@ -43,12 +43,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
 	for _, dataGJson := range dataGJsonSlice {
-		for _, hook := range model.BeforeInsertHooks[collectionName] {
+		for _, hook := range model.GetBeforeInsertHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
 		}
-		for _, hook := range model.BeforeSaveHooks[collectionName] {
+		for _, hook := range model.GetBeforeSaveHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
@@ -125,12 +125,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 	// 执行 AfterInsertHooks, AfterSaveHooks 勾子
 	for _, dataGJson := range dataGJsonSlice {
-		for _, hook := range model.AfterInsertHooks[collectionName] {
+		for _, hook := range model.GetAfterInsertHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
 		}
-		for _, hook := range model.AfterSaveHooks[collectionName] {
+		for _, hook := range model.GetAfterSaveHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}

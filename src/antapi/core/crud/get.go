@@ -92,7 +92,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 	}
 
 	// 执行 AfterFindHooks 勾子
-	for _, hook := range model.AfterFindHooks[collectionName] {
+	for _, hook := range model.GetAfterFindHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return dataGJson, err
 		}
@@ -222,7 +222,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	// 执行 AfterFindHooks 勾子
 	for i := 0; i < recordsLen; i++ {
 		dataGJson := listDataGJson.GetJson(fmt.Sprintf("%d", i))
-		for _, hook := range model.AfterFindHooks[collectionName] {
+		for _, hook := range model.GetAfterFindHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return dataGJson, err
 			}
