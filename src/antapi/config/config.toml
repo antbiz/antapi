@@ -24,5 +24,5 @@
         Level  = "all"
         Stdout = true
     [database.default]
-        Link   = "mysql:root:12345678@tcp(127.0.0.1:3306)/focus"
+        Link   = "mysql:root:12345678@tcp(127.0.0.1:3306)/antapi"
         Debug  = true
