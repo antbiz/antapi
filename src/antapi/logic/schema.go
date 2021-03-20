@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"antapi/global"
 	"errors"
 	"fmt"
 
@@ -88,5 +89,11 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 		}
 	}
 
+	return nil
+}
+
+// ReloadGlobalSchemas : 当某个Collection的Schema插入/更新/删除后，重新加载数据到内存
+func (SchemaLogic) ReloadGlobalSchemas(_ *gjson.Json) error {
+	global.SchemaChan <- struct{}{}
 	return nil
 }

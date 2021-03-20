@@ -1,11 +1,13 @@
 package boot
 
 import (
+	"antapi/hooks"
 	"antapi/model"
 	_ "antapi/packed"
 )
 
 func init() {
 	model.Sync()
-	model.RegisterAllHooks()
+	hooks.RegisterAllHooks()
+	loadData()
 }
