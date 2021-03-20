@@ -194,6 +194,20 @@ func (schema *Schema) GetLinkCollectionNames() []string {
 	return collectionNames.Slice()
 }
 
+// GetLinkPathIncludeTableInner : 获取所有link字段的路径，包括子表
+func (schema *Schema) GetLinkPathIncludeTableInner() (paths map[string][]string) {
+	for _, linkField := range schema.GetLinkFields() {
+		paths[linkField.RelatedCollection] = append(paths[linkField.RelatedCollection], linkField.Name)
+	}
+	for _, tableField := range schema.GetTableFields() {
+		tableSchema, _ := GetSchema(tableField.RelatedCollection)
+		for _, tableLinkField := range tableSchema.GetLinkFields() {
+			paths[tableLinkField.RelatedCollection] = append(paths[tableLinkField.RelatedCollection], fmt.Sprintf("%s.%s", tableField.Name, tableLinkField.Name))
+		}
+	}
+	return
+}
+
 // GetTableFieldNames : 获取所有Table类型字段名
 func (schema *Schema) GetTableFieldNames() []string {
 	fieldNames := make([]string, 0)

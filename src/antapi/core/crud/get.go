@@ -3,6 +3,7 @@ package crud
 import (
 	"antapi/model"
 	"fmt"
+	"strings"
 
 	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
@@ -23,18 +24,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 	}
 	dataGJson := gjson.New(record.Json())
 
-	for _, field := range schema.GetLinkFields() {
-		linkSchema, err := model.GetSchema(field.RelatedCollection)
-		if err != nil {
-			return nil, err
-		}
-		linkRecord, err := db.Table(field.RelatedCollection).Fields(linkSchema.GetPublicFieldNames()).Where("id", dataGJson.GetString(field.Name)).One()
-		if err != nil {
-			return nil, err
-		}
-		dataGJson.Set(field.RelatedCollection, linkRecord.Json())
-	}
-
+	// 查询子表数据
 	for _, field := range schema.GetTableFields() {
 		tableSchema, err := model.GetSchema(field.RelatedCollection)
 		if err != nil {
@@ -51,6 +41,54 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 			return nil, err
 		}
 		dataGJson.Set(field.RelatedCollection, tableRecords.Json())
+	}
+
+	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
+	for linkCollectionName, linkPaths := range schema.GetLinkPathIncludeTableInner() {
+		var (
+			linkIds                   []string
+			tableRecordsLenByLinkPath map[string]int
+		)
+		for _, path := range linkPaths {
+			_path := strings.Split(path, ".")
+			// 是否为子表内的link字段
+			isTableInner := len(path) > 1
+			if isTableInner {
+				tableRecordsLen := len(dataGJson.GetArray(fmt.Sprintf("%s", _path[0])))
+				if tableRecordsLen == 0 {
+					continue
+				}
+				tableRecordsLenByLinkPath[path] = tableRecordsLen
+				for j := 0; j < tableRecordsLen; j++ {
+					linkIds = append(linkIds, dataGJson.GetString(fmt.Sprintf("%s.%d.%s", _path[0], j, _path[1])))
+				}
+			} else {
+				linkIds = append(linkIds, dataGJson.GetString(path))
+			}
+
+		}
+		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
+		if err != nil {
+			return nil, err
+		}
+		linkRecordsMap := linkRecords.MapKeyStr("id")
+		for _, path := range linkPaths {
+			_path := strings.Split(path, ".")
+			isTableInner := len(path) > 1
+			if isTableInner {
+				tableRecordsLen := tableRecordsLenByLinkPath[path]
+				if tableRecordsLen == 0 {
+					continue
+				}
+				for j := 0; j < tableRecordsLen; j++ {
+					innderLinkRecordId := dataGJson.GetString(fmt.Sprintf("%s.%d.%s", _path[0], j, _path[1]))
+					dataGJson.Set(fmt.Sprintf("%s.%d.%s_linkinfo", _path[0], j, _path[1]), linkRecordsMap[innderLinkRecordId])
+				}
+			} else {
+				linkRecordId := dataGJson.GetString(path)
+				dataGJson.Set(fmt.Sprintf("%s_linkinfo", path), linkRecordsMap[linkRecordId])
+			}
+		}
 	}
 
 	// 执行 AfterFindHooks 勾子
@@ -88,31 +126,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		ids = append(ids, listDataGJson.GetString(fmt.Sprintf("%d.id", i)))
 	}
 
-	// 查询指定范围内Link字段的关联的数据，先批量获取然后再按属性分配
-	var linkRecordsMap map[string]map[string]interface{}
-	for _, linkCollectionName := range schema.GetLinkCollectionNames() {
-		linkSchema, err := model.GetSchema(linkCollectionName)
-		if err != nil {
-			return nil, err
-		}
-		linkRecords, err := db.Table(linkCollectionName).Fields(linkSchema.GetPublicFieldNames()).Where("id", ids).All()
-		if err != nil {
-			return nil, err
-		}
-		for k, v := range linkRecords.MapKeyStr("id") {
-			linkRecordsMap[fmt.Sprintf("%s@%s", linkCollectionName, k)] = v
-		}
-	}
-	for _, field := range schema.GetLinkFields() {
-		for i := 0; i < recordsLen; i++ {
-			linkId := listDataGJson.GetString(fmt.Sprintf("%d.%s", i, field.Name))
-			if err := listDataGJson.Set(fmt.Sprintf("%d.%s", i, field.RelatedCollection), linkRecordsMap[fmt.Sprintf("%s@%s", field.RelatedCollection, linkId)]); err != nil {
-				return nil, err
-			}
-		}
-	}
-
-	// 查询指定范围内Table字段的关联的数据，先批量获取然后再按属性分配
+	// 查询指定范围内子表数据，先批量获取然后再按属性分配
 	for _, tableCollectionName := range schema.GetTableCollectionNames() {
 		tableSchema, err := model.GetSchema(tableCollectionName)
 		if err != nil {
@@ -148,6 +162,58 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 			for _, pfd := range pfdSlice {
 				if err := listDataGJson.Set(fmt.Sprintf("%d.%s", i, pfd), tableGroupRecords[fmt.Sprintf("%s@%s", pid, pfd)]); err != nil {
 					return nil, err
+				}
+			}
+		}
+	}
+
+	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
+	for linkCollectionName, linkPaths := range schema.GetLinkPathIncludeTableInner() {
+		var (
+			linkIds                   []string
+			tableRecordsLenByLinkPath map[string]int
+		)
+		for _, path := range linkPaths {
+			_path := strings.Split(path, ".")
+			// 是否为子表内的link字段
+			isTableInner := len(path) > 1
+			for i := 0; i < recordsLen; i++ {
+				if isTableInner {
+					tableRecordsLen := len(listDataGJson.GetArray(fmt.Sprintf("%d.%s", i, _path[0])))
+					if tableRecordsLen == 0 {
+						continue
+					}
+					tableRecordsLenByLinkPath[fmt.Sprintf("%d.%s", i, path)] = tableRecordsLen
+					for j := 0; j < tableRecordsLen; j++ {
+						linkIds = append(linkIds, listDataGJson.GetString(fmt.Sprintf("%d.%s.%d.%s", i, _path[0], j, _path[1])))
+					}
+				} else {
+					linkIds = append(linkIds, listDataGJson.GetString(fmt.Sprintf("%d.%s", i, path)))
+				}
+			}
+
+		}
+		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
+		if err != nil {
+			return nil, err
+		}
+		linkRecordsMap := linkRecords.MapKeyStr("id")
+		for _, path := range linkPaths {
+			_path := strings.Split(path, ".")
+			isTableInner := len(path) > 1
+			for i := 0; i < recordsLen; i++ {
+				if isTableInner {
+					tableRecordsLen := tableRecordsLenByLinkPath[fmt.Sprintf("%d.%s", i, path)]
+					if tableRecordsLen == 0 {
+						continue
+					}
+					for j := 0; j < tableRecordsLen; j++ {
+						innderLinkRecordId := listDataGJson.GetString(fmt.Sprintf("%d.%s.%d.%s", i, _path[0], j, _path[1]))
+						listDataGJson.Set(fmt.Sprintf("%d.%s.%d.%s_linkinfo", i, _path[0], j, _path[1]), linkRecordsMap[innderLinkRecordId])
+					}
+				} else {
+					linkRecordId := listDataGJson.GetString(fmt.Sprintf("%d.%s", i, path))
+					listDataGJson.Set(fmt.Sprintf("%d.%s_linkinfo", i, path), linkRecordsMap[linkRecordId])
 				}
 			}
 		}
