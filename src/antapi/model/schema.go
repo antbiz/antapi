@@ -6,7 +6,6 @@ import (
 
 	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gvalid"
 )
@@ -100,21 +99,6 @@ const (
 // DefaultFieldNames : 所有默认的字段
 // var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd", "created_at", "updated_at", "deleted_at", "created_by", "updated_by"}
 
-// GetSchema : 获取collection的schema
-// TODO: 缓存
-func GetSchema(collectionName string) (*Schema, error) {
-	db := g.DB()
-
-	var schema *Schema
-	if err := db.Table("schema").Scan(&schema, "name", collectionName); err != nil {
-		return nil, err
-	}
-	if err := db.Table("schema_field").Order("idx asc").ScanList(&schema.Fields, "pid", schema.ID); err != nil {
-		return nil, err
-	}
-	return schema, nil
-}
-
 // GetPublicFieldNames : 获取所有对外开放的字段名
 func (schema *Schema) GetPublicFieldNames() []string {
 	fieldNames := make([]string, 0)
@@ -204,20 +188,6 @@ func (schema *Schema) GetLinkCollectionNames() []string {
 		}
 	}
 	return collectionNames.Slice()
-}
-
-// GetLinkPathIncludeTableInner : 获取所有link字段的路径，包括子表
-func (schema *Schema) GetLinkPathIncludeTableInner() (paths map[string][]string) {
-	for _, linkField := range schema.GetLinkFields() {
-		paths[linkField.RelatedCollection] = append(paths[linkField.RelatedCollection], linkField.Name)
-	}
-	for _, tableField := range schema.GetTableFields() {
-		tableSchema, _ := GetSchema(tableField.RelatedCollection)
-		for _, tableLinkField := range tableSchema.GetLinkFields() {
-			paths[tableLinkField.RelatedCollection] = append(paths[tableLinkField.RelatedCollection], fmt.Sprintf("%s.%s", tableField.Name, tableLinkField.Name))
-		}
-	}
-	return
 }
 
 // GetTableFieldNames : 获取所有Table类型字段名

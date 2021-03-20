@@ -2,6 +2,7 @@ package logic
 
 import (
 	"antapi/global"
+	"antapi/model"
 	"errors"
 	"fmt"
 
@@ -143,4 +144,18 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 func (SchemaLogic) ReloadGlobalSchemas(_ *gjson.Json) error {
 	global.SchemaChan <- struct{}{}
 	return nil
+}
+
+// GetLinkPathIncludeTableInner : 获取所有link字段的路径，包括子表
+func (SchemaLogic) GetLinkPathIncludeTableInner(schema *model.Schema) (paths map[string][]string) {
+	for _, linkField := range schema.GetLinkFields() {
+		paths[linkField.RelatedCollection] = append(paths[linkField.RelatedCollection], linkField.Name)
+	}
+	for _, tableField := range schema.GetTableFields() {
+		tableSchema := GetSchema(tableField.RelatedCollection)
+		for _, tableLinkField := range tableSchema.GetLinkFields() {
+			paths[tableLinkField.RelatedCollection] = append(paths[tableLinkField.RelatedCollection], fmt.Sprintf("%s.%s", tableField.Name, tableLinkField.Name))
+		}
+	}
+	return
 }

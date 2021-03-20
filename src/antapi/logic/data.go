@@ -37,6 +37,7 @@ func LoadSchemas() error {
 	for _, schema := range schemas {
 		schemasMap[schema.Name] = schema
 	}
+	Schemas = schemasMap
 
 	glog.Info("LoadSchemas successfully!")
 	return nil
