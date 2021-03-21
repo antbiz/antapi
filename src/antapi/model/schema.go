@@ -158,7 +158,7 @@ func (schema *Schema) GetLinkFieldNames() []string {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Link {
+		if field.RelatedCollection != "" && FieldType(field.Type) == Link {
 			fieldNames = append(fieldNames, field.Name)
 		}
 	}
@@ -172,7 +172,7 @@ func (schema *Schema) GetLinkFields() []*SchemaField {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Link {
+		if field.RelatedCollection != "" && FieldType(field.Type) == Link {
 			fields = append(fields, field)
 		}
 	}
@@ -197,7 +197,7 @@ func (schema *Schema) GetTableFieldNames() []string {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Table {
+		if field.RelatedCollection != "" && FieldType(field.Type) == Table {
 			fieldNames = append(fieldNames, field.Name)
 		}
 	}
@@ -211,7 +211,7 @@ func (schema *Schema) GetTableFields() []*SchemaField {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if len(field.RelatedCollection) > 0 && FieldType(field.Type) == Table {
+		if field.RelatedCollection != "" && FieldType(field.Type) == Table {
 			fields = append(fields, field)
 		}
 	}
@@ -265,7 +265,7 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 		rule = "boolean"
 	case Enum:
 		var enumOptions []string
-		if len(field.EnumOptions) > 0 {
+		if field.EnumOptions != "" {
 			if j, err := gjson.LoadContent(fmt.Sprintf(`{"options":%s}`, field.EnumOptions)); err == nil {
 				for i := 0; i < len(j.GetArray("options")); i++ {
 					enumOptions = append(enumOptions, j.GetString(fmt.Sprintf("%d.value", i)))
@@ -276,14 +276,14 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 		rule = fmt.Sprintf("in:%s", enumOptionsStr)
 		msg = fmt.Sprintf("%s不存在于%s", field.Title, enumOptionsStr)
 	}
-	if len(rule) > 0 {
+	if rule != "" {
 		if err = gvalid.Check(value, rule, msg); err != nil {
 			return err
 		}
 	}
 
 	// 后台配置的校验规则
-	if len(field.Validator) > 0 {
+	if field.Validator != "" {
 		return gvalid.Check(value, field.Validator, msg)
 	}
 

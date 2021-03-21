@@ -58,11 +58,11 @@ func (table *Table) UpdateWithCols(columns []*Column) {
 			table.PrimaryKeys = append(table.PrimaryKeys, col.Name)
 		}
 
-		if col.IsUnique && len(col.IndexName) == 0 {
+		if col.IsUnique && col.IndexName == "" {
 			col.IndexName = col.Name
 		}
 
-		if len(col.IndexName) > 0 {
+		if col.IndexName != "" {
 			var idxName string
 			if col.IsUnique {
 				idxName = fmt.Sprintf("UQE_%s_%s", table.Name, col.IndexName)

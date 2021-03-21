@@ -19,7 +19,7 @@ func UpdateOne(collectionName string, data interface{}) error {
 		return err
 	}
 	id := dataGJson.GetString("id")
-	if len(id) == 0 {
+	if id == "" {
 		return errors.New("id is required")
 	}
 	schema := logic.GetSchema(collectionName)
@@ -65,7 +65,7 @@ func UpdateOne(collectionName string, data interface{}) error {
 			dataGJson.Set(fmt.Sprintf("%s.%d.pid", field.Name, i), id)
 			dataGJson.Set(fmt.Sprintf("%s.%d.pfd", field.Name, i), field.Name)
 			tableRowId := dataGJson.GetString(fmt.Sprintf("%s.%d.%s", field.Name, i, "id"))
-			if len(tableRowId) == 0 {
+			if tableRowId == "" {
 				tableRowId = guid.S()
 				dataGJson.Set(fmt.Sprintf("%s.%d.id", field.Name, i), tableRowId)
 			}

@@ -48,7 +48,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 		for _, path := range linkPaths {
 			_path := strings.Split(path, ".")
 			// 是否为子表内的link字段
-			isTableInner := len(path) > 1
+			isTableInner := len(_path) > 1
 			if isTableInner {
 				tableRecordsLen := len(dataGJson.GetArray(fmt.Sprintf("%s", _path[0])))
 				if tableRecordsLen == 0 {
@@ -70,7 +70,7 @@ func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjs
 		linkRecordsMap := linkRecords.MapKeyStr("id")
 		for _, path := range linkPaths {
 			_path := strings.Split(path, ".")
-			isTableInner := len(path) > 1
+			isTableInner := len(_path) > 1
 			if isTableInner {
 				tableRecordsLen := tableRecordsLenByLinkPath[path]
 				if tableRecordsLen == 0 {
@@ -167,7 +167,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		for _, path := range linkPaths {
 			_path := strings.Split(path, ".")
 			// 是否为子表内的link字段
-			isTableInner := len(path) > 1
+			isTableInner := len(_path) > 1
 			for i := 0; i < recordsLen; i++ {
 				if isTableInner {
 					tableRecordsLen := len(listDataGJson.GetArray(fmt.Sprintf("%d.%s", i, _path[0])))
@@ -191,7 +191,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		linkRecordsMap := linkRecords.MapKeyStr("id")
 		for _, path := range linkPaths {
 			_path := strings.Split(path, ".")
-			isTableInner := len(path) > 1
+			isTableInner := len(_path) > 1
 			for i := 0; i < recordsLen; i++ {
 				if isTableInner {
 					tableRecordsLen := tableRecordsLenByLinkPath[fmt.Sprintf("%d.%s", i, path)]

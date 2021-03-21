@@ -177,7 +177,7 @@ func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
 			s, _ := ColumnString(dialect, col, col.IsPrimaryKey && len(pkList) == 1)
 			sql += s
 			sql = strings.TrimSpace(sql)
-			if len(col.Comment) > 0 {
+			if col.Comment != "" {
 				sql += " COMMENT '" + col.Comment + "'"
 			}
 			sql += ", "
@@ -192,18 +192,18 @@ func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
 	sql += ")"
 
 	var storeEngine = table.StoreEngine
-	if len(storeEngine) == 0 {
+	if storeEngine == "" {
 		storeEngine = dialect.StoreEngine
 	}
-	if len(table.StoreEngine) != 0 {
+	if table.StoreEngine != "" {
 		sql += " ENGINE=" + table.StoreEngine
 	}
 
 	var charset = table.Charset
-	if len(charset) == 0 {
+	if charset == "" {
 		charset = dialect.Charset
 	}
-	if len(charset) != 0 {
+	if charset != "" {
 		sql += " DEFAULT CHARSET " + charset
 	}
 
@@ -310,7 +310,7 @@ func (dialect *MySQLDialect) IsColumnExist(tx *sql.Tx, tableName string, colName
 func (dialect *MySQLDialect) AddColumnSQL(tableName string, col *Column) string {
 	s, _ := ColumnString(dialect, col, true)
 	sql := fmt.Sprintf("ALTER TABLE `%s` ADD %v", tableName, s)
-	if len(col.Comment) > 0 {
+	if col.Comment != "" {
 		sql += " COMMENT '" + col.Comment + "'"
 	}
 	return sql
