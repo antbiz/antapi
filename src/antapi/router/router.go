@@ -15,7 +15,7 @@ func init() {
 		// 获取 {collection} 详情
 		group.GET("/{collection}/{id}", controller.CRUD.Get)
 		// 添加 {collection}
-		group.POST("/{collection}/{id}", controller.CRUD.Create)
+		group.POST("/{collection}", controller.CRUD.Create)
 		// 修改 {collection}
 		group.PATCH("/{collection}/{id}", controller.CRUD.Update)
 		// 删除 {collection}
