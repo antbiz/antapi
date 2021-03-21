@@ -10,8 +10,8 @@ import (
 	"github.com/gogf/gf/util/guid"
 )
 
-// InsertOne : 插入单个数据，返回插入的主体id
-func InsertOne(collectionName string, data interface{}) (string, error) {
+// Insert : 插入单个数据，返回插入的主体id
+func Insert(collectionName string, data interface{}) (string, error) {
 	res, err := InsertList(collectionName, data)
 	if err != nil {
 		return "", nil

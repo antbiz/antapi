@@ -11,8 +11,8 @@ import (
 	"github.com/gogf/gf/frame/g"
 )
 
-// GetOne : 获取单个数据
-func GetOne(collectionName string, where interface{}, args ...interface{}) (*gjson.Json, error) {
+// Get : 获取单个数据
+func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.Json, error) {
 	db := g.DB()
 	schema := logic.GetSchema(collectionName)
 

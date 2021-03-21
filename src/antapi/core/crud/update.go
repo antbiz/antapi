@@ -11,8 +11,8 @@ import (
 	"github.com/gogf/gf/util/guid"
 )
 
-// UpdateOne : 更新单个数据
-func UpdateOne(collectionName string, data interface{}) error {
+// Update : 更新单个数据
+func Update(collectionName string, data interface{}) error {
 	db := g.DB()
 	dataGJson, err := gjson.LoadJson(data)
 	if err != nil {
