@@ -11,14 +11,14 @@ func init() {
 	s := g.Server()
 	s.Group("/api/business", func(group *ghttp.RouterGroup) {
 		// 查询 {collection} 列表
-		group.GET("/{collection}", controller.CRUD.GetList)
+		group.GET("/{collection}", controller.Biz.GetList)
 		// 获取 {collection} 详情
-		group.GET("/{collection}/{id}", controller.CRUD.Get)
+		group.GET("/{collection}/{id}", controller.Biz.Get)
 		// 添加 {collection}
-		group.POST("/{collection}", controller.CRUD.Create)
+		group.POST("/{collection}", controller.Biz.Create)
 		// 修改 {collection}
-		group.PATCH("/{collection}/{id}", controller.CRUD.Update)
+		group.PATCH("/{collection}/{id}", controller.Biz.Update)
 		// 删除 {collection}
-		group.DELETE("/{collection}/{id}", controller.CRUD.Delete)
+		group.DELETE("/{collection}/{id}", controller.Biz.Delete)
 	})
 }

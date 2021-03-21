@@ -2,31 +2,37 @@ package controller
 
 import "github.com/gogf/gf/net/ghttp"
 
-var CRUD = new(crudControl)
+var Biz = new(bizControl)
 
-type crudControl struct{}
+type bizControl struct{}
+
+type getListReq struct {
+	Page int `d:"1"  v:"min:0#分页号码错误"`     // 分页号码
+	Size int `d:"10" v:"max:50#分页数量最大50条"` // 分页数量，最大50
+	Sort string
+}
 
 // Get : 查询详情
-func (crudControl) Get(r *ghttp.Request) {
+func (bizControl) Get(r *ghttp.Request) {
 
 }
 
 // GetList : 查询列表数据
-func (crudControl) GetList(r *ghttp.Request) {
+func (bizControl) GetList(r *ghttp.Request) {
 
 }
 
 // Create : 新建数据
-func (crudControl) Create(r *ghttp.Request) {
+func (bizControl) Create(r *ghttp.Request) {
 
 }
 
 // Update : 更新数据
-func (crudControl) Update(r *ghttp.Request) {
+func (bizControl) Update(r *ghttp.Request) {
 
 }
 
 // Delete : 删除数据
-func (crudControl) Delete(r *ghttp.Request) {
+func (bizControl) Delete(r *ghttp.Request) {
 
 }

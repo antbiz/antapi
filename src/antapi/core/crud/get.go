@@ -98,25 +98,30 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 }
 
 // GetList : 获取列表数据
-func GetList(collectionName string, pageNum, pageSize int, where interface{}, args ...interface{}) (*gjson.Json, error) {
+func GetList(collectionName string, pageNum, pageSize int, where interface{}, args ...interface{}) (list *gjson.Json, total int, err error) {
 	db := g.DB()
 	schema := logic.GetSchema(collectionName)
 
 	// 查询指定范围内主体数据list
-	orm := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...)
+	m := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...)
 	if pageNum > 0 && pageSize > 0 {
-		orm = orm.Limit((pageNum-1)*pageSize, pageSize)
+		m = m.Limit((pageNum-1)*pageSize, pageSize)
 	}
-	records, err := orm.All()
+
+	if total, err = m.Count(); err != nil {
+		return nil, 0, err
+	}
+	records, err := m.All()
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
+
 	recordsLen := records.Len()
-	listDataGJson := gjson.New(records.Json())
+	list = gjson.New(records.Json())
 
 	ids := make([]string, 0, recordsLen)
 	for i := 0; i < recordsLen; i++ {
-		ids = append(ids, listDataGJson.GetString(fmt.Sprintf("%d.id", i)))
+		ids = append(ids, list.GetString(fmt.Sprintf("%d.id", i)))
 	}
 
 	// 查询指定范围内子表数据，先批量获取然后再按属性分配
@@ -130,7 +135,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 			Where("pid", ids).
 			All()
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 
 		var (
@@ -149,10 +154,10 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 
 		pfdSlice := pfdArr.Slice()
 		for i := 0; i < recordsLen; i++ {
-			pid := listDataGJson.GetString(fmt.Sprintf("%d.id", i))
+			pid := list.GetString(fmt.Sprintf("%d.id", i))
 			for _, pfd := range pfdSlice {
-				if err := listDataGJson.Set(fmt.Sprintf("%d.%s", i, pfd), tableGroupRecords[fmt.Sprintf("%s@%s", pid, pfd)]); err != nil {
-					return nil, err
+				if err := list.Set(fmt.Sprintf("%d.%s", i, pfd), tableGroupRecords[fmt.Sprintf("%s@%s", pid, pfd)]); err != nil {
+					return nil, 0, err
 				}
 			}
 		}
@@ -170,23 +175,23 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 			isTableInner := len(_path) > 1
 			for i := 0; i < recordsLen; i++ {
 				if isTableInner {
-					tableRecordsLen := len(listDataGJson.GetArray(fmt.Sprintf("%d.%s", i, _path[0])))
+					tableRecordsLen := len(list.GetArray(fmt.Sprintf("%d.%s", i, _path[0])))
 					if tableRecordsLen == 0 {
 						continue
 					}
 					tableRecordsLenByLinkPath[fmt.Sprintf("%d.%s", i, path)] = tableRecordsLen
 					for j := 0; j < tableRecordsLen; j++ {
-						linkIds = append(linkIds, listDataGJson.GetString(fmt.Sprintf("%d.%s.%d.%s", i, _path[0], j, _path[1])))
+						linkIds = append(linkIds, list.GetString(fmt.Sprintf("%d.%s.%d.%s", i, _path[0], j, _path[1])))
 					}
 				} else {
-					linkIds = append(linkIds, listDataGJson.GetString(fmt.Sprintf("%d.%s", i, path)))
+					linkIds = append(linkIds, list.GetString(fmt.Sprintf("%d.%s", i, path)))
 				}
 			}
 
 		}
 		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		linkRecordsMap := linkRecords.MapKeyStr("id")
 		for _, path := range linkPaths {
@@ -199,12 +204,12 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 						continue
 					}
 					for j := 0; j < tableRecordsLen; j++ {
-						innderLinkRecordId := listDataGJson.GetString(fmt.Sprintf("%d.%s.%d.%s", i, _path[0], j, _path[1]))
-						listDataGJson.Set(fmt.Sprintf("%d.%s.%d.%s_linkinfo", i, _path[0], j, _path[1]), linkRecordsMap[innderLinkRecordId])
+						innderLinkRecordId := list.GetString(fmt.Sprintf("%d.%s.%d.%s", i, _path[0], j, _path[1]))
+						list.Set(fmt.Sprintf("%d.%s.%d.%s_linkinfo", i, _path[0], j, _path[1]), linkRecordsMap[innderLinkRecordId])
 					}
 				} else {
-					linkRecordId := listDataGJson.GetString(fmt.Sprintf("%d.%s", i, path))
-					listDataGJson.Set(fmt.Sprintf("%d.%s_linkinfo", i, path), linkRecordsMap[linkRecordId])
+					linkRecordId := list.GetString(fmt.Sprintf("%d.%s", i, path))
+					list.Set(fmt.Sprintf("%d.%s_linkinfo", i, path), linkRecordsMap[linkRecordId])
 				}
 			}
 		}
@@ -212,13 +217,13 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 
 	// 执行 AfterFindHooks 勾子
 	for i := 0; i < recordsLen; i++ {
-		dataGJson := listDataGJson.GetJson(fmt.Sprintf("%d", i))
+		dataGJson := list.GetJson(fmt.Sprintf("%d", i))
 		for _, hook := range hooks.GetAfterFindHooksByCollectionName(collectionName) {
-			if err := hook(dataGJson); err != nil {
-				return dataGJson, err
+			if err = hook(dataGJson); err != nil {
+				return
 			}
 		}
 	}
 
-	return listDataGJson, nil
+	return
 }
