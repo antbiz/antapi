@@ -1,11 +1,13 @@
 package crud
 
 import (
+	"antapi/common/errcode"
 	"antapi/hooks"
 	"antapi/logic"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/util/guid"
 )
@@ -41,7 +43,7 @@ func Update(collectionName string, id string, data interface{}) error {
 		content[field.Name] = val
 	}
 	if _, err := db.Table(collectionName).Where("id", id).Update(content); err != nil {
-		return err
+		return gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
 	}
 
 	// 更新子表数据
@@ -79,7 +81,7 @@ func Update(collectionName string, id string, data interface{}) error {
 
 		// 执行save操作，如果存在则更新，否则插入
 		if _, err := db.Table(field.RelatedCollection).Save(tableContent); err != nil {
-			return err
+			return gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
 		}
 
 		// 自动处理需要删除的子表数据
@@ -89,7 +91,7 @@ func Update(collectionName string, id string, data interface{}) error {
 			Where("pid", id).
 			Where("pfd", field.Name).
 			Delete(); err != nil {
-			return err
+			return gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
 		}
 	}
 

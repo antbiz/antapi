@@ -1,11 +1,13 @@
 package crud
 
 import (
+	"antapi/common/errcode"
 	"antapi/hooks"
 	"antapi/logic"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/util/guid"
 )
@@ -74,7 +76,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		contents = append(contents, content)
 	}
 	if _, err := db.Table(collectionName).Insert(contents); err != nil {
-		return nil, err
+		return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
 	}
 
 	// 批量插入子表数据
@@ -115,7 +117,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		}
 
 		if _, err := db.Table(field.RelatedCollection).Insert(tableContent); err != nil {
-			return nil, err
+			return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
 		}
 	}
 
