@@ -21,7 +21,7 @@ type Resp struct {
 // ListsData : list data resp struct
 type ListsData struct {
 	List  interface{} `json:"list"`
-	Total int64       `json:"total"`
+	Total int         `json:"total"`
 }
 
 type apiResp struct {

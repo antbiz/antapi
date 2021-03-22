@@ -3,7 +3,6 @@ package crud
 import (
 	"antapi/hooks"
 	"antapi/logic"
-	"errors"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -12,15 +11,11 @@ import (
 )
 
 // Update : 更新单个数据
-func Update(collectionName string, data interface{}) error {
+func Update(collectionName string, id string, data interface{}) error {
 	db := g.DB()
 	dataGJson, err := gjson.LoadJson(data)
 	if err != nil {
 		return err
-	}
-	id := dataGJson.GetString("id")
-	if id == "" {
-		return errors.New("id is required")
 	}
 	schema := logic.GetSchema(collectionName)
 
