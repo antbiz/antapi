@@ -75,6 +75,8 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 		updateField(fieldsLen, "type", "UUID")
 		updateField(fieldsLen, "title", "ID")
 		updateField(fieldsLen, "name", "id")
+		updateField(fieldsLen, "is_unique", true)
+		updateField(fieldsLen, "can_index", true)
 	}
 	if !hasCreatedAtField {
 		fieldsLen++

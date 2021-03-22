@@ -34,7 +34,7 @@ func JSONCollection2TableSchema(collection *gjson.Json) *dbsm.Table {
 			Comment:  field.GetString("description"),
 		}
 
-		if field.GetBool("create_index") {
+		if field.GetBool("can_index") {
 			col.IndexName = col.Name
 		}
 		if col.Name == "id" {

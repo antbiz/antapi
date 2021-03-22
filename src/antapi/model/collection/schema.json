@@ -97,7 +97,7 @@
       "is_multiple": false
     },
     {
-      "type": "HasMany",
+      "type": "Table",
       "title": "Fields",
       "name": "fields",
       "description": "",
