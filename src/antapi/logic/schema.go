@@ -1,12 +1,13 @@
 package logic
 
 import (
+	"antapi/common/errcode"
 	"antapi/global"
 	"antapi/model"
-	"errors"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/errors/gerror"
 )
 
 type SchemaLogic struct{}
@@ -17,7 +18,7 @@ var DefaultSchemaLogic = SchemaLogic{}
 func (SchemaLogic) CheckFields(data *gjson.Json) error {
 	fieldsLen := len(data.GetArray("fields"))
 	if fieldsLen == 0 {
-		return errors.New("fields is required")
+		return gerror.NewCodef(errcode.MissRequiredParameter, errcode.MissRequiredParameterMsg, "fields")
 	}
 
 	isChildTable := data.GetBool("is_child")

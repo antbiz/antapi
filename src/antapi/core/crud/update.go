@@ -17,7 +17,7 @@ func Update(collectionName string, id string, data interface{}) error {
 	db := g.DB()
 	dataGJson, err := gjson.LoadJson(data)
 	if err != nil {
-		return err
+		return gerror.WrapCode(errcode.JSONError, err, errcode.JSONErrorMsg)
 	}
 	schema := logic.GetSchema(collectionName)
 
@@ -38,12 +38,12 @@ func Update(collectionName string, id string, data interface{}) error {
 	for _, field := range schema.GetPublicFields() {
 		val := dataGJson.Get(field.Name)
 		if validErr := field.CheckFieldValue(val); validErr != nil {
-			return validErr.Current()
+			return gerror.NewCode(errcode.ParameterBindError, validErr.String())
 		}
 		content[field.Name] = val
 	}
 	if _, err := db.Table(collectionName).Where("id", id).Update(content); err != nil {
-		return gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 
 	// 更新子表数据
@@ -72,7 +72,7 @@ func Update(collectionName string, id string, data interface{}) error {
 			for _, tableField := range tableSchema.GetPublicFields() {
 				val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, i, tableField.Name))
 				if validErr := field.CheckFieldValue(val); validErr != nil {
-					return validErr.Current()
+					return gerror.NewCode(errcode.ParameterBindError, validErr.String())
 				}
 				tableRowContent[tableField.Name] = val
 			}
@@ -81,7 +81,7 @@ func Update(collectionName string, id string, data interface{}) error {
 
 		// 执行save操作，如果存在则更新，否则插入
 		if _, err := db.Table(field.RelatedCollection).Save(tableContent); err != nil {
-			return gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 
 		// 自动处理需要删除的子表数据
@@ -91,7 +91,7 @@ func Update(collectionName string, id string, data interface{}) error {
 			Where("pid", id).
 			Where("pfd", field.Name).
 			Delete(); err != nil {
-			return gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 	}
 

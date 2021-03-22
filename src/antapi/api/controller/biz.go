@@ -2,8 +2,10 @@ package controller
 
 import (
 	"antapi/api/resp"
+	"antapi/common/errcode"
 	"antapi/core/crud"
 
+	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
@@ -25,9 +27,9 @@ func (bizControl) Get(r *ghttp.Request) {
 	id := r.GetString("id")
 
 	if res, err := crud.Get(collectionName, g.Map{"id": id}); err != nil {
-		resp.Error(r).SetError(err).Json()
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
-		resp.Success(r).SetData(res.MustToJsonString())
+		resp.Success(r).SetData(res.MustToJsonString()).Json()
 	}
 }
 
@@ -36,11 +38,11 @@ func (bizControl) GetList(r *ghttp.Request) {
 	var reqArgs *getListReq
 	collectionName := r.GetString("collection")
 	if err := r.ParseQuery(&reqArgs); err != nil {
-		resp.Error(r).SetError(err).Json()
+		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
 
 	if res, total, err := crud.GetList(collectionName, reqArgs.Page, reqArgs.Size, nil); err != nil {
-		resp.Error(r).SetError(err).Json()
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(resp.ListsData{List: res.MustToJsonString(), Total: total}).Json()
 	}
@@ -51,7 +53,7 @@ func (bizControl) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 
 	if id, err := crud.Insert(collectionName, r.GetBodyString()); err != nil {
-		resp.Error(r).SetError(err).Json()
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(g.Map{"id": id}).Json()
 	}
@@ -63,7 +65,7 @@ func (bizControl) Update(r *ghttp.Request) {
 	id := r.GetString("id")
 
 	if err := crud.Update(collectionName, id, r.GetBodyString()); err != nil {
-		resp.Error(r).SetError(err).Json()
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).Json()
 	}
@@ -75,7 +77,7 @@ func (bizControl) Delete(r *ghttp.Request) {
 	id := r.GetString("id")
 
 	if err := crud.Delete(collectionName, "id", gstr.SplitAndTrimSpace(id, ",")); err != nil {
-		resp.Error(r).SetError(err).Json()
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).Json()
 	}

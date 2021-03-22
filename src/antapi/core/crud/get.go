@@ -20,7 +20,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 
 	record, err := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...).One()
 	if err != nil {
-		return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+		return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 	dataGJson := gjson.New(record.Json())
 
@@ -36,7 +36,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 			Where("pfd", field.Name).
 			All()
 		if err != nil {
-			return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 		dataGJson.Set(field.RelatedCollection, tableRecords.Json())
 	}
@@ -67,7 +67,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 		}
 		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
 		if err != nil {
-			return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 		linkRecordsMap := linkRecords.MapKeyStr("id")
 		for _, path := range linkPaths {
@@ -111,11 +111,11 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	}
 
 	if total, err = m.Count(); err != nil {
-		return nil, 0, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+		return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 	records, err := m.All()
 	if err != nil {
-		return nil, 0, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+		return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 
 	recordsLen := records.Len()
@@ -137,7 +137,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 			Where("pid", ids).
 			All()
 		if err != nil {
-			return nil, 0, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 
 		var (
@@ -159,7 +159,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 			pid := list.GetString(fmt.Sprintf("%d.id", i))
 			for _, pfd := range pfdSlice {
 				if err := list.Set(fmt.Sprintf("%d.%s", i, pfd), tableGroupRecords[fmt.Sprintf("%s@%s", pid, pfd)]); err != nil {
-					return nil, 0, err
+					return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 				}
 			}
 		}
@@ -193,7 +193,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		}
 		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
 		if err != nil {
-			return nil, 0, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 		linkRecordsMap := linkRecords.MapKeyStr("id")
 		for _, path := range linkPaths {

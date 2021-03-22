@@ -16,7 +16,7 @@ import (
 func Insert(collectionName string, data interface{}) (string, error) {
 	res, err := InsertList(collectionName, data)
 	if err != nil {
-		return "", nil
+		return "", err
 	}
 	return res[0], nil
 }
@@ -37,7 +37,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 	for i := 0; i < dataLen; i++ {
 		dataGJson, err := gjson.LoadJson(data[i])
 		if err != nil {
-			return nil, nil
+			return nil, gerror.WrapCode(errcode.JSONError, err, errcode.JSONErrorMsg)
 		}
 		dataGJsonSlice = append(dataGJsonSlice, dataGJson)
 	}
@@ -68,7 +68,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		for _, field := range schema.GetPublicFields() {
 			val := dataGJson.Get(field.Name)
 			if validErr := field.CheckFieldValue(val); validErr != nil {
-				return nil, validErr.Current()
+				return nil, gerror.NewCode(errcode.ParameterBindError, validErr.String())
 			}
 			content[field.Name] = val
 		}
@@ -76,7 +76,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		contents = append(contents, content)
 	}
 	if _, err := db.Table(collectionName).Insert(contents); err != nil {
-		return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+		return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 
 	// 批量插入子表数据
@@ -95,7 +95,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 				for _, tableField := range tableSchema.GetPublicFields() {
 					val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, j, tableField.Name))
 					if validErr := field.CheckFieldValue(val); validErr != nil {
-						return nil, validErr.Current()
+						return nil, gerror.NewCode(errcode.ParameterBindError, validErr.String())
 					}
 					tableRowContent[tableField.Name] = val
 				}
@@ -117,7 +117,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		}
 
 		if _, err := db.Table(field.RelatedCollection).Insert(tableContent); err != nil {
-			return nil, gerror.NewCode(errcode.ServerError, errcode.ServerErrorMsg)
+			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 	}
 
