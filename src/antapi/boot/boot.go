@@ -1,13 +1,13 @@
 package boot
 
 import (
+	"antapi/cmd"
 	"antapi/hooks"
-	"antapi/model"
 	_ "antapi/packed"
 )
 
 func init() {
-	model.Sync()
+	cmd.Sync()
 	hooks.RegisterAllHooks()
 	ServerBackground()
 }

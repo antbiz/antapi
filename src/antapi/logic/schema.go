@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"antapi/common/errcode"
+	"antapi/api/errcode"
 	"antapi/global"
 	"antapi/model"
 	"fmt"

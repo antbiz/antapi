@@ -1,7 +1,7 @@
-package crud
+package dao
 
 import (
-	"antapi/common/errcode"
+	"antapi/api/errcode"
 	"antapi/hooks"
 	"antapi/logic"
 	"fmt"

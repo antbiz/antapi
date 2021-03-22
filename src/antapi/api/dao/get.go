@@ -1,7 +1,7 @@
-package crud
+package dao
 
 import (
-	"antapi/common/errcode"
+	"antapi/api/errcode"
 	"antapi/hooks"
 	"antapi/logic"
 	"fmt"
@@ -228,4 +228,13 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	}
 
 	return
+}
+
+// Exists : 是否存在
+func Exists(collectionName string, where interface{}, args ...interface{}) (bool, error) {
+	total, err := g.Table(collectionName).Where(where, args...).Count()
+	if err != nil {
+		return false, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+	return total > 0, nil
 }

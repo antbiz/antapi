@@ -12,52 +12,52 @@ import (
 
 // Schema .
 type Schema struct {
-	ID          string
-	CreatedAt   *gtime.Time
-	UpdatedAt   *gtime.Time
-	DeletedAt   *gtime.Time
-	CreatedBy   string
-	UpdatedBy   string
-	Title       string
-	Name        string
-	ProjectName string
-	Description string
+	ID          string      `orm:"id"`
+	CreatedAt   *gtime.Time `orm:"created_at"`
+	UpdatedAt   *gtime.Time `orm:"updated_at"`
+	DeletedAt   *gtime.Time `orm:"deleted_at"`
+	CreatedBy   string      `orm:"created_by"`
+	UpdatedBy   string      `orm:"updated_by"`
+	Title       string      `orm:"title"`
+	Name        string      `orm:"name"`
+	ProjectName string      `orm:"project_name"`
+	Description string      `orm:"description"`
 	Fields      []*SchemaField
 }
 
 // SchemaField .
 type SchemaField struct {
-	ID                  string
-	CreatedAt           *gtime.Time
-	UpdatedAt           *gtime.Time
-	DeletedAt           *gtime.Time
-	CreatedBy           string
-	UpdatedBy           string
-	Pcn                 string
-	Pid                 string
-	Idx                 int
-	Pfd                 string
-	Type                string
-	Title               string
-	Name                string
-	Description         string
-	IsRequired          bool
-	IsHidden            bool
-	IsUnique            bool
-	IsPrivate           bool
-	IsEncrypted         bool
-	CanSort             bool
-	CanIndex            bool
-	IsMultiple          bool
-	Default             string
-	RelatedCollection   string
-	RelatedDisplayField string
-	Min                 int
-	Max                 int
-	Validator           string
-	Style               string
-	EnumType            string
-	EnumOptions         string
+	ID                  string      `orm:"id"`
+	CreatedAt           *gtime.Time `orm:"created_at"`
+	UpdatedAt           *gtime.Time `orm:"updated_at"`
+	DeletedAt           *gtime.Time `orm:"deleted_at"`
+	CreatedBy           string      `orm:"created_by"`
+	UpdatedBy           string      `orm:"updated_by"`
+	Pcn                 string      `orm:"pcn"`
+	Pid                 string      `orm:"pid"`
+	Idx                 int         `orm:"idx"`
+	Pfd                 string      `orm:"pfd"`
+	Type                string      `orm:"type"`
+	Title               string      `orm:"title"`
+	Name                string      `orm:"name"`
+	Description         string      `orm:"description"`
+	IsRequired          bool        `orm:"is_required"`
+	IsHidden            bool        `orm:"is_hidden"`
+	IsUnique            bool        `orm:"is_unique"`
+	IsPrivate           bool        `orm:"is_private"`
+	IsEncrypted         bool        `orm:"is_encrypted"`
+	CanSort             bool        `orm:"can_sort"`
+	CanIndex            bool        `orm:"can_index"`
+	IsMultiple          bool        `orm:"is_multiple"`
+	Default             string      `orm:"default"`
+	RelatedCollection   string      `orm:"related_collection"`
+	RelatedDisplayField string      `orm:"related_display_field"`
+	Min                 int         `orm:"min"`
+	Max                 int         `orm:"max"`
+	Validator           string      `orm:"validator"`
+	Style               string      `orm:"style"`
+	EnumType            string      `orm:"enum_type"`
+	EnumOptions         string      `orm:"enum_options"`
 }
 
 // FieldType .
