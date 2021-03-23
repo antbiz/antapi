@@ -1,9 +1,9 @@
 package dao
 
 import (
-	"antapi/api/errcode"
-	"antapi/hooks"
-	"antapi/logic"
+	"antapi/app/errcode"
+	"antapi/app/hooks"
+	"antapi/app/logic"
 	"fmt"
 	"strings"
 

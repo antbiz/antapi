@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"antapi/model"
+	"antapi/app/model"
 	"sync"
 
 	"github.com/gogf/gf/database/gdb"

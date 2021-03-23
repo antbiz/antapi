@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"antapi/logic"
-	"antapi/model"
+	"antapi/app/logic"
+	"antapi/app/model"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"

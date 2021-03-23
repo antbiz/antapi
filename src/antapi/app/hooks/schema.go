@@ -1,6 +1,6 @@
 package hooks
 
-import "antapi/logic"
+import "antapi/app/logic"
 
 // RegisterSchemaHooks : 注册Schema的所有勾子
 func RegisterSchemaHooks() {

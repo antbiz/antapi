@@ -2,7 +2,7 @@ package boot
 
 import (
 	"antapi/cmd"
-	"antapi/hooks"
+	"antapi/app/hooks"
 	_ "antapi/packed"
 )
 

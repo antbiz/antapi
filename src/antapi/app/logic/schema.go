@@ -1,10 +1,10 @@
 package logic
 
 import (
-	"antapi/api/errcode"
+	"antapi/app/errcode"
 	"antapi/global"
-	"antapi/model"
-	"antapi/model/fieldtype"
+	"antapi/app/model"
+	"antapi/app/model/fieldtype"
 	"antapi/pkg/dbsm"
 	coltype "antapi/pkg/dbsm/types"
 	"fmt"

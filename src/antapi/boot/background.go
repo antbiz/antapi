@@ -2,7 +2,7 @@ package boot
 
 import (
 	"antapi/global"
-	"antapi/logic"
+	"antapi/app/logic"
 )
 
 // ServerBackground : 后台常驻任务

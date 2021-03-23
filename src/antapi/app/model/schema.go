@@ -1,7 +1,7 @@
 package model
 
 import (
-	"antapi/model/fieldtype"
+	"antapi/app/model/fieldtype"
 	"fmt"
 	"strings"
 
