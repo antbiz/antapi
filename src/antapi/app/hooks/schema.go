@@ -7,15 +7,15 @@ func RegisterSchemaHooks() {
 	collectionName := "schema"
 	registerBeforeSaveHooks(
 		collectionName,
-		logic.DefaultSchemaLogic.CheckFields,
+		logic.Schema.CheckFields,
 	)
 	registerAfterSaveHooks(
 		collectionName,
-		logic.DefaultSchemaLogic.MigrateCollectionSchema,
-		logic.DefaultSchemaLogic.ReloadGlobalSchemas,
+		logic.Schema.MigrateCollectionSchema,
+		logic.Schema.ReloadGlobalSchemas,
 	)
 	registerAfterDeleteHooks(
 		collectionName,
-		logic.DefaultSchemaLogic.ReloadGlobalSchemas,
+		logic.Schema.ReloadGlobalSchemas,
 	)
 }

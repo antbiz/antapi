@@ -2,9 +2,9 @@ package logic
 
 import (
 	"antapi/app/errcode"
-	"antapi/global"
 	"antapi/app/model"
 	"antapi/app/model/fieldtype"
+	"antapi/global"
 	"antapi/pkg/dbsm"
 	coltype "antapi/pkg/dbsm/types"
 	"fmt"
@@ -14,12 +14,12 @@ import (
 	"github.com/gogf/gf/frame/g"
 )
 
-type SchemaLogic struct{}
+var Schema = new(schemaLogic)
 
-var DefaultSchemaLogic = SchemaLogic{}
+type schemaLogic struct{}
 
 // CheckFields : 校验collection的字段，并填充系统必要字段
-func (SchemaLogic) CheckFields(data *gjson.Json) error {
+func (schemaLogic) CheckFields(data *gjson.Json) error {
 	fieldsLen := len(data.GetArray("fields"))
 	if fieldsLen == 0 {
 		return gerror.NewCodef(errcode.MissRequiredParameter, errcode.MissRequiredParameterMsg, "fields")
@@ -148,13 +148,13 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 }
 
 // ReloadGlobalSchemas : 当某个Collection的Schema插入/更新/删除后，重新加载数据到内存
-func (SchemaLogic) ReloadGlobalSchemas(_ *gjson.Json) error {
+func (schemaLogic) ReloadGlobalSchemas(_ *gjson.Json) error {
 	global.SchemaChan <- struct{}{}
 	return nil
 }
 
 // MigrateCollectionSchema : 迁移collection，同步collection的schema和collection的数据库表结构
-func (SchemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
+func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	tableName := collection.GetString("name")
 	columns := make([]*dbsm.Column, 0)
 	for _, field := range collection.GetJsons("fields") {
@@ -250,7 +250,7 @@ func (SchemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 }
 
 // GetLinkPathIncludeTableInner : 获取所有link字段的路径，包括子表
-func (SchemaLogic) GetLinkPathIncludeTableInner(schema *model.Schema) (paths map[string][]string) {
+func (schemaLogic) GetLinkPathIncludeTableInner(schema *model.Schema) (paths map[string][]string) {
 	for _, linkField := range schema.GetLinkFields() {
 		paths[linkField.RelatedCollection] = append(paths[linkField.RelatedCollection], linkField.Name)
 	}

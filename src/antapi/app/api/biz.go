@@ -1,4 +1,4 @@
-package controller
+package api
 
 import (
 	"antapi/app/dao"
@@ -11,9 +11,9 @@ import (
 	"github.com/gogf/gf/text/gstr"
 )
 
-var Biz = new(bizControl)
+var Biz = new(bizApi)
 
-type bizControl struct{}
+type bizApi struct{}
 
 type getListReq struct {
 	Page int `d:"1"  v:"min:1#分页号码错误"`     // 分页号码
@@ -22,7 +22,7 @@ type getListReq struct {
 }
 
 // Get : 查询详情
-func (bizControl) Get(r *ghttp.Request) {
+func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 
@@ -34,7 +34,7 @@ func (bizControl) Get(r *ghttp.Request) {
 }
 
 // GetList : 查询列表数据
-func (bizControl) GetList(r *ghttp.Request) {
+func (bizApi) GetList(r *ghttp.Request) {
 	var reqArgs *getListReq
 	collectionName := r.GetString("collection")
 	if err := r.ParseQuery(&reqArgs); err != nil {
@@ -49,7 +49,7 @@ func (bizControl) GetList(r *ghttp.Request) {
 }
 
 // Create : 新建数据
-func (bizControl) Create(r *ghttp.Request) {
+func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 
 	if id, err := dao.Insert(collectionName, r.GetBodyString()); err != nil {
@@ -60,7 +60,7 @@ func (bizControl) Create(r *ghttp.Request) {
 }
 
 // Update : 更新数据
-func (bizControl) Update(r *ghttp.Request) {
+func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 
@@ -72,7 +72,7 @@ func (bizControl) Update(r *ghttp.Request) {
 }
 
 // Delete : 删除数据
-func (bizControl) Delete(r *ghttp.Request) {
+func (bizApi) Delete(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 

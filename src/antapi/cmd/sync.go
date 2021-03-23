@@ -37,7 +37,7 @@ func SyncCollections() {
 			glog.Fatalf("SyncCollections %s Error: %v", fileName, err)
 			continue
 		}
-		if err := logic.DefaultSchemaLogic.MigrateCollectionSchema(collection); err != nil {
+		if err := logic.Schema.MigrateCollectionSchema(collection); err != nil {
 			glog.Fatalf("Migrate Collections %s Error: %v", fileName, err)
 			continue
 		}

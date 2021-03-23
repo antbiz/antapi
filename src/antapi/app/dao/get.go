@@ -42,7 +42,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 	}
 
 	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
-	for linkCollectionName, linkPaths := range logic.DefaultSchemaLogic.GetLinkPathIncludeTableInner(schema) {
+	for linkCollectionName, linkPaths := range logic.Schema.GetLinkPathIncludeTableInner(schema) {
 		var (
 			linkIds                   []string
 			tableRecordsLenByLinkPath map[string]int
@@ -166,7 +166,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	}
 
 	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
-	for linkCollectionName, linkPaths := range logic.DefaultSchemaLogic.GetLinkPathIncludeTableInner(schema) {
+	for linkCollectionName, linkPaths := range logic.Schema.GetLinkPathIncludeTableInner(schema) {
 		var (
 			linkIds                   []string
 			tableRecordsLenByLinkPath map[string]int
