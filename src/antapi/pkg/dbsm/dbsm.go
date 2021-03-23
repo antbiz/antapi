@@ -2,13 +2,14 @@ package dbsm
 
 import (
 	"antapi/pkg/dbsm/types"
-	"database/sql"
 	"strings"
+
+	"github.com/gogf/gf/database/gdb"
 )
 
 // Sync .
-func Sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
-	if err := sync(tx, dialect, tables); err != nil {
+func Sync(tx *gdb.TX, dialect Dialect, tables ...*Table) error {
+	if err := sync(tx, dialect, tables...); err != nil {
 		tx.Rollback()
 		return err
 	}
@@ -17,7 +18,7 @@ func Sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
 }
 
 // sync .
-func sync(tx *sql.Tx, dialect Dialect, tables []*Table) error {
+func sync(tx *gdb.TX, dialect Dialect, tables ...*Table) error {
 	oriTables, err := dialect.GetTables(tx)
 	if err != nil {
 		return err

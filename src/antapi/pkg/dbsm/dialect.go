@@ -2,8 +2,9 @@ package dbsm
 
 import (
 	"antapi/pkg/dbsm/types"
-	"database/sql"
 	"strings"
+
+	"github.com/gogf/gf/database/gdb"
 )
 
 // Dialect represents a kind of database
@@ -13,17 +14,17 @@ type Dialect interface {
 	GetQuoter() Quoter
 	SQLType(column *Column) string
 
-	GetIndexes(tx *sql.Tx, tableName string) (map[string]*Index, error)
+	GetIndexes(tx *gdb.TX, tableName string) (map[string]*Index, error)
 	CreateIndexSQL(tableName string, index *Index) string
 	DropIndexSQL(tableName string, index *Index) string
 
-	GetTables(tx *sql.Tx) ([]*Table, error)
-	IsTableExist(tx *sql.Tx, tableName string) bool
+	GetTables(tx *gdb.TX) ([]*Table, error)
+	IsTableExist(tx *gdb.TX, tableName string) (bool, error)
 	CreateTableSQL(table *Table) string
 	DropTableSQL(tableName string) string
 
-	GetColumns(tx *sql.Tx, tableName string) ([]*Column, error)
-	IsColumnExist(tx *sql.Tx, tableName string, colName string) bool
+	GetColumns(tx *gdb.TX, tableName string) ([]*Column, error)
+	IsColumnExist(tx *gdb.TX, tableName string, colName string) (bool, error)
 	AddColumnSQL(tableName string, col *Column) string
 	ModifyColumnSQL(tableName string, col *Column) string
 }
@@ -86,4 +87,14 @@ func ColumnString(dialect Dialect, col *Column, includePrimaryKey bool) (string,
 	}
 
 	return bd.String(), nil
+}
+
+// NewDialect : New NewDialect
+func NewDialect(dbType string) Dialect {
+	switch types.DBType(dbType) {
+	case types.MYSQL:
+		return &MySQLDialect{}
+	default:
+		panic("Not implemented")
+	}
 }

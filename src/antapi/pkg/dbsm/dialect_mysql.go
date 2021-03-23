@@ -2,10 +2,11 @@ package dbsm
 
 import (
 	"antapi/pkg/dbsm/types"
-	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/gogf/gf/database/gdb"
 )
 
 // MySQLDialect Implementation of Dialect for MySQL databases.
@@ -60,7 +61,7 @@ func (dialect *MySQLDialect) SQLType(column *Column) string {
 	return res
 }
 
-func (dialect *MySQLDialect) GetIndexes(tx *sql.Tx, tableName string) (map[string]*Index, error) {
+func (dialect *MySQLDialect) GetIndexes(tx *gdb.TX, tableName string) (map[string]*Index, error) {
 	sql := fmt.Sprintf("SELECT `INDEX_NAME`, `NON_UNIQUE`, `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`STATISTICS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s'", dialect.DBName, tableName)
 	rows, err := tx.Query(sql)
 	if err != nil {
@@ -121,7 +122,7 @@ func (dialect *MySQLDialect) DropIndexSQL(tableName string, index *Index) string
 	return fmt.Sprintf("DROP INDEX `%s` ON %s", quote(index.XName(tableName)), quote(tableName))
 }
 
-func (dialect *MySQLDialect) GetTables(tx *sql.Tx) ([]*Table, error) {
+func (dialect *MySQLDialect) GetTables(tx *gdb.TX) ([]*Table, error) {
 	sql := fmt.Sprintf("SELECT `TABLE_NAME`, `ENGINE`, `AUTO_INCREMENT`, `TABLE_COMMENT` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = '%s' AND (`ENGINE` = 'MyISAM' OR `ENGINE` = 'InnoDB' OR `ENGINE` = 'TokuDB')", dialect.DBName)
 	rows, err := tx.Query(sql)
 	if err != nil {
@@ -162,9 +163,13 @@ func (dialect *MySQLDialect) GetTables(tx *sql.Tx) ([]*Table, error) {
 	return tables, nil
 }
 
-func (dialect *MySQLDialect) IsTableExist(tx *sql.Tx, tableName string) bool {
+func (dialect *MySQLDialect) IsTableExist(tx *gdb.TX, tableName string) (bool, error) {
 	sql := fmt.Sprintf("SELECT `TABLE_NAME` FROM `INFORMATION_SCHEMA`.`TABLES` WHERE `TABLE_SCHEMA` = '%s' and `TABLE_NAME` = '%s'", dialect.DBName, tableName)
-	return tx.QueryRow(sql) != nil
+	v, err := tx.GetCount(sql)
+	if err != nil {
+		return false, err
+	}
+	return v > 0, nil
 }
 
 func (dialect *MySQLDialect) CreateTableSQL(table *Table) string {
@@ -214,7 +219,7 @@ func (dialect *MySQLDialect) DropTableSQL(tableName string) string {
 	return fmt.Sprintf("DROP TABLE IF EXISTS `%s`", tableName)
 }
 
-func (dialect *MySQLDialect) GetColumns(tx *sql.Tx, tableName string) ([]*Column, error) {
+func (dialect *MySQLDialect) GetColumns(tx *gdb.TX, tableName string) ([]*Column, error) {
 	alreadyQuoted := "(INSTR(VERSION(), 'maria') > 0 && " +
 		"(SUBSTRING_INDEX(VERSION(), '.', 1) > 10 || " +
 		"(SUBSTRING_INDEX(VERSION(), '.', 1) = 10 && " +
@@ -302,9 +307,13 @@ func (dialect *MySQLDialect) GetColumns(tx *sql.Tx, tableName string) ([]*Column
 	return cols, nil
 }
 
-func (dialect *MySQLDialect) IsColumnExist(tx *sql.Tx, tableName string, colName string) bool {
+func (dialect *MySQLDialect) IsColumnExist(tx *gdb.TX, tableName string, colName string) (bool, error) {
 	sql := fmt.Sprintf("SELECT `COLUMN_NAME` FROM `INFORMATION_SCHEMA`.`COLUMNS` WHERE `TABLE_SCHEMA` = '%s' AND `TABLE_NAME` = '%s' AND `COLUMN_NAME` = '%s'", dialect.DBName, tableName, colName)
-	return tx.QueryRow(sql) != nil
+	v, err := tx.GetCount(sql)
+	if err != nil {
+		return false, err
+	}
+	return v > 0, nil
 }
 
 func (dialect *MySQLDialect) AddColumnSQL(tableName string, col *Column) string {

@@ -24,5 +24,7 @@
         Level  = "all"
         Stdout = true
     [database.default]
+        # mysql/pgsql/mssql/sqlite/oracle
+        Type   = "mysql"
         Link   = "mysql:root:12345678@tcp(127.0.0.1:3306)/antapi"
         Debug  = true

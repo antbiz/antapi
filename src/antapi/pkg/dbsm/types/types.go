@@ -4,12 +4,12 @@ type DBType string
 
 // Supported database types
 const (
-	POSTGRES DBType = "postgres"
-	SQLITE   DBType = "sqlite3"
+	POSTGRES DBType = "pgsql"
+	SQLITE   DBType = "sqlite"
 	MYSQL    DBType = "mysql"
 	MSSQL    DBType = "mssql"
-	MONGO    DBType = "mongo"
-	// ORACLE   DBType = "oracle"
+	ORACLE   DBType = "oracle"
+	// MONGO    DBType = "mongo"
 )
 
 // Supported field types

@@ -1,8 +1,8 @@
 package cmd
 
 import (
+	"antapi/logic"
 	"antapi/model"
-	"antapi/pkg/dbsm"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -13,52 +13,22 @@ import (
 )
 
 // Sync : 同步collection和默认数据
-func Sync() error {
-	if err := SyncCollections(); err != nil {
-		return err
-	}
-	if err := SyncDefaultsData(); err != nil {
-		return err
-	}
-	return nil
+func Sync() {
+	SyncCollections()
+	SyncSchemas()
+	SyncProjects()
+	SyncDefaultsData()
 }
 
-// JSONCollection2TableSchema : collection数据转数据表机构
-func JSONCollection2TableSchema(collection *gjson.Json) *dbsm.Table {
-	tableName := collection.GetString("name")
-	columns := make([]*dbsm.Column, 0)
-	for _, field := range collection.GetJsons("fields") {
-		col := &dbsm.Column{
-			Name:     field.GetString("name"),
-			Type:     field.GetString("type"),
-			Default:  field.GetString("default"),
-			Nullable: true,
-			IsUnique: field.GetBool("is_unique"),
-			Comment:  field.GetString("description"),
-		}
-
-		if field.GetBool("can_index") {
-			col.IndexName = col.Name
-		}
-		if col.Name == "id" {
-			col.IsAutoIncrement = true
-			col.IsPrimaryKey = true
-		}
-
-		columns = append(columns, col)
-	}
-	return dbsm.NewTable(tableName, columns)
-}
-
-// SyncCollections : 同步collections
-func SyncCollections() error {
+// SyncCollections : 读取collection，更新对应数据库表
+func SyncCollections() {
 	collectionFilePath := fmt.Sprintf("%s/model/collection", gfile.MainPkgPath())
 	collectionFileNames, err := gfile.DirNames(collectionFilePath)
 	if err != nil {
-		return err
+		glog.Fatalf("Scan Collection Dir %s Error: %v", collectionFilePath, err)
+		return
 	}
 
-	tables := make([]*dbsm.Table, 0)
 	for _, fileName := range collectionFileNames {
 		glog.Debugf("SyncCollections %s", fileName)
 		collection, err := gjson.Load(fmt.Sprintf("%s/%s.json", collectionFilePath, fileName))
@@ -66,18 +36,85 @@ func SyncCollections() error {
 			glog.Debugf("SyncCollections %s Error: %v", fileName, err)
 			continue
 		}
-		tables = append(tables, JSONCollection2TableSchema(collection))
+		if err := logic.DefaultSchemaLogic.MigrateCollectionSchema(collection); err != nil {
+			glog.Debugf("Migrate Collections %s Error: %v", fileName, err)
+			continue
+		}
 	}
-
-	return nil
 }
 
-// SyncProjects : 同步projects
+// SyncSchemas : 同步collection的schema到 `schema` 数据表
+func SyncSchemas() {
+	collectionFilePath := fmt.Sprintf("%s/model/collection", gfile.MainPkgPath())
+	collectionFileNames, err := gfile.DirNames(collectionFilePath)
+	if err != nil {
+		glog.Fatalf("Scan Collection Dir %s Error: %v", collectionFilePath, err)
+		return
+	}
+
+	db := g.DB()
+	for _, fileName := range collectionFileNames {
+		glog.Fatalf("SyncSchemas %s", fileName)
+		j, err := gjson.Load(fmt.Sprintf("%s/%s.json", collectionFilePath, fileName))
+		if err != nil {
+			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
+			continue
+		}
+		schema := new(model.Schema)
+		if err := j.Struct(schema); err != nil {
+			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
+			continue
+		}
+		glog.Debugf("SyncSchema %s", fileName)
+
+		schemaID, err := db.Table("schema").Value("id", "name", schema.Name)
+		if err != nil {
+			glog.Fatalf("Find Schema %s Error: %v", schema.Name, err)
+			continue
+		}
+		if schemaID.IsEmpty() {
+			schema.ID = guid.S()
+			if _, err := db.Table("schema").Data(schema).Insert(); err != nil {
+				glog.Fatalf("Create Schema %s Error: %v", schema.Name, err)
+				continue
+			}
+		} else {
+			schema.ID = schemaID.String()
+			if _, err := db.Table("schema").Where("id", schema.ID).Data(schema).Update(); err != nil {
+				glog.Fatalf("Update Schema %s-%s Error: %v", schema.Name, schema.ID, err)
+				continue
+			}
+		}
+
+		for _, field := range schema.Fields {
+			fieldID, err := db.Table("schema_field").Value("id", "pid", schema.ID)
+			if err != nil {
+				glog.Fatalf("Find SchemaField %s-%s Error: %v", schema.Name, field.Name, err)
+				continue
+			}
+			if fieldID.IsEmpty() {
+				field.ID = guid.S()
+				if _, err := db.Table("schema").Data(field).Insert(); err != nil {
+					glog.Fatalf("Create SchemaField %s Error: %v", field.Name, err)
+					continue
+				}
+			} else {
+				field.ID = fieldID.String()
+				if _, err := db.Table("schema_field").Where("id", field.ID).Data(field).Update(); err != nil {
+					glog.Fatalf("Update SchemaField %s-%s Error: %v", field.Name, field.ID, err)
+					continue
+				}
+			}
+		}
+	}
+}
+
+// SyncProjects : 同步projects数据到 `project` 数据表
 func SyncProjects() {
 	projectFilePath := fmt.Sprintf("%s/model/project", gfile.MainPkgPath())
 	projectFileNames, err := gfile.DirNames(projectFilePath)
 	if err != nil {
-		glog.Debugf("Scan Projects Dir Error: %v", err)
+		glog.Fatalf("Scan Project Dir %s Error: %v", projectFilePath, err)
 		return
 	}
 
@@ -85,30 +122,31 @@ func SyncProjects() {
 	for _, fileName := range projectFileNames {
 		j, err := gjson.Load(fmt.Sprintf("%s/%s.json", projectFilePath, fileName))
 		if err != nil {
-			glog.Debugf("SyncProjects %s Error: %v", fileName, err)
+			glog.Fatalf("SyncProjects %s Error: %v", fileName, err)
 			continue
 		}
 		project := new(model.Project)
 		if err := j.Struct(project); err != nil {
-			glog.Debugf("SyncProjects %s Error: %v", fileName, err)
+			glog.Fatalf("SyncProjects %s Error: %v", fileName, err)
 			continue
 		}
 		glog.Debugf("SyncProjects %s", fileName)
 
-		val, err := db.Table("project").Value("id", "project", project.Name)
+		projectID, err := db.Table("project").Value("id", "project", project.Name)
 		if err != nil {
-			glog.Debugf("Find Project %s Error: %v", project.Name, err)
+			glog.Fatalf("Find Project %s Error: %v", project.Name, err)
 			continue
 		}
-		if val.IsEmpty() {
+		if projectID.IsEmpty() {
 			project.ID = guid.S()
 			if _, err := db.Table("project").Data(project).Insert(); err != nil {
-				glog.Debugf("Create Project %s Error: %v", project.Name, err)
+				glog.Fatalf("Create Project %s Error: %v", project.Name, err)
 				continue
 			}
 		} else {
-			if _, err := db.Table("project").Where("id", val.String()).Data(project).Update(); err != nil {
-				glog.Debugf("Update Project %s-%s Error: %v", project.Name, val.String(), err)
+			project.ID = projectID.String()
+			if _, err := db.Table("project").Where("id", project.ID).Data(project).Update(); err != nil {
+				glog.Fatalf("Update Project %s-%s Error: %v", project.Name, project.ID, err)
 				continue
 			}
 		}
@@ -116,6 +154,5 @@ func SyncProjects() {
 }
 
 // SyncDefaultsData : 初始化默认数据
-func SyncDefaultsData() error {
-	return nil
+func SyncDefaultsData() {
 }

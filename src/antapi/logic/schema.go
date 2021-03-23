@@ -4,10 +4,12 @@ import (
 	"antapi/api/errcode"
 	"antapi/global"
 	"antapi/model"
+	"antapi/pkg/dbsm"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
+	"github.com/gogf/gf/frame/g"
 )
 
 type SchemaLogic struct{}
@@ -146,6 +148,45 @@ func (SchemaLogic) CheckFields(data *gjson.Json) error {
 // ReloadGlobalSchemas : 当某个Collection的Schema插入/更新/删除后，重新加载数据到内存
 func (SchemaLogic) ReloadGlobalSchemas(_ *gjson.Json) error {
 	global.SchemaChan <- struct{}{}
+	return nil
+}
+
+// MigrateCollectionSchema : 迁移collection，同步collection的schema和collection的数据库表结构
+func (SchemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
+	tableName := collection.GetString("name")
+	columns := make([]*dbsm.Column, 0)
+	for _, field := range collection.GetJsons("fields") {
+		col := &dbsm.Column{
+			Name:     field.GetString("name"),
+			Type:     field.GetString("type"),
+			Default:  field.GetString("default"),
+			Nullable: true,
+			IsUnique: field.GetBool("is_unique"),
+			Comment:  field.GetString("description"),
+		}
+
+		if field.GetBool("can_index") {
+			col.IndexName = col.Name
+		}
+		if col.Name == "id" {
+			col.IsAutoIncrement = true
+			col.IsPrimaryKey = true
+		}
+
+		columns = append(columns, col)
+	}
+
+	table := dbsm.NewTable(tableName, columns)
+	db := g.DB()
+	tx, err := db.Begin()
+	if err != nil {
+		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+	dialect := dbsm.NewDialect(db.GetConfig().Type)
+	if err := table.Sync(tx, dialect); err != nil {
+		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+
 	return nil
 }
 

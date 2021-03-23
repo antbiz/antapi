@@ -3,6 +3,8 @@ package dbsm
 import (
 	"fmt"
 	"strings"
+
+	"github.com/gogf/gf/database/gdb"
 )
 
 // Table .
@@ -204,4 +206,14 @@ func NewTable(tableName string, columns []*Column) *Table {
 	}
 	table.UpdateWithCols(columns)
 	return table
+}
+
+// Sync : table sync
+func (table *Table) Sync(tx *gdb.TX, dialect Dialect) error {
+	if err := sync(tx, dialect, table); err != nil {
+		tx.Rollback()
+		return err
+	}
+	tx.Commit()
+	return nil
 }
