@@ -12,7 +12,7 @@ import (
 // 常驻内存数据
 var (
 	schemaLocker sync.RWMutex
-	Schemas      map[string]*model.Schema
+	schemasMap   map[string]*model.Schema
 )
 
 // LoadSchemas : 加载全部Collection的Schema
@@ -33,11 +33,9 @@ func LoadSchemas() error {
 	schemaLocker.Lock()
 	defer schemaLocker.Unlock()
 
-	schemasMap := make(map[string]*model.Schema, len(schemas))
 	for _, schema := range schemas {
 		schemasMap[schema.Name] = schema
 	}
-	Schemas = schemasMap
 
 	glog.Info("LoadSchemas successfully!")
 	return nil
@@ -45,5 +43,5 @@ func LoadSchemas() error {
 
 // GetSchema : 从内存中获取某个Collection的Schema
 func GetSchema(collectionName string) *model.Schema {
-	return Schemas[collectionName]
+	return schemasMap[collectionName]
 }

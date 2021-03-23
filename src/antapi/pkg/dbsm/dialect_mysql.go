@@ -41,13 +41,10 @@ func (dialect *MySQLDialect) SQLType(column *Column) string {
 		column.Size = 512
 	case types.MEDIUMTEXT:
 		column.Size = 1024
-	case types.UUID:
-		column.Size = 40
-		column.IsUnique = true
-		column.IsPrimaryKey = true
-		res = "VARCHAR"
+	case types.JSON:
+		res = types.TEXT
 	case types.BOOL:
-		res = "TINYINT"
+		res = types.TINYINT
 		column.Size = 1
 	default:
 		res = t

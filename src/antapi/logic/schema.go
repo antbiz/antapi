@@ -4,7 +4,9 @@ import (
 	"antapi/api/errcode"
 	"antapi/global"
 	"antapi/model"
+	"antapi/model/fieldtype"
 	"antapi/pkg/dbsm"
+	coltype "antapi/pkg/dbsm/types"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -156,9 +158,12 @@ func (SchemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	tableName := collection.GetString("name")
 	columns := make([]*dbsm.Column, 0)
 	for _, field := range collection.GetJsons("fields") {
+		fieldType := fieldtype.FieldType(field.GetString("type"))
+		if fieldType == fieldtype.Table {
+			continue
+		}
 		col := &dbsm.Column{
 			Name:     field.GetString("name"),
-			Type:     field.GetString("type"),
 			Default:  field.GetString("default"),
 			Nullable: true,
 			IsUnique: field.GetBool("is_unique"),
@@ -168,6 +173,60 @@ func (SchemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 		if field.GetBool("can_index") {
 			col.IndexName = col.Name
 		}
+
+		if field.GetBool("is_multiple") {
+			col.Type = coltype.JSON
+		} else {
+			switch fieldType {
+			case fieldtype.String, fieldtype.Enum:
+				col.Type = coltype.VARCHAR
+			case fieldtype.UUID, fieldtype.Link:
+				col.Type = coltype.VARCHAR
+				col.IndexName = col.Name
+			case fieldtype.Email, fieldtype.Phone:
+				col.Type = coltype.VARCHAR
+				col.Size = 100
+			case fieldtype.Color, fieldtype.Password:
+				col.Type = coltype.VARCHAR
+				col.Size = 100
+				col.IndexName = ""
+				col.IsUnique = false
+			case fieldtype.URL, fieldtype.SmallText, fieldtype.Media:
+				col.Type = coltype.SMALLTEXT
+				col.IndexName = ""
+			case fieldtype.Text, fieldtype.RichText, fieldtype.Markdown, fieldtype.Code, fieldtype.HTML:
+				col.Type = coltype.TEXT
+				col.IndexName = ""
+				col.IsUnique = false
+			case fieldtype.Signature:
+				col.Type = coltype.BLOB
+				col.IndexName = ""
+				col.IsUnique = false
+			case fieldtype.JSON:
+				col.Type = coltype.JSON
+				col.IndexName = ""
+				col.IsUnique = false
+			case fieldtype.Int, fieldtype.Money:
+				col.Type = coltype.INT
+			case fieldtype.BigInt:
+				col.Type = coltype.BIGINT
+			case fieldtype.Float:
+				col.Type = coltype.FLOAT
+			case fieldtype.Date:
+				col.Type = coltype.DATE
+			case fieldtype.DateTime:
+				col.Type = coltype.DATETIME
+			case fieldtype.Time:
+				col.Type = coltype.TIME
+			case fieldtype.TimeStamp:
+				col.Type = coltype.TIMESTAMP
+			case fieldtype.Year:
+				col.Type = coltype.YEAR
+			case fieldtype.Bool:
+				col.Type = coltype.BOOL
+			}
+		}
+
 		if col.Name == "id" {
 			col.IsAutoIncrement = true
 			col.IsPrimaryKey = true

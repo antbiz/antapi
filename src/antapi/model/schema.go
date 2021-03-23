@@ -1,6 +1,7 @@
 package model
 
 import (
+	"antapi/model/fieldtype"
 	"fmt"
 	"strings"
 
@@ -60,42 +61,6 @@ type SchemaField struct {
 	EnumOptions         string      `orm:"enum_options"`
 }
 
-// FieldType .
-type FieldType string
-
-// Supported field types
-const (
-	String    FieldType = "String"
-	Color     FieldType = "Color"
-	Email     FieldType = "Email"
-	Phone     FieldType = "Phone"
-	URL       FieldType = "Url"
-	Password  FieldType = "Password"
-	Text      FieldType = "Text"
-	LongText  FieldType = "LongText"
-	RichText  FieldType = "RichText"
-	Markdown  FieldType = "Markdown"
-	Code      FieldType = "Code"
-	HTML      FieldType = "HTML"
-	Signature FieldType = "Signature"
-	Media     FieldType = "Media"
-	Enum      FieldType = "Enum"
-	JSON      FieldType = "JSON"
-	UUID      FieldType = "UUID"
-	Int       FieldType = "Int"
-	BigInt    FieldType = "BigInt"
-	Float     FieldType = "Float"
-	Money     FieldType = "Money"
-	Date      FieldType = "Date"
-	DateTime  FieldType = "DateTime"
-	Time      FieldType = "Time"
-	TimeStamp FieldType = "TimeStamp"
-	Year      FieldType = "Year"
-	Bool      FieldType = "Bool"
-	Link      FieldType = "Link"
-	Table     FieldType = "Table"
-)
-
 // DefaultFieldNames : 所有默认的字段
 // var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd", "created_at", "updated_at", "deleted_at", "created_by", "updated_by"}
 
@@ -103,7 +68,7 @@ const (
 func (schema *Schema) GetPublicFieldNames() []string {
 	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden || FieldType(field.Type) == Table {
+		if field.IsPrivate || field.IsHidden || fieldtype.FieldType(field.Type) == fieldtype.Table {
 			continue
 		}
 		fieldNames = append(fieldNames, field.Name)
@@ -115,7 +80,7 @@ func (schema *Schema) GetPublicFieldNames() []string {
 func (schema *Schema) GetPublicFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden || FieldType(field.Type) == Table {
+		if field.IsPrivate || field.IsHidden || fieldtype.FieldType(field.Type) == fieldtype.Table {
 			continue
 		}
 		fields = append(fields, field)
@@ -158,7 +123,7 @@ func (schema *Schema) GetLinkFieldNames() []string {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if field.RelatedCollection != "" && FieldType(field.Type) == Link {
+		if field.RelatedCollection != "" && fieldtype.FieldType(field.Type) == fieldtype.Link {
 			fieldNames = append(fieldNames, field.Name)
 		}
 	}
@@ -172,7 +137,7 @@ func (schema *Schema) GetLinkFields() []*SchemaField {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if field.RelatedCollection != "" && FieldType(field.Type) == Link {
+		if field.RelatedCollection != "" && fieldtype.FieldType(field.Type) == fieldtype.Link {
 			fields = append(fields, field)
 		}
 	}
@@ -197,7 +162,7 @@ func (schema *Schema) GetTableFieldNames() []string {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if field.RelatedCollection != "" && FieldType(field.Type) == Table {
+		if field.RelatedCollection != "" && fieldtype.FieldType(field.Type) == fieldtype.Table {
 			fieldNames = append(fieldNames, field.Name)
 		}
 	}
@@ -211,7 +176,7 @@ func (schema *Schema) GetTableFields() []*SchemaField {
 		if field.IsPrivate || field.IsHidden {
 			continue
 		}
-		if field.RelatedCollection != "" && FieldType(field.Type) == Table {
+		if field.RelatedCollection != "" && fieldtype.FieldType(field.Type) == fieldtype.Table {
 			fields = append(fields, field)
 		}
 	}
@@ -246,24 +211,24 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 	}
 
 	// 通过字段类型做校验
-	switch FieldType(field.Type) {
-	case Email:
+	switch fieldtype.FieldType(field.Type) {
+	case fieldtype.Email:
 		rule = "email"
-	case Phone:
+	case fieldtype.Phone:
 		rule = "phone"
-	case URL:
+	case fieldtype.URL:
 		rule = "url"
-	case Date:
+	case fieldtype.Date:
 		rule = "date"
-	case JSON:
+	case fieldtype.JSON:
 		rule = "json"
-	case Int:
+	case fieldtype.Int:
 		rule = "integer"
-	case Float:
+	case fieldtype.Float:
 		rule = "float"
-	case Bool:
+	case fieldtype.Bool:
 		rule = "boolean"
-	case Enum:
+	case fieldtype.Enum:
 		var enumOptions []string
 		if field.EnumOptions != "" {
 			if j, err := gjson.LoadContent(fmt.Sprintf(`{"options":%s}`, field.EnumOptions)); err == nil {

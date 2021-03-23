@@ -22,6 +22,7 @@ func Sync() {
 
 // SyncCollections : 读取collection，更新对应数据库表
 func SyncCollections() {
+	glog.Debug("Migrate database tables")
 	collectionFilePath := fmt.Sprintf("%s/model/collection", gfile.MainPkgPath())
 	collectionFileNames, err := gfile.DirNames(collectionFilePath)
 	if err != nil {
@@ -33,11 +34,11 @@ func SyncCollections() {
 		glog.Debugf("SyncCollections %s", fileName)
 		collection, err := gjson.Load(fmt.Sprintf("%s/%s.json", collectionFilePath, fileName))
 		if err != nil {
-			glog.Debugf("SyncCollections %s Error: %v", fileName, err)
+			glog.Fatalf("SyncCollections %s Error: %v", fileName, err)
 			continue
 		}
 		if err := logic.DefaultSchemaLogic.MigrateCollectionSchema(collection); err != nil {
-			glog.Debugf("Migrate Collections %s Error: %v", fileName, err)
+			glog.Fatalf("Migrate Collections %s Error: %v", fileName, err)
 			continue
 		}
 	}
@@ -45,6 +46,7 @@ func SyncCollections() {
 
 // SyncSchemas : 同步collection的schema到 `schema` 数据表
 func SyncSchemas() {
+	glog.Debug("Update table schema data")
 	collectionFilePath := fmt.Sprintf("%s/model/collection", gfile.MainPkgPath())
 	collectionFileNames, err := gfile.DirNames(collectionFilePath)
 	if err != nil {
@@ -111,6 +113,7 @@ func SyncSchemas() {
 
 // SyncProjects : 同步projects数据到 `project` 数据表
 func SyncProjects() {
+	glog.Debug("Update table project data")
 	projectFilePath := fmt.Sprintf("%s/model/project", gfile.MainPkgPath())
 	projectFileNames, err := gfile.DirNames(projectFilePath)
 	if err != nil {
