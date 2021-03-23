@@ -2,8 +2,8 @@ package dao
 
 import (
 	"antapi/app/errcode"
-	"antapi/app/hooks"
-	"antapi/app/logic"
+	"antapi/app/global"
+	"antapi/app/model"
 	"fmt"
 	"strings"
 
@@ -13,10 +13,24 @@ import (
 	"github.com/gogf/gf/frame/g"
 )
 
+// getLinkPathIncludeTableInner : 获取所有link字段的路径，包括子表
+func getLinkPathIncludeTableInner(schema *model.Schema) (paths map[string][]string) {
+	for _, linkField := range schema.GetLinkFields() {
+		paths[linkField.RelatedCollection] = append(paths[linkField.RelatedCollection], linkField.Name)
+	}
+	for _, tableField := range schema.GetTableFields() {
+		tableSchema := global.GetSchema(tableField.RelatedCollection)
+		for _, tableLinkField := range tableSchema.GetLinkFields() {
+			paths[tableLinkField.RelatedCollection] = append(paths[tableLinkField.RelatedCollection], fmt.Sprintf("%s.%s", tableField.Name, tableLinkField.Name))
+		}
+	}
+	return
+}
+
 // Get : 获取单个数据
 func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.Json, error) {
 	db := g.DB()
-	schema := logic.GetSchema(collectionName)
+	schema := global.GetSchema(collectionName)
 
 	record, err := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...).One()
 	if err != nil {
@@ -26,7 +40,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 
 	// 查询子表数据
 	for _, field := range schema.GetTableFields() {
-		tableSchema := logic.GetSchema(field.RelatedCollection)
+		tableSchema := global.GetSchema(field.RelatedCollection)
 
 		tableRecords, err := db.Table(field.RelatedCollection).
 			Fields(tableSchema.GetTableFieldNames()).
@@ -42,7 +56,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 	}
 
 	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
-	for linkCollectionName, linkPaths := range logic.Schema.GetLinkPathIncludeTableInner(schema) {
+	for linkCollectionName, linkPaths := range getLinkPathIncludeTableInner(schema) {
 		var (
 			linkIds                   []string
 			tableRecordsLenByLinkPath map[string]int
@@ -90,7 +104,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 	}
 
 	// 执行 AfterFindHooks 勾子
-	for _, hook := range hooks.GetAfterFindHooksByCollectionName(collectionName) {
+	for _, hook := range global.GetAfterFindHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return dataGJson, err
 		}
@@ -102,7 +116,7 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 // GetList : 获取列表数据
 func GetList(collectionName string, pageNum, pageSize int, where interface{}, args ...interface{}) (list *gjson.Json, total int, err error) {
 	db := g.DB()
-	schema := logic.GetSchema(collectionName)
+	schema := global.GetSchema(collectionName)
 
 	// 查询指定范围内主体数据list
 	m := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...)
@@ -128,7 +142,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 
 	// 查询指定范围内子表数据，先批量获取然后再按属性分配
 	for _, tableCollectionName := range schema.GetTableCollectionNames() {
-		tableSchema := logic.GetSchema(tableCollectionName)
+		tableSchema := global.GetSchema(tableCollectionName)
 
 		tableRecords, err := db.Table(tableCollectionName).
 			Fields(tableSchema.GetPublicFieldNames()).
@@ -166,7 +180,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	}
 
 	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
-	for linkCollectionName, linkPaths := range logic.Schema.GetLinkPathIncludeTableInner(schema) {
+	for linkCollectionName, linkPaths := range getLinkPathIncludeTableInner(schema) {
 		var (
 			linkIds                   []string
 			tableRecordsLenByLinkPath map[string]int
@@ -220,7 +234,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	// 执行 AfterFindHooks 勾子
 	for i := 0; i < recordsLen; i++ {
 		dataGJson := list.GetJson(fmt.Sprintf("%d", i))
-		for _, hook := range hooks.GetAfterFindHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetAfterFindHooksByCollectionName(collectionName) {
 			if err = hook(dataGJson); err != nil {
 				return
 			}

@@ -20,13 +20,13 @@ func (userLogic) EncryptPwd(username, password string) string {
 }
 
 // GetUserByLogin 根据 用户名/手机号/邮箱 + 密码 查询用户信息
-func (userLogic) GetUserByLogin(login, pwd string) (data *gjson.Json, err error) {
+func (self userLogic) GetUserByLogin(login, pwd string) (data *gjson.Json, err error) {
 	if data, err = dao.Get("user", "username=? or phone=? or email=?", g.Slice{login, login, login}); err != nil {
 		return
 	}
 	username := data.GetString("username")
 	password := data.GetString("password")
-	if userLogic.EncryptPwd(username, pwd) != password {
+	if self.EncryptPwd(username, pwd) != password {
 		return nil, gerror.NewCode(errcode.IncorrectUsernameOrPassword, errcode.IncorrectUsernameOrPasswordMsg)
 	}
 	return data, nil

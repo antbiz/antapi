@@ -2,8 +2,7 @@ package dao
 
 import (
 	"antapi/app/errcode"
-	"antapi/app/hooks"
-	"antapi/app/logic"
+	"antapi/app/global"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -14,7 +13,7 @@ import (
 // Delete : 删除指定数据
 func Delete(collectionName string, where interface{}, args ...interface{}) error {
 	db := g.DB()
-	schema := logic.GetSchema(collectionName)
+	schema := global.GetSchema(collectionName)
 
 	// 查询需要删除的id
 	var delIds []string
@@ -36,7 +35,7 @@ func Delete(collectionName string, where interface{}, args ...interface{}) error
 
 	// 执行 BeforeDelete 勾子
 	for _, recordGJson := range recordsGJsonSlice {
-		for _, hook := range hooks.GetBeforeDeleteHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetBeforeDeleteHooksByCollectionName(collectionName) {
 			if err := hook(recordGJson); err != nil {
 				return err
 			}
@@ -57,7 +56,7 @@ func Delete(collectionName string, where interface{}, args ...interface{}) error
 
 	// 执行 AfterDelete 勾子
 	for _, recordGJson := range recordsGJsonSlice {
-		for _, hook := range hooks.GetAfterDeleteHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetAfterDeleteHooksByCollectionName(collectionName) {
 			if err := hook(recordGJson); err != nil {
 				return err
 			}

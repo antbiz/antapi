@@ -1,20 +1,23 @@
 package hooks
 
-import "antapi/app/logic"
+import (
+	"antapi/app/global"
+	"antapi/app/logic"
+)
 
 // RegisterSchemaHooks : 注册Schema的所有勾子
 func RegisterSchemaHooks() {
 	collectionName := "schema"
-	registerBeforeSaveHooks(
+	global.RegisterBeforeSaveHooks(
 		collectionName,
 		logic.Schema.CheckFields,
 	)
-	registerAfterSaveHooks(
+	global.RegisterAfterSaveHooks(
 		collectionName,
 		logic.Schema.MigrateCollectionSchema,
 		logic.Schema.ReloadGlobalSchemas,
 	)
-	registerAfterDeleteHooks(
+	global.RegisterAfterDeleteHooks(
 		collectionName,
 		logic.Schema.ReloadGlobalSchemas,
 	)

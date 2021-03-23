@@ -1,4 +1,4 @@
-package logic
+package global
 
 import (
 	"antapi/app/model"

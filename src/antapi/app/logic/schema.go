@@ -2,9 +2,8 @@ package logic
 
 import (
 	"antapi/app/errcode"
-	"antapi/app/model"
+	"antapi/app/global"
 	"antapi/app/model/fieldtype"
-	"antapi/global"
 	"antapi/pkg/dbsm"
 	coltype "antapi/pkg/dbsm/types"
 	"fmt"
@@ -247,18 +246,4 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	}
 
 	return nil
-}
-
-// GetLinkPathIncludeTableInner : 获取所有link字段的路径，包括子表
-func (schemaLogic) GetLinkPathIncludeTableInner(schema *model.Schema) (paths map[string][]string) {
-	for _, linkField := range schema.GetLinkFields() {
-		paths[linkField.RelatedCollection] = append(paths[linkField.RelatedCollection], linkField.Name)
-	}
-	for _, tableField := range schema.GetTableFields() {
-		tableSchema := GetSchema(tableField.RelatedCollection)
-		for _, tableLinkField := range tableSchema.GetLinkFields() {
-			paths[tableLinkField.RelatedCollection] = append(paths[tableLinkField.RelatedCollection], fmt.Sprintf("%s.%s", tableField.Name, tableLinkField.Name))
-		}
-	}
-	return
 }

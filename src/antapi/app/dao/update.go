@@ -2,8 +2,7 @@ package dao
 
 import (
 	"antapi/app/errcode"
-	"antapi/app/hooks"
-	"antapi/app/logic"
+	"antapi/app/global"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -19,15 +18,15 @@ func Update(collectionName string, id string, data interface{}) error {
 	if err != nil {
 		return gerror.WrapCode(errcode.JSONError, err, errcode.JSONErrorMsg)
 	}
-	schema := logic.GetSchema(collectionName)
+	schema := global.GetSchema(collectionName)
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
-	for _, hook := range hooks.GetBeforeUpdateHooksByCollectionName(collectionName) {
+	for _, hook := range global.GetBeforeUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
 	}
-	for _, hook := range hooks.GetBeforeSaveHooksByCollectionName(collectionName) {
+	for _, hook := range global.GetBeforeSaveHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
@@ -53,7 +52,7 @@ func Update(collectionName string, id string, data interface{}) error {
 			continue
 		}
 		tableContent := make([]map[string]interface{}, 0)
-		tableSchema := logic.GetSchema(field.RelatedCollection)
+		tableSchema := global.GetSchema(field.RelatedCollection)
 
 		tableIds := make([]string, tableRowsLen)
 		for i := 0; i < tableRowsLen; i++ {
@@ -96,12 +95,12 @@ func Update(collectionName string, id string, data interface{}) error {
 	}
 
 	// 执行 AfterUpdateHooks, AfterSaveHooks 勾子
-	for _, hook := range hooks.GetAfterUpdateHooksByCollectionName(collectionName) {
+	for _, hook := range global.GetAfterUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}
 	}
-	for _, hook := range hooks.GetAfterSaveHooksByCollectionName(collectionName) {
+	for _, hook := range global.GetAfterSaveHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
 			return err
 		}

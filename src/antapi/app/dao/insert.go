@@ -2,8 +2,7 @@ package dao
 
 import (
 	"antapi/app/errcode"
-	"antapi/app/hooks"
-	"antapi/app/logic"
+	"antapi/app/global"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -29,7 +28,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		return nil, nil
 	}
 	db := g.DB()
-	schema := logic.GetSchema(collectionName)
+	schema := global.GetSchema(collectionName)
 
 	ids := make([]string, 0, dataLen)
 
@@ -44,12 +43,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
 	for _, dataGJson := range dataGJsonSlice {
-		for _, hook := range hooks.GetBeforeInsertHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetBeforeInsertHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
 		}
-		for _, hook := range hooks.GetBeforeSaveHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetBeforeSaveHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
@@ -88,7 +87,7 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 			if tableRowsLen == 0 {
 				continue
 			}
-			tableSchema := logic.GetSchema(field.RelatedCollection)
+			tableSchema := global.GetSchema(field.RelatedCollection)
 
 			for j := 0; j < tableRowsLen; j++ {
 				var tableRowContent map[string]interface{}
@@ -123,12 +122,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 	// 执行 AfterInsertHooks, AfterSaveHooks 勾子
 	for _, dataGJson := range dataGJsonSlice {
-		for _, hook := range hooks.GetAfterInsertHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetAfterInsertHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
 		}
-		for _, hook := range hooks.GetAfterSaveHooksByCollectionName(collectionName) {
+		for _, hook := range global.GetAfterSaveHooksByCollectionName(collectionName) {
 			if err := hook(dataGJson); err != nil {
 				return nil, err
 			}
