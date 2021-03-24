@@ -1,9 +1,10 @@
 # HTTP Server
 [server]
-	Address     = ":8199"
-	ServerRoot  = "public"
-	ServerAgent = "antapi"
-	LogPath     = "../../logs/antapi/server"
+	Address       = ":8199"
+	ServerRoot    = "public"
+	ServerAgent   = "antapi"
+    SessionIdName = "x-antapi-sid"
+	LogPath       = "../../logs/antapi/server"
 
 # Logger.
 [logger]

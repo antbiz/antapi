@@ -9,6 +9,7 @@ import (
 
 func init() {
 	s := g.Server()
+
 	s.Group("/api/business", func(group *ghttp.RouterGroup) {
 		// 查询 {collection} 列表
 		group.GET("/{collection}", api.Biz.GetList)
@@ -20,5 +21,10 @@ func init() {
 		group.PATCH("/{collection}/{id}", api.Biz.Update)
 		// 删除 {collection}
 		group.DELETE("/{collection}/{id}", api.Biz.Delete)
+	})
+
+	// TODO: 集成三方登录
+	s.Group("/api/signin", func(group *ghttp.RouterGroup) {
+		group.POST("/byuser", api.SignIn.SignInByUser)
 	})
 }

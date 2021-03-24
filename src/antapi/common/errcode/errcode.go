@@ -20,8 +20,11 @@ const (
 	JSONError             = 10016
 
 	// 服务级错误代码 - 用户
-	IllegalUsername             = 20001
-	IncorrectUsernameOrPassword = 20002
+	IncorrectUsernameOrPassword = 20001
+	IllegalUsername             = 20002
+	ExistsUserName              = 20003
+	ExistsUserEmail             = 20004
+	ExistsUserPhone             = 20005
 )
 
 const (
@@ -41,6 +44,9 @@ const (
 	MissRequiredParameterMsg       = "缺失必选参数 (%s)"
 	ResubmitErrorMsg               = "请勿重复提交"
 	JSONErrorMsg                   = "无效的JSON"
-	IllegalUsernameMsg             = "非法用户名 (%s)"
 	IncorrectUsernameOrPasswordMsg = "账号或密码错误"
+	IllegalUsernameMsg             = "非法用户名 (%s)"
+	ExistsUserNameMsg              = "已存在用户名 (%s)"
+	ExistsUserEmailMsg             = "已存在用户邮箱 (%s)"
+	ExistsUserPhoneMsg             = "已存在用户手机号 (%s)"
 )

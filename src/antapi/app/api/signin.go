@@ -1,10 +1,12 @@
 package api
 
 import (
-	"antapi/common/errcode"
+	"antapi/app/logic"
 	"antapi/app/model"
+	"antapi/common/errcode"
 	"antapi/common/resp"
 
+	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/net/ghttp"
 )
 
@@ -18,4 +20,9 @@ func (signInApi) SignInByUser(r *ghttp.Request) {
 	if err := r.Parse(&data); err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
+	res, err := logic.User.SignIn(data, r)
+	if err != nil {
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+	}
+	resp.Success(r).SetData(res).Json()
 }
