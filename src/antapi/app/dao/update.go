@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"antapi/app/errcode"
+	"antapi/common/errcode"
 	"antapi/app/global"
 	"fmt"
 
@@ -12,7 +12,7 @@ import (
 )
 
 // Update : 更新单个数据
-func Update(collectionName string, id string, data interface{}) error {
+func Update(collectionName string, arg *UpdateFuncArg, id string, data interface{}) error {
 	db := g.DB()
 	dataGJson, err := gjson.LoadJson(data)
 	if err != nil {
@@ -34,10 +34,12 @@ func Update(collectionName string, id string, data interface{}) error {
 
 	// 更新主体数据
 	var content map[string]interface{}
-	for _, field := range schema.GetPublicFields() {
+	for _, field := range schema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 		val := dataGJson.Get(field.Name)
-		if validErr := field.CheckFieldValue(val); validErr != nil {
-			return gerror.NewCode(errcode.ParameterBindError, validErr.String())
+		if !arg.IgnoreFieldValueCheck {
+			if validErr := field.CheckFieldValue(val); validErr != nil {
+				return gerror.NewCode(errcode.ParameterBindError, validErr.String())
+			}
 		}
 		content[field.Name] = val
 	}
@@ -68,10 +70,12 @@ func Update(collectionName string, id string, data interface{}) error {
 			tableIds = append(tableIds, tableRowId)
 
 			var tableRowContent map[string]interface{}
-			for _, tableField := range tableSchema.GetPublicFields() {
+			for _, tableField := range tableSchema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 				val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, i, tableField.Name))
-				if validErr := field.CheckFieldValue(val); validErr != nil {
-					return gerror.NewCode(errcode.ParameterBindError, validErr.String())
+				if !arg.IgnoreFieldValueCheck {
+					if validErr := field.CheckFieldValue(val); validErr != nil {
+						return gerror.NewCode(errcode.ParameterBindError, validErr.String())
+					}
 				}
 				tableRowContent[tableField.Name] = val
 			}

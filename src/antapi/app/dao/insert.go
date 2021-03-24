@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"antapi/app/errcode"
+	"antapi/common/errcode"
 	"antapi/app/global"
 	"fmt"
 
@@ -12,8 +12,8 @@ import (
 )
 
 // Insert : 插入单个数据，返回插入的主体id
-func Insert(collectionName string, data interface{}) (string, error) {
-	res, err := InsertList(collectionName, data)
+func Insert(collectionName string, arg *InsertFuncArg, data interface{}) (string, error) {
+	res, err := InsertList(collectionName, arg, data)
 	if err != nil {
 		return "", err
 	}
@@ -22,7 +22,7 @@ func Insert(collectionName string, data interface{}) (string, error) {
 
 // InsertList : 插入多个数据，返回一组插入的主体id
 // TODO: 需要考虑子表数据校验的提示信息
-func InsertList(collectionName string, data ...interface{}) ([]string, error) {
+func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) ([]string, error) {
 	dataLen := len(data)
 	if dataLen == 0 {
 		return nil, nil
@@ -64,10 +64,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 		dataGJson.Set("id", id)
 
 		var content map[string]interface{}
-		for _, field := range schema.GetPublicFields() {
+		for _, field := range schema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 			val := dataGJson.Get(field.Name)
-			if validErr := field.CheckFieldValue(val); validErr != nil {
-				return nil, gerror.NewCode(errcode.ParameterBindError, validErr.String())
+			if !arg.IgnoreFieldValueCheck {
+				if validErr := field.CheckFieldValue(val); validErr != nil {
+					return nil, gerror.NewCode(errcode.ParameterBindError, validErr.String())
+				}
 			}
 			content[field.Name] = val
 		}
@@ -91,10 +93,12 @@ func InsertList(collectionName string, data ...interface{}) ([]string, error) {
 
 			for j := 0; j < tableRowsLen; j++ {
 				var tableRowContent map[string]interface{}
-				for _, tableField := range tableSchema.GetPublicFields() {
+				for _, tableField := range tableSchema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 					val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, j, tableField.Name))
-					if validErr := field.CheckFieldValue(val); validErr != nil {
-						return nil, gerror.NewCode(errcode.ParameterBindError, validErr.String())
+					if !arg.IgnoreFieldValueCheck {
+						if validErr := field.CheckFieldValue(val); validErr != nil {
+							return nil, gerror.NewCode(errcode.ParameterBindError, validErr.String())
+						}
 					}
 					tableRowContent[tableField.Name] = val
 				}

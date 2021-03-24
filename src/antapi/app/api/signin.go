@@ -1,9 +1,9 @@
 package api
 
 import (
-	"antapi/app/errcode"
+	"antapi/common/errcode"
 	"antapi/app/model"
-	"antapi/app/resp"
+	"antapi/common/resp"
 
 	"github.com/gogf/gf/net/ghttp"
 )

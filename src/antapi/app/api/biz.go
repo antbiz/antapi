@@ -2,8 +2,8 @@ package api
 
 import (
 	"antapi/app/dao"
-	"antapi/app/errcode"
-	"antapi/app/resp"
+	"antapi/common/errcode"
+	"antapi/common/resp"
 
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
@@ -25,8 +25,11 @@ type getListReq struct {
 func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
+	arg := &dao.GetFuncArg{
+		Where: g.Map{"id": id},
+	}
 
-	if res, err := dao.Get(collectionName, g.Map{"id": id}); err != nil {
+	if res, err := dao.Get(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(res.MustToJsonString()).Json()
@@ -40,8 +43,13 @@ func (bizApi) GetList(r *ghttp.Request) {
 	if err := r.ParseQuery(&reqArgs); err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
+	arg := &dao.GetListFuncArg{
+		PageNum:  reqArgs.Page,
+		PageSize: reqArgs.Size,
+		Order:    reqArgs.Sort,
+	}
 
-	if res, total, err := dao.GetList(collectionName, reqArgs.Page, reqArgs.Size, nil); err != nil {
+	if res, total, err := dao.GetList(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(resp.ListsData{List: res.MustToJsonString(), Total: total}).Json()
@@ -52,7 +60,7 @@ func (bizApi) GetList(r *ghttp.Request) {
 func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 
-	if id, err := dao.Insert(collectionName, r.GetBodyString()); err != nil {
+	if id, err := dao.Insert(collectionName, &dao.InsertFuncArg{}, r.GetBodyString()); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(g.Map{"id": id}).Json()
@@ -64,7 +72,7 @@ func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 
-	if err := dao.Update(collectionName, id, r.GetBodyString()); err != nil {
+	if err := dao.Update(collectionName, &dao.UpdateFuncArg{}, id, r.GetBodyString()); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).Json()
@@ -75,8 +83,12 @@ func (bizApi) Update(r *ghttp.Request) {
 func (bizApi) Delete(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
+	arg := &dao.DeleteFuncArg{
+		Where:     "id",
+		WhereArgs: gstr.SplitAndTrimSpace(id, ","),
+	}
 
-	if err := dao.Delete(collectionName, "id", gstr.SplitAndTrimSpace(id, ",")); err != nil {
+	if err := dao.Delete(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).Json()

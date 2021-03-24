@@ -1,7 +1,7 @@
 package logic
 
 import (
-	"antapi/app/errcode"
+	"antapi/common/errcode"
 	"antapi/app/global"
 	"antapi/app/model/fieldtype"
 	"antapi/pkg/dbsm"

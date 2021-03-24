@@ -5,8 +5,11 @@ package dao
 // GetFuncArg .
 type GetFuncArg struct {
 	Where               interface{}
+	WhereArgs           interface{}
 	Or                  interface{}
+	OrArgs              interface{}
 	Having              interface{}
+	HavingArgs          interface{}
 	Fields              []string
 	IgnoreFieldsCheck   bool
 	IncludeHiddenField  bool
@@ -16,8 +19,11 @@ type GetFuncArg struct {
 // GetListFuncArg .
 type GetListFuncArg struct {
 	Where               interface{}
+	WhereArgs           interface{}
 	Or                  interface{}
+	OrArgs              interface{}
 	Having              interface{}
+	HavingArgs          interface{}
 	Fields              []string
 	IgnoreFieldsCheck   bool
 	Group               string
@@ -30,52 +36,34 @@ type GetListFuncArg struct {
 
 // ExistsAndCountFuncArg .
 type ExistsAndCountFuncArg struct {
-	Where  interface{}
-	Or     interface{}
-	Having interface{}
+	Where      interface{}
+	WhereArgs  interface{}
+	Or         interface{}
+	OrArgs     interface{}
+	Having     interface{}
+	HavingArgs interface{}
 }
 
 // InsertFuncArg .
 type InsertFuncArg struct {
-	IgnoreFieldsCheck   bool
-	IgnoreFieldRequired bool
-	IncludeHiddenField  bool
-	IncludePrivateField bool
-}
-
-// InsertListFuncArg .
-type InsertListFuncArg struct {
-	IgnoreFieldsCheck   bool
-	IgnoreFieldRequired bool
-	IncludeHiddenField  bool
-	IncludePrivateField bool
+	IgnoreFieldValueCheck bool
+	IncludeHiddenField    bool
+	IncludePrivateField   bool
 }
 
 // UpdateFuncArg .
 type UpdateFuncArg struct {
-	Where               interface{}
-	Or                  interface{}
-	IgnoreFieldsCheck   bool
-	IgnoreFieldRequired bool
-	IncludeHiddenField  bool
-	IncludePrivateField bool
-}
-
-// UpdateListFuncArg .
-type UpdateListFuncArg struct {
-	Where               interface{}
-	Or                  interface{}
-	IgnoreFieldsCheck   bool
-	IgnoreFieldRequired bool
-	IncludeHiddenField  bool
-	IncludePrivateField bool
+	IgnoreFieldValueCheck bool
+	IncludeHiddenField    bool
+	IncludePrivateField   bool
 }
 
 // DeleteFuncArg .
 type DeleteFuncArg struct {
-	Where               interface{}
-	Or                  interface{}
-	Having              interface{}
-	IncludeHiddenField  bool
-	IncludePrivateField bool
+	Where      interface{}
+	WhereArgs  interface{}
+	Or         interface{}
+	OrArgs     interface{}
+	Having     interface{}
+	HavingArgs interface{}
 }

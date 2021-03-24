@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"antapi/app/errcode"
+	"antapi/common/errcode"
 	"antapi/app/global"
 	"fmt"
 
@@ -11,13 +11,13 @@ import (
 )
 
 // Delete : 删除指定数据
-func Delete(collectionName string, where interface{}, args ...interface{}) error {
+func Delete(collectionName string, arg *DeleteFuncArg) error {
 	db := g.DB()
 	schema := global.GetSchema(collectionName)
 
 	// 查询需要删除的id
 	var delIds []string
-	records, err := db.Table(collectionName).Where(where, args...).All()
+	records, err := db.Table(collectionName).Where(arg.Where, arg.WhereArgs).Or(arg.Or, arg.OrArgs).Having(arg.Having, arg.WhereArgs).All()
 	if err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}

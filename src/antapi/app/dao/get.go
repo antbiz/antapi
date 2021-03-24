@@ -1,7 +1,7 @@
 package dao
 
 import (
-	"antapi/app/errcode"
+	"antapi/common/errcode"
 	"antapi/app/global"
 	"antapi/app/model"
 	"fmt"
@@ -32,7 +32,7 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 	db := g.DB()
 	schema := global.GetSchema(collectionName)
 
-	m := db.Table(collectionName).Where(arg.Where).Or(arg.Or).Having(arg.Having)
+	m := db.Table(collectionName).Where(arg.Where, arg.WhereArgs).Or(arg.Or, arg.OrArgs).Having(arg.Having, arg.HavingArgs)
 	if len(arg.Fields) > 0 {
 		if arg.IgnoreFieldsCheck {
 			m.Fields(arg.Fields)
@@ -65,6 +65,9 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 	if err != nil {
 		return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
+	if record.IsEmpty() {
+		return nil, nil
+	}
 	dataGJson := gjson.New(record.Json())
 
 	// 查询子表数据
@@ -72,7 +75,7 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 		tableSchema := global.GetSchema(field.RelatedCollection)
 
 		tableRecords, err := db.Table(field.RelatedCollection).
-			Fields(tableSchema.GetTableFieldNames()).
+			Fields(tableSchema.GetFieldNames(arg.IncludeHiddenField, arg.IncludePrivateField)).
 			Order("idx asc").
 			Where("pid", dataGJson.Get("id")).
 			Where("pcn", collectionName).
@@ -108,7 +111,9 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 			}
 
 		}
-		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
+
+		linkCollectionFieldNames := global.GetSchema(linkCollectionName).GetFieldNames(false, false)
+		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionFieldNames).Where("id", linkIds).All()
 		if err != nil {
 			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
@@ -148,7 +153,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 	schema := global.GetSchema(collectionName)
 
 	// 查询指定范围内主体数据list
-	m := db.Table(collectionName).Where(arg.Where).Or(arg.Or).Having(arg.Having)
+	m := db.Table(collectionName).Where(arg.Where, arg.WhereArgs).Or(arg.Or, arg.OrArgs).Having(arg.Having, arg.HavingArgs)
 	if len(arg.Fields) > 0 {
 		if arg.IgnoreFieldsCheck {
 			m.Fields(arg.Fields)
@@ -188,6 +193,9 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 	if err != nil {
 		return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
+	if records.IsEmpty() {
+		return nil, 0, nil
+	}
 
 	recordsLen := records.Len()
 	list = gjson.New(records.Json())
@@ -202,7 +210,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 		tableSchema := global.GetSchema(tableCollectionName)
 
 		tableRecords, err := db.Table(tableCollectionName).
-			Fields(tableSchema.GetFieldNames(false, false)).
+			Fields(tableSchema.GetFieldNames(arg.IncludeHiddenField, arg.IncludePrivateField)).
 			Order("idx asc").
 			Where("pcn", collectionName).
 			Where("pid", ids).
@@ -262,7 +270,9 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 			}
 
 		}
-		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionName).Where("id", linkIds).All()
+
+		linkCollectionFieldNames := global.GetSchema(linkCollectionName).GetFieldNames(false, false)
+		linkRecords, err := db.Table(linkCollectionName).Fields(linkCollectionFieldNames).Where("id", linkIds).All()
 		if err != nil {
 			return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
@@ -303,7 +313,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 
 // Count : 查询统计
 func Count(collectionName string, arg *ExistsAndCountFuncArg) (int, error) {
-	total, err := g.Table(collectionName).Where(arg.Where).Or(arg.Or).Having(arg.Having).Count()
+	total, err := g.Table(collectionName).Where(arg.Where, arg.WhereArgs).Or(arg.Or, arg.OrArgs).Having(arg.Having, arg.HavingArgs).Count()
 	if err != nil {
 		return 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
