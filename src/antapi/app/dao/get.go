@@ -28,11 +28,40 @@ func getLinkPathIncludeTableInner(schema *model.Schema) (paths map[string][]stri
 }
 
 // Get : 获取单个数据
-func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.Json, error) {
+func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 	db := g.DB()
 	schema := global.GetSchema(collectionName)
 
-	record, err := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...).One()
+	m := db.Table(collectionName).Where(arg.Where).Or(arg.Or).Having(arg.Having)
+	if len(arg.Fields) > 0 {
+		if arg.IgnoreFieldsCheck {
+			m.Fields(arg.Fields)
+		} else {
+			passFieldNames := make([]string, 0)
+			allFieldNames := garray.NewStrArrayFrom(schema.GetFieldNames(true, true))
+			hiddenFieldNames := garray.NewStrArrayFrom(schema.GetHiddenFieldNames())
+			privateFieldNames := garray.NewStrArrayFrom(schema.GetPrivateFieldNames())
+			for _, fieldName := range arg.Fields {
+				if fieldName == "" {
+					continue
+				}
+				if !allFieldNames.Contains(fieldName) {
+					continue
+				}
+				if !arg.IncludeHiddenField && hiddenFieldNames.Contains(fieldName) {
+					continue
+				}
+				if !arg.IncludePrivateField && privateFieldNames.Contains(fieldName) {
+					continue
+				}
+				passFieldNames = append(passFieldNames, fieldName)
+			}
+			m.Fields(passFieldNames)
+		}
+	} else {
+		m.Fields(schema.GetFieldNames(arg.IncludeHiddenField, arg.IncludePrivateField))
+	}
+	record, err := m.One()
 	if err != nil {
 		return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
@@ -114,14 +143,42 @@ func Get(collectionName string, where interface{}, args ...interface{}) (*gjson.
 }
 
 // GetList : 获取列表数据
-func GetList(collectionName string, pageNum, pageSize int, where interface{}, args ...interface{}) (list *gjson.Json, total int, err error) {
+func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, total int, err error) {
 	db := g.DB()
 	schema := global.GetSchema(collectionName)
 
 	// 查询指定范围内主体数据list
-	m := db.Table(collectionName).Fields(schema.GetPublicFieldNames()).Where(where, args...)
-	if pageNum > 0 && pageSize > 0 {
-		m = m.Limit((pageNum-1)*pageSize, pageSize)
+	m := db.Table(collectionName).Where(arg.Where).Or(arg.Or).Having(arg.Having)
+	if len(arg.Fields) > 0 {
+		if arg.IgnoreFieldsCheck {
+			m.Fields(arg.Fields)
+		} else {
+			passFieldNames := make([]string, 0)
+			allFieldNames := garray.NewStrArrayFrom(schema.GetFieldNames(true, true))
+			hiddenFieldNames := garray.NewStrArrayFrom(schema.GetHiddenFieldNames())
+			privateFieldNames := garray.NewStrArrayFrom(schema.GetPrivateFieldNames())
+			for _, fieldName := range arg.Fields {
+				if fieldName == "" {
+					continue
+				}
+				if !allFieldNames.Contains(fieldName) {
+					continue
+				}
+				if !arg.IncludeHiddenField && hiddenFieldNames.Contains(fieldName) {
+					continue
+				}
+				if !arg.IncludePrivateField && privateFieldNames.Contains(fieldName) {
+					continue
+				}
+				passFieldNames = append(passFieldNames, fieldName)
+			}
+			m.Fields(passFieldNames)
+		}
+	} else {
+		m.Fields(schema.GetFieldNames(arg.IncludeHiddenField, arg.IncludePrivateField))
+	}
+	if arg.PageNum > 0 && arg.PageSize > 0 {
+		m.Limit((arg.PageNum-1)*arg.PageSize, arg.PageSize)
 	}
 
 	if total, err = m.Count(); err != nil {
@@ -145,7 +202,7 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 		tableSchema := global.GetSchema(tableCollectionName)
 
 		tableRecords, err := db.Table(tableCollectionName).
-			Fields(tableSchema.GetPublicFieldNames()).
+			Fields(tableSchema.GetFieldNames(false, false)).
 			Order("idx asc").
 			Where("pcn", collectionName).
 			Where("pid", ids).
@@ -244,11 +301,20 @@ func GetList(collectionName string, pageNum, pageSize int, where interface{}, ar
 	return
 }
 
-// Exists : 是否存在
-func Exists(collectionName string, where interface{}, args ...interface{}) (bool, error) {
-	total, err := g.Table(collectionName).Where(where, args...).Count()
+// Count : 查询统计
+func Count(collectionName string, arg *ExistsAndCountFuncArg) (int, error) {
+	total, err := g.Table(collectionName).Where(arg.Where).Or(arg.Or).Having(arg.Having).Count()
 	if err != nil {
-		return false, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+		return 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+	return total, nil
+}
+
+// Exists : 是否存在
+func Exists(collectionName string, arg *ExistsAndCountFuncArg) (bool, error) {
+	total, err := Count(collectionName, arg)
+	if err != nil {
+		return false, err
 	}
 	return total > 0, nil
 }

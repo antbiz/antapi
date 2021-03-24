@@ -64,11 +64,19 @@ type SchemaField struct {
 // DefaultFieldNames : 所有默认的字段
 // var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd", "created_at", "updated_at", "deleted_at", "created_by", "updated_by"}
 
-// GetPublicFieldNames : 获取所有对外开放的字段名
-func (schema *Schema) GetPublicFieldNames() []string {
+// GetFieldNames 获取字段名
+// includeHidden: 包括 is_hidden 的字段
+// includePrivate: 包括 is_private 的字段
+func (schema *Schema) GetFieldNames(includeHidden, includePrivate bool) []string {
 	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden || fieldtype.FieldType(field.Type) == fieldtype.Table {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsHidden && !includeHidden {
+			continue
+		}
+		if field.IsPrivate && !includePrivate {
 			continue
 		}
 		fieldNames = append(fieldNames, field.Name)
@@ -76,14 +84,76 @@ func (schema *Schema) GetPublicFieldNames() []string {
 	return fieldNames
 }
 
-// GetPublicFields : 获取所有对外开放的字段
-func (schema *Schema) GetPublicFields() []*SchemaField {
+// GetFields : 获取字段
+func (schema *Schema) GetFields(includeHidden, includePrivate bool) []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
-		if field.IsPrivate || field.IsHidden || fieldtype.FieldType(field.Type) == fieldtype.Table {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsHidden && !includeHidden {
+			continue
+		}
+		if field.IsPrivate && !includePrivate {
 			continue
 		}
 		fields = append(fields, field)
+	}
+	return fields
+}
+
+// GetHiddenFieldNames : 获取所有隐藏字段名
+func (schema *Schema) GetHiddenFieldNames() []string {
+	fieldNames := make([]string, 0)
+	for _, field := range schema.Fields {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsHidden {
+			fieldNames = append(fieldNames, field.Name)
+		}
+	}
+	return fieldNames
+}
+
+// GetHiddenFields : 获取所有隐藏字段
+func (schema *Schema) GetHiddenFields() []*SchemaField {
+	fields := make([]*SchemaField, 0)
+	for _, field := range schema.Fields {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsHidden {
+			fields = append(fields, field)
+		}
+	}
+	return fields
+}
+
+// GetPrivateFieldNames : 获取所有私密字段名
+func (schema *Schema) GetPrivateFieldNames() []string {
+	fieldNames := make([]string, 0)
+	for _, field := range schema.Fields {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsPrivate {
+			fieldNames = append(fieldNames, field.Name)
+		}
+	}
+	return fieldNames
+}
+
+// GetPrivateFields : 获取所有私密字段
+func (schema *Schema) GetPrivateFields() []*SchemaField {
+	fields := make([]*SchemaField, 0)
+	for _, field := range schema.Fields {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsPrivate {
+			fields = append(fields, field)
+		}
 	}
 	return fields
 }
