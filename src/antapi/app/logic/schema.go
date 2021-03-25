@@ -67,13 +67,12 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		}
 	}
 
-	addField := func(i int, v interface{}) {
-		data.Append(fmt.Sprintf("fields.%d", i), v)
+	addField := func(v interface{}) {
+		data.Append("fields", v)
 	}
 
 	if !hasIdField {
-		fieldsLen++
-		addField(fieldsLen, g.Map{
+		addField(g.Map{
 			"type":      "UUID",
 			"title":     "ID",
 			"name":      "id",
@@ -82,8 +81,7 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		})
 	}
 	if !hasCreatedAtField {
-		fieldsLen++
-		addField(fieldsLen, g.Map{
+		addField(g.Map{
 			"type":      "DateTime",
 			"title":     "Created At",
 			"name":      "created_at",
@@ -91,24 +89,21 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		})
 	}
 	if !hasUpdatedAtField {
-		fieldsLen++
-		addField(fieldsLen, g.Map{
+		addField(g.Map{
 			"type":  "DateTime",
 			"title": "Updated At",
 			"name":  "updated_at",
 		})
 	}
 	if !hasDeletedAtField {
-		fieldsLen++
-		addField(fieldsLen, g.Map{
+		addField(g.Map{
 			"type":  "DateTime",
 			"title": "Deleted At",
 			"name":  "deleted_at",
 		})
 	}
 	if !hasCreatedByField {
-		fieldsLen++
-		addField(fieldsLen, g.Map{
+		addField(g.Map{
 			"type":      "String",
 			"title":     "Created By",
 			"name":      "created_by",
@@ -116,8 +111,7 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		})
 	}
 	if !hasUpdatedByField {
-		fieldsLen++
-		addField(fieldsLen, g.Map{
+		addField(g.Map{
 			"type":  "String",
 			"title": "Updated By",
 			"name":  "updated_by",
@@ -125,8 +119,7 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 	}
 	if isChildTable {
 		if !hasPcnField {
-			fieldsLen++
-			addField(fieldsLen, g.Map{
+			addField(g.Map{
 				"type":      "String",
 				"title":     "Parent Co",
 				"name":      "pcn",
@@ -134,16 +127,14 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 			})
 		}
 		if !hasIdxField {
-			fieldsLen++
-			addField(fieldsLen, g.Map{
+			addField(g.Map{
 				"type":  "Int",
 				"title": "Index",
 				"name":  "idx",
 			})
 		}
 		if !hasPidField {
-			fieldsLen++
-			addField(fieldsLen, g.Map{
+			addField(g.Map{
 				"type":      "String",
 				"title":     "Parent ID",
 				"name":      "pid",
@@ -151,8 +142,7 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 			})
 		}
 		if !hasPfdField {
-			fieldsLen++
-			addField(fieldsLen, g.Map{
+			addField(g.Map{
 				"type":      "String",
 				"title":     "Parent Field",
 				"name":      "pfd",
