@@ -2,6 +2,7 @@ package router
 
 import (
 	"antapi/app/api"
+	"antapi/common/middleware"
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
@@ -9,6 +10,7 @@ import (
 
 func init() {
 	s := g.Server()
+	s.Use(middleware.ErrorHandler, middleware.CORS)
 
 	// 通用的biz增删改查
 	// TODO: 后台可配置鉴权
@@ -42,6 +44,7 @@ func init() {
 
 	// 用户个人相关的接口，需要做auth鉴权
 	s.Group("/api/user", func(group *ghttp.RouterGroup) {
+		group.Middleware(middleware.Auth)
 		// 退出登录
 		group.ALL("/signout", api.User.SignOut)
 		// 个人信息
