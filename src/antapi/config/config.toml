@@ -4,11 +4,11 @@
 	ServerRoot    = "public"
 	ServerAgent   = "antapi"
     SessionIdName = "x-antapi-sid"
-    LogPath       = "./logs/server" # "../../logs/antapi/server"
+    LogPath       = "./log/server" # "../../log/antapi/server"
 
 # Logger.
 [logger]
-    Path        = "./logs" # "../../logs/antapi"
+    Path        = "./log" # "../../log/antapi"
     Level       = "all"
     Stdout      = true
 
@@ -21,7 +21,7 @@
 # Database.
 [database]
     [database.logger]
-        Path   = "./logs/sql" # "../../logs/antapi/sql"
+        Path   = "./log/sql" # "../../log/antapi/sql"
         Level  = "all"
         Stdout = true
     [database.default]

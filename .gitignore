@@ -7,7 +7,7 @@
 .settings/
 .vscode/
 vender/
-logs/
+log/
 composer.lock
 gitpush.sh
 cbuild
