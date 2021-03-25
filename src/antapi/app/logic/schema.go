@@ -179,6 +179,7 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 		}
 
 		col.Nullable = col.Name != "id"
+		col.IsPrimaryKey = col.Name == "id"
 
 		if field.GetBool("can_index") {
 			col.IndexName = col.Name
@@ -235,11 +236,6 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 			case fieldtype.Bool:
 				col.Type = coltype.BOOL
 			}
-		}
-
-		if col.Name == "id" {
-			col.IsAutoIncrement = true
-			col.IsPrimaryKey = true
 		}
 
 		if defaultFieldNames.Contains(col.Name) {
