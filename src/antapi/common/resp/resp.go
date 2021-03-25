@@ -8,7 +8,8 @@ import (
 
 const (
 	SUCCESS = 0
-	ERROR   = 1
+	// 未知错误码
+	ERROR = 10000
 )
 
 // Resp : normal resp struct
@@ -57,6 +58,10 @@ func Error(r *ghttp.Request) *apiResp {
 }
 
 func (apiResp *apiResp) SetCode(code int) *apiResp {
+	// 如果从gerror中获取的code码为默认的也就是没有提前设定，那么则将code码重置为未知错误码
+	if code < 0 {
+		code = ERROR
+	}
 	apiResp.Code = code
 	return apiResp
 }
