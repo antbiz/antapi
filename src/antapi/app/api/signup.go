@@ -15,7 +15,7 @@ var SignUp = new(signUpApi)
 type signUpApi struct{}
 
 // SignUpWithEmail 用户邮箱注册
-func (signInApi) SignUpWithEmail(r *ghttp.Request) {
+func (signUpApi) SignUpWithEmail(r *ghttp.Request) {
 	var data *model.UserSignUpWithEmailReq
 	if err := r.Parse(&data); err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
@@ -27,7 +27,7 @@ func (signInApi) SignUpWithEmail(r *ghttp.Request) {
 }
 
 // SignUpWithPhone 用户手机号注册
-func (signInApi) SignUpWithPhone(r *ghttp.Request) {
+func (signUpApi) SignUpWithPhone(r *ghttp.Request) {
 	var data *model.UserSignUpWithPhoneReq
 	if err := r.Parse(&data); err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
