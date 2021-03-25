@@ -2,6 +2,7 @@
   "title": "File",
   "name": "file",
   "project_name": "system",
+  "is_child": false,
   "description": "file collection",
   "fields": [
     {

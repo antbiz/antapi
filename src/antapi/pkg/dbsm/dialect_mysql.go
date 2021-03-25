@@ -36,10 +36,10 @@ func (dialect *MySQLDialect) SQLType(column *Column) string {
 	var res string
 	switch t := column.Type; t {
 	case types.VARCHAR:
+		res = t
 		column.Size = 255
 	case types.SMALLTEXT:
-		column.Size = 512
-	case types.MEDIUMTEXT:
+		res = types.VARCHAR
 		column.Size = 1024
 	case types.JSON:
 		res = types.TEXT

@@ -7,6 +7,7 @@ import (
 
 	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gtime"
 	"github.com/gogf/gf/util/gvalid"
 )
@@ -62,7 +63,7 @@ type SchemaField struct {
 }
 
 // DefaultFieldNames : 所有默认的字段
-// var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd", "created_at", "updated_at", "deleted_at", "created_by", "updated_by"}
+var DefaultFieldNames = g.SliceStr{"id", "pcn", "idx", "pid", "pfd", "created_at", "updated_at", "deleted_at", "created_by", "updated_by"}
 
 // GetFieldNames 获取字段名
 // includeHidden: 包括 is_hidden 的字段

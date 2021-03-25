@@ -2,6 +2,7 @@
   "title": "Project",
   "name": "project",
   "project_name": "system",
+  "is_child": false,
   "description": "project collection",
   "fields": [
     {

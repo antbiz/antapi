@@ -2,6 +2,7 @@
   "title": "Role",
   "name": "role",
   "project_name": "system",
+  "is_child": false,
   "description": "role collection",
   "fields": [
     {

@@ -2,6 +2,7 @@
   "title": "Schema Field",
   "name": "schema_field",
   "project_name": "system",
+  "is_child": true,
   "description": "schema field collection",
   "fields": [
     {

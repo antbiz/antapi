@@ -2,6 +2,7 @@
   "title": "User",
   "name": "user",
   "project_name": "system",
+  "is_child": false,
   "description": "user collection",
   "fields": [
     {

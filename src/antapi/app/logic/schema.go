@@ -1,13 +1,15 @@
 package logic
 
 import (
-	"antapi/common/errcode"
 	"antapi/app/global"
+	"antapi/app/model"
 	"antapi/app/model/fieldtype"
+	"antapi/common/errcode"
 	"antapi/pkg/dbsm"
 	coltype "antapi/pkg/dbsm/types"
 	"fmt"
 
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
@@ -39,12 +41,8 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		hasPfdField       bool
 	)
 
-	getDataPathForField := func(i int, name string) string {
-		return fmt.Sprintf("fields.%d.%s", i, name)
-	}
-
 	for i := 0; i < fieldsLen; i++ {
-		fieldName := getDataPathForField(i, "name")
+		fieldName := data.GetString(fmt.Sprintf("fields.%d.name", i))
 		switch fieldName {
 		case "id":
 			hasIdField = true
@@ -69,77 +67,97 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		}
 	}
 
-	updateField := func(i int, name string, v interface{}) {
-		data.Set(fmt.Sprintf("fields.%d.%s", i, name), v)
+	addField := func(i int, v interface{}) {
+		data.Append(fmt.Sprintf("fields.%d", i), v)
 	}
 
 	if !hasIdField {
 		fieldsLen++
-		updateField(fieldsLen, "type", "UUID")
-		updateField(fieldsLen, "title", "ID")
-		updateField(fieldsLen, "name", "id")
-		updateField(fieldsLen, "is_unique", true)
-		updateField(fieldsLen, "can_index", true)
+		addField(fieldsLen, g.Map{
+			"type":      "UUID",
+			"title":     "ID",
+			"name":      "id",
+			"is_unique": true,
+			"can_index": true,
+		})
 	}
 	if !hasCreatedAtField {
 		fieldsLen++
-		updateField(fieldsLen, "type", "DateTime")
-		updateField(fieldsLen, "title", "Created At")
-		updateField(fieldsLen, "name", "created_at")
-		updateField(fieldsLen, "can_index", true)
+		addField(fieldsLen, g.Map{
+			"type":      "DateTime",
+			"title":     "Created At",
+			"name":      "created_at",
+			"can_index": true,
+		})
 	}
 	if !hasUpdatedAtField {
 		fieldsLen++
-		updateField(fieldsLen, "type", "DateTime")
-		updateField(fieldsLen, "title", "Updated At")
-		updateField(fieldsLen, "name", "updated_at")
+		addField(fieldsLen, g.Map{
+			"type":  "DateTime",
+			"title": "Updated At",
+			"name":  "updated_at",
+		})
 	}
 	if !hasDeletedAtField {
 		fieldsLen++
-		updateField(fieldsLen, "type", "DateTime")
-		updateField(fieldsLen, "title", "Deleted At")
-		updateField(fieldsLen, "name", "deleted_at")
+		addField(fieldsLen, g.Map{
+			"type":  "DateTime",
+			"title": "Deleted At",
+			"name":  "deleted_at",
+		})
 	}
 	if !hasCreatedByField {
 		fieldsLen++
-		updateField(fieldsLen, "type", "String")
-		updateField(fieldsLen, "title", "Created By")
-		updateField(fieldsLen, "name", "created_by")
-		updateField(fieldsLen, "can_index", true)
+		addField(fieldsLen, g.Map{
+			"type":      "String",
+			"title":     "Created By",
+			"name":      "created_by",
+			"can_index": true,
+		})
 	}
 	if !hasUpdatedByField {
 		fieldsLen++
-		updateField(fieldsLen, "type", "String")
-		updateField(fieldsLen, "title", "Updated By")
-		updateField(fieldsLen, "name", "updated_by")
+		addField(fieldsLen, g.Map{
+			"type":  "String",
+			"title": "Updated By",
+			"name":  "updated_by",
+		})
 	}
 	if isChildTable {
 		if !hasPcnField {
 			fieldsLen++
-			updateField(fieldsLen, "type", "String")
-			updateField(fieldsLen, "title", "Parent Collection")
-			updateField(fieldsLen, "name", "pcn")
-			updateField(fieldsLen, "can_index", true)
+			addField(fieldsLen, g.Map{
+				"type":      "String",
+				"title":     "Parent Co",
+				"name":      "pcn",
+				"can_index": true,
+			})
 		}
 		if !hasIdxField {
 			fieldsLen++
-			updateField(fieldsLen, "type", "Int")
-			updateField(fieldsLen, "title", "Index")
-			updateField(fieldsLen, "name", "idx")
+			addField(fieldsLen, g.Map{
+				"type":  "Int",
+				"title": "Index",
+				"name":  "idx",
+			})
 		}
 		if !hasPidField {
 			fieldsLen++
-			updateField(fieldsLen, "type", "String")
-			updateField(fieldsLen, "title", "Parent ID")
-			updateField(fieldsLen, "name", "pid")
-			updateField(fieldsLen, "can_index", true)
+			addField(fieldsLen, g.Map{
+				"type":      "String",
+				"title":     "Parent ID",
+				"name":      "pid",
+				"can_index": true,
+			})
 		}
 		if !hasPfdField {
 			fieldsLen++
-			updateField(fieldsLen, "type", "String")
-			updateField(fieldsLen, "title", "Parent Field")
-			updateField(fieldsLen, "name", "pfd")
-			updateField(fieldsLen, "can_index", true)
+			addField(fieldsLen, g.Map{
+				"type":      "String",
+				"title":     "Parent Field",
+				"name":      "pfd",
+				"can_index": true,
+			})
 		}
 	}
 
@@ -155,7 +173,9 @@ func (schemaLogic) ReloadGlobalSchemas(_ *gjson.Json) error {
 // MigrateCollectionSchema : 迁移collection，同步collection的schema和collection的数据库表结构
 func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	tableName := collection.GetString("name")
-	columns := make([]*dbsm.Column, 0)
+	defaultFieldNames := garray.NewStrArrayFrom(model.DefaultFieldNames)
+	baseColumns := make([]*dbsm.Column, 0)
+	bizColumns := make([]*dbsm.Column, 0)
 	for _, field := range collection.GetJsons("fields") {
 		fieldType := fieldtype.FieldType(field.GetString("type"))
 		if fieldType == fieldtype.Table {
@@ -164,10 +184,11 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 		col := &dbsm.Column{
 			Name:     field.GetString("name"),
 			Default:  field.GetString("default"),
-			Nullable: true,
 			IsUnique: field.GetBool("is_unique"),
 			Comment:  field.GetString("description"),
 		}
+
+		col.Nullable = col.Name != "id"
 
 		if field.GetBool("can_index") {
 			col.IndexName = col.Name
@@ -231,10 +252,15 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 			col.IsPrimaryKey = true
 		}
 
-		columns = append(columns, col)
+		if defaultFieldNames.Contains(col.Name) {
+			baseColumns = append(baseColumns, col)
+		} else {
+			bizColumns = append(bizColumns, col)
+		}
 	}
+	baseColumns = append(baseColumns, bizColumns...)
 
-	table := dbsm.NewTable(tableName, columns)
+	table := dbsm.NewTable(tableName, baseColumns)
 	db := g.DB()
 	tx, err := db.Begin()
 	if err != nil {

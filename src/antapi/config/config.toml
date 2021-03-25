@@ -4,11 +4,11 @@
 	ServerRoot    = "public"
 	ServerAgent   = "antapi"
     SessionIdName = "x-antapi-sid"
-	LogPath       = "../../logs/antapi/server"
+    LogPath       = "./logs/server" # "../../logs/antapi/server"
 
 # Logger.
 [logger]
-    Path        = "../../logs/antapi"
+    Path        = "./logs" # "../../logs/antapi"
     Level       = "all"
     Stdout      = true
 
@@ -21,11 +21,11 @@
 # Database.
 [database]
     [database.logger]
-        Path   = "../../logs/antapi/sql"
+        Path   = "./logs/sql" # "../../logs/antapi/sql"
         Level  = "all"
         Stdout = true
     [database.default]
         # mysql/pgsql/mssql/sqlite/oracle
         Type   = "mysql"
-        Link   = "mysql:root:12345678@tcp(127.0.0.1:3306)/antapi"
+        Link   = "root:1234567890@tcp(127.0.0.1:3306)/antapi"
         Debug  = true
