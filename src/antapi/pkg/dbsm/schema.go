@@ -133,11 +133,15 @@ func (q Quoter) quoteWordTo(buf *strings.Builder, word string) error {
 		return err
 	}
 
+	if err := buf.WriteByte(q.Prefix); err != nil {
+		return err
+	}
+
 	if _, err := buf.WriteString(realWord); err != nil {
 		return err
 	}
 
-	return nil
+	return buf.WriteByte(q.Suffix)
 }
 
 func (q Quoter) Quote(s string) string {
