@@ -11,7 +11,6 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
-	"github.com/gogf/gf/net/ghttp"
 )
 
 var User = &userLogic{
@@ -78,7 +77,7 @@ func (u *userLogic) CheckUserUnique(fieldname, value string) error {
 }
 
 // SignIn 用户登录
-func (u *userLogic) SignIn(req *model.UserSignInReq, r *ghttp.Request) (map[string]interface{}, error) {
+func (u *userLogic) SignIn(req *model.UserSignInReq) (map[string]interface{}, error) {
 	data, err := u.GetUserByLogin(req.Login, req.Pwd)
 	if err != nil {
 		return nil, err
@@ -92,7 +91,6 @@ func (u *userLogic) SignIn(req *model.UserSignInReq, r *ghttp.Request) (map[stri
 		"blocked":    data.GetBool("blocked"),
 		"is_sysuser": data.GetBool("is_sysuser"),
 	}
-	r.Session.Set(r.Session.Id(), sessionData)
 	return sessionData, nil
 }
 

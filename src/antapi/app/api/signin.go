@@ -20,9 +20,12 @@ func (signInApi) SignInByUser(r *ghttp.Request) {
 	if err := r.Parse(&data); err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
-	res, err := logic.User.SignIn(data, r)
+	res, err := logic.User.SignIn(data)
 	if err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	}
+
+	r.Session.SetMap(res)
+	res["sid"] = r.Session.Id()
 	resp.Success(r).SetData(res).Json()
 }
