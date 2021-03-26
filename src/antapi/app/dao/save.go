@@ -4,7 +4,7 @@ import (
 	"antapi/app/global"
 )
 
-// Save 保持或创建单个数据
+// Save 更新或创建单个数据
 func Save(collectionName string, arg *SaveFuncArg, data interface{}) (string, error) {
 	dataGJson := dataToJson(data)
 	schema := global.GetSchema(collectionName)
