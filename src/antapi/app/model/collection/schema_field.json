@@ -525,7 +525,7 @@
     },
     {
 
-      "type": "Json",
+      "type": "JSON",
       "title": "Enum Options",
       "name": "enum_options",
       "description": "",

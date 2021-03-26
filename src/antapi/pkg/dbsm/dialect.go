@@ -88,13 +88,3 @@ func ColumnString(dialect Dialect, col *Column, includePrimaryKey bool) (string,
 
 	return bd.String(), nil
 }
-
-// NewDialect : New NewDialect
-func NewDialect(dbType string) Dialect {
-	switch types.DBType(dbType) {
-	case types.MYSQL:
-		return &MySQLDialect{}
-	default:
-		panic("Not implemented")
-	}
-}

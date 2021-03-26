@@ -56,7 +56,7 @@ func SyncSchemas() {
 
 	db := g.DB()
 	for _, fileName := range collectionFileNames {
-		glog.Fatalf("SyncSchemas %s", fileName)
+		glog.Infof("SyncSchema %s", fileName)
 		j, err := gjson.Load(gfile.Join(collectionFilePath, fileName))
 		if err != nil {
 			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
@@ -65,7 +65,6 @@ func SyncSchemas() {
 		if err := j.Struct(schema); err != nil {
 			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
 		}
-		glog.Infof("SyncSchema %s", fileName)
 
 		schemaID, err := db.Table("schema").Value("id", "name", schema.Name)
 		if err != nil {

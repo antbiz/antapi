@@ -155,6 +155,12 @@ func (dialect *MySQLDialect) GetTables(tx *gdb.TX) ([]*Table, error) {
 			return nil, err
 		}
 		table.UpdateWithCols(cols)
+
+		idxMap, err := dialect.GetIndexes(tx, table.Name)
+		if err != nil {
+			return nil, err
+		}
+		table.Indexes = idxMap
 	}
 
 	return tables, nil

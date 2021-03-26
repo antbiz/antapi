@@ -6,7 +6,7 @@ import (
 	"antapi/app/model/fieldtype"
 	"antapi/common/errcode"
 	"antapi/pkg/dbsm"
-	coltype "antapi/pkg/dbsm/types"
+	dbsmtyp "antapi/pkg/dbsm/types"
 	"fmt"
 
 	"github.com/gogf/gf/container/garray"
@@ -76,8 +76,8 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 			"type":      "UUID",
 			"title":     "ID",
 			"name":      "id",
-			"is_unique": true,
-			"can_index": true,
+			"is_unique": false,
+			"can_index": false,
 		})
 	}
 	if !hasCreatedAtField {
@@ -186,55 +186,55 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 		}
 
 		if field.GetBool("is_multiple") {
-			col.Type = coltype.JSON
+			col.Type = dbsmtyp.JSON
 		} else {
 			switch fieldType {
 			case fieldtype.String, fieldtype.Enum:
-				col.Type = coltype.VARCHAR
+				col.Type = dbsmtyp.VARCHAR
 			case fieldtype.UUID, fieldtype.Link:
-				col.Type = coltype.VARCHAR
+				col.Type = dbsmtyp.VARCHAR
 				col.IndexName = col.Name
 			case fieldtype.Email, fieldtype.Phone:
-				col.Type = coltype.VARCHAR
+				col.Type = dbsmtyp.VARCHAR
 				col.Size = 100
 			case fieldtype.Color, fieldtype.Password:
-				col.Type = coltype.VARCHAR
+				col.Type = dbsmtyp.VARCHAR
 				col.Size = 100
 				col.IndexName = ""
 				col.IsUnique = false
 			case fieldtype.URL, fieldtype.SmallText, fieldtype.Media:
-				col.Type = coltype.SMALLTEXT
+				col.Type = dbsmtyp.SMALLTEXT
 				col.IndexName = ""
 			case fieldtype.Text, fieldtype.RichText, fieldtype.Markdown, fieldtype.Code, fieldtype.HTML:
-				col.Type = coltype.TEXT
+				col.Type = dbsmtyp.TEXT
 				col.IndexName = ""
 				col.IsUnique = false
 			case fieldtype.Signature:
-				col.Type = coltype.BLOB
+				col.Type = dbsmtyp.BLOB
 				col.IndexName = ""
 				col.IsUnique = false
 			case fieldtype.JSON:
-				col.Type = coltype.JSON
+				col.Type = dbsmtyp.JSON
 				col.IndexName = ""
 				col.IsUnique = false
 			case fieldtype.Int, fieldtype.Money:
-				col.Type = coltype.INT
+				col.Type = dbsmtyp.INT
 			case fieldtype.BigInt:
-				col.Type = coltype.BIGINT
+				col.Type = dbsmtyp.BIGINT
 			case fieldtype.Float:
-				col.Type = coltype.FLOAT
+				col.Type = dbsmtyp.FLOAT
 			case fieldtype.Date:
-				col.Type = coltype.DATE
+				col.Type = dbsmtyp.DATE
 			case fieldtype.DateTime:
-				col.Type = coltype.DATETIME
+				col.Type = dbsmtyp.DATETIME
 			case fieldtype.Time:
-				col.Type = coltype.TIME
+				col.Type = dbsmtyp.TIME
 			case fieldtype.TimeStamp:
-				col.Type = coltype.TIMESTAMP
+				col.Type = dbsmtyp.TIMESTAMP
 			case fieldtype.Year:
-				col.Type = coltype.YEAR
+				col.Type = dbsmtyp.YEAR
 			case fieldtype.Bool:
-				col.Type = coltype.BOOL
+				col.Type = dbsmtyp.BOOL
 			}
 		}
 
@@ -252,10 +252,29 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	if err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
-	dialect := dbsm.NewDialect(db.GetConfig().Type)
+	dialect, err := getDialect()
+	if err != nil {
+		return err
+	}
 	if err := table.Sync(tx, dialect); err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 
 	return nil
+}
+
+func getDialect() (dbsm.Dialect, error) {
+	db := g.DB()
+	dbType := db.GetConfig().Type
+
+	switch dbsmtyp.DBType(dbType) {
+	case dbsmtyp.MYSQL:
+		dialect := &dbsm.MySQLDialect{
+			DBName:  db.GetConfig().Name,
+			Charset: "utf8mb4",
+		}
+		return dialect, nil
+	default:
+		return nil, gerror.Newf("Not implemented %s", dbType)
+	}
 }

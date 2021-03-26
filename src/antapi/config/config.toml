@@ -27,5 +27,6 @@
     [database.default]
         # mysql/pgsql/mssql/sqlite/oracle
         Type   = "mysql"
+        Name   = "antapi"
         Link   = "root:1234567890@tcp(127.0.0.1:3306)/antapi"
         Debug  = true
