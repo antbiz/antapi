@@ -131,6 +131,34 @@ func (schema *Schema) GetHiddenFields() []*SchemaField {
 	return fields
 }
 
+// GetUniqueFieldNames : 获取所有私密字段名
+func (schema *Schema) GetUniqueFieldNames() []string {
+	fieldNames := make([]string, 0)
+	for _, field := range schema.Fields {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsUnique {
+			fieldNames = append(fieldNames, field.Name)
+		}
+	}
+	return fieldNames
+}
+
+// GetUniqueFields : 获取所有私密字段
+func (schema *Schema) GetUniqueFields() []*SchemaField {
+	fields := make([]*SchemaField, 0)
+	for _, field := range schema.Fields {
+		if fieldtype.FieldType(field.Type) == fieldtype.Table {
+			continue
+		}
+		if field.IsUnique {
+			fields = append(fields, field)
+		}
+	}
+	return fields
+}
+
 // GetPrivateFieldNames : 获取所有私密字段名
 func (schema *Schema) GetPrivateFieldNames() []string {
 	fieldNames := make([]string, 0)

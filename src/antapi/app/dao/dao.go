@@ -58,6 +58,13 @@ type UpdateFuncArg struct {
 	IncludePrivateField   bool
 }
 
+// SaveFuncArg .
+type SaveFuncArg struct {
+	IgnoreFieldValueCheck bool
+	IncludeHiddenField    bool
+	IncludePrivateField   bool
+}
+
 // DeleteFuncArg .
 type DeleteFuncArg struct {
 	Where      interface{}
