@@ -4,7 +4,6 @@ import (
 	"antapi/app/model"
 	"sync"
 
-	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
 )
@@ -19,13 +18,14 @@ var (
 func LoadSchemas() error {
 	db := g.DB()
 	schemas := ([]*model.Schema)(nil)
+	schemaFields := ([]*model.SchemaField)(nil)
 
 	if err := db.Table("schema").Structs(&schemas); err != nil {
 		glog.Error("LoadSchemas schema read fail:", err)
 		return err
 	}
 
-	if err := db.Table("schema_field").Where("pid", gdb.ListItemValuesUnique(schemas, "ID")).ScanList(&schemas, "Fields", "pid:ID"); err != nil {
+	if err := db.Table("schema_field").Order("idx asc").Structs(&schemaFields); err != nil {
 		glog.Error("LoadSchemas schema_field read fail:", err)
 		return err
 	}
@@ -33,9 +33,18 @@ func LoadSchemas() error {
 	schemaLocker.Lock()
 	defer schemaLocker.Unlock()
 
+	_schemasMap := map[string]*model.Schema{}
 	for _, schema := range schemas {
-		schemasMap[schema.Name] = schema
+
+		for _, field := range schemaFields {
+			if field.Pid == schema.ID {
+				schema.Fields = append(schema.Fields, field)
+			}
+		}
+
+		_schemasMap[schema.Name] = schema
 	}
+	schemasMap = _schemasMap
 
 	glog.Info("LoadSchemas successfully!")
 	return nil

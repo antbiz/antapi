@@ -14,17 +14,17 @@ import (
 
 // Schema .
 type Schema struct {
-	ID          string      `orm:"id"`
-	CreatedAt   *gtime.Time `orm:"created_at"`
-	UpdatedAt   *gtime.Time `orm:"updated_at"`
-	DeletedAt   *gtime.Time `orm:"deleted_at"`
-	CreatedBy   string      `orm:"created_by"`
-	UpdatedBy   string      `orm:"updated_by"`
-	Title       string      `orm:"title"`
-	Name        string      `orm:"name"`
-	ProjectName string      `orm:"project_name"`
-	Description string      `orm:"description"`
-	Fields      []*SchemaField
+	ID          string         `orm:"id"`
+	CreatedAt   *gtime.Time    `orm:"created_at"`
+	UpdatedAt   *gtime.Time    `orm:"updated_at"`
+	DeletedAt   *gtime.Time    `orm:"deleted_at"`
+	CreatedBy   string         `orm:"created_by"`
+	UpdatedBy   string         `orm:"updated_by"`
+	Title       string         `orm:"title"`
+	Name        string         `orm:"name"`
+	ProjectName string         `orm:"project_name"`
+	Description string         `orm:"description"`
+	Fields      []*SchemaField `orm:"-"`
 }
 
 // SchemaField .

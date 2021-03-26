@@ -1,13 +1,15 @@
 package cmd
 
 import (
-	"antapi/app/dao"
 	"antapi/app/logic"
+	"antapi/app/model"
 
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gfile"
 	"github.com/gogf/gf/os/glog"
+	"github.com/gogf/gf/util/guid"
 )
 
 // Sync : 同步collection和默认数据
@@ -52,7 +54,12 @@ func SyncSchemas() {
 		return
 	}
 
-	// db := g.DB()
+	db := g.DB()
+	tx, err := db.Begin()
+	if err != nil {
+		glog.Fatalf("DB Begin Error: %v", err)
+	}
+
 	for _, fileName := range collectionFileNames {
 		glog.Infof("SyncSchema %s", fileName)
 		j, err := gjson.Load(gfile.Join(collectionFilePath, fileName))
@@ -60,53 +67,54 @@ func SyncSchemas() {
 			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
 		}
 
-		saveArg := &dao.SaveFuncArg{
-			IncludeHiddenField:  true,
-			IncludePrivateField: true,
-		}
-		if _, err := dao.Save("schema", saveArg, j); err != nil {
-			glog.Fatalf("Save Schema Error: %v", gerror.Stack(err))
+		schema := new(model.Schema)
+		if err := j.Struct(schema); err != nil {
+			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
 		}
 
-		// schema := new(model.Schema)
-		// if err := j.Struct(schema); err != nil {
-		// 	glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
-		// }
+		schemaID, err := db.Table("schema").Value("id", "name", schema.Name)
+		if err != nil {
+			glog.Fatalf("Find Schema %s Error: %v", schema.Name, err)
+		}
+		if schemaID.IsEmpty() {
+			schema.ID = guid.S()
+			if _, err := db.Table("schema").Data(schema).Insert(); err != nil {
+				glog.Fatalf("Create Schema %s Error: %v", schema.Name, err)
+			}
+		} else {
+			schema.ID = schemaID.String()
+			if _, err := db.Table("schema").Where("id", schema.ID).Data(schema).Update(); err != nil {
+				glog.Fatalf("Update Schema %s-%s Error: %v", schema.Name, schema.ID, err)
+			}
+		}
 
-		// schemaID, err := db.Table("schema").Value("id", "name", schema.Name)
-		// if err != nil {
-		// 	glog.Fatalf("Find Schema %s Error: %v", schema.Name, err)
-		// }
-		// if schemaID.IsEmpty() {
-		// 	schema.ID = guid.S()
-		// 	if _, err := db.Table("schema").Data(schema).Insert(); err != nil {
-		// 		glog.Fatalf("Create Schema %s Error: %v", schema.Name, err)
-		// 	}
-		// } else {
-		// 	schema.ID = schemaID.String()
-		// 	if _, err := db.Table("schema").Where("id", schema.ID).Data(schema).Update(); err != nil {
-		// 		glog.Fatalf("Update Schema %s-%s Error: %v", schema.Name, schema.ID, err)
-		// 	}
-		// }
+		for idx, field := range schema.Fields {
+			fieldID, err := db.Table("schema_field").Value("id", "pid", schema.ID)
+			if err != nil {
+				glog.Fatalf("Find SchemaField %s-%s Error: %v", schema.Name, field.Name, err)
+			}
+			field.Pid = schema.ID
+			field.Pcn = "schema"
+			field.Pfd = "fields"
+			field.Idx = idx
 
-		// for _, field := range schema.Fields {
-		// 	fieldID, err := db.Table("schema_field").Value("id", "pid", schema.ID)
-		// 	if err != nil {
-		// 		glog.Fatalf("Find SchemaField %s-%s Error: %v", schema.Name, field.Name, err)
-		// 	}
-		// 	if fieldID.IsEmpty() {
-		// 		field.ID = guid.S()
-		// 		if _, err := db.Table("schema").Data(field).Insert(); err != nil {
-		// 			glog.Fatalf("Create SchemaField %s Error: %v", field.Name, err)
-		// 		}
-		// 	} else {
-		// 		field.ID = fieldID.String()
-		// 		if _, err := db.Table("schema_field").Where("id", field.ID).Data(field).Update(); err != nil {
-		// 			glog.Fatalf("Update SchemaField %s-%s Error: %v", field.Name, field.ID, err)
-		// 		}
-		// 	}
-		// }
+			if fieldID.IsEmpty() {
+				field.ID = guid.S()
+				if _, err := db.Table("schema_field").Data(field).Insert(); err != nil {
+					tx.Rollback()
+					glog.Fatalf("Create SchemaField %s Error: %v", field.Name, err)
+				}
+			} else {
+				field.ID = fieldID.String()
+				if _, err := db.Table("schema_field").Where("id", field.ID).Data(field).Update(); err != nil {
+					tx.Rollback()
+					glog.Fatalf("Update SchemaField %s-%s Error: %v", field.Name, field.ID, err)
+				}
+			}
+		}
 	}
+
+	tx.Commit()
 }
 
 // SyncProjects : 同步projects数据到 `project` 数据表
@@ -119,42 +127,34 @@ func SyncProjects() {
 		return
 	}
 
-	// db := g.DB()
+	db := g.DB()
 	for _, fileName := range projectFileNames {
 		j, err := gjson.Load(gfile.Join(projectFilePath, fileName))
 		if err != nil {
 			glog.Fatalf("SyncProjects %s Error: %v", fileName, err)
 		}
 
-		saveArg := &dao.SaveFuncArg{
-			IncludeHiddenField:  true,
-			IncludePrivateField: true,
+		project := new(model.Project)
+		if err := j.Struct(project); err != nil {
+			glog.Fatalf("SyncProjects %s Error: %v", fileName, err)
 		}
-		if _, err := dao.Save("project", saveArg, j); err != nil {
-			glog.Fatalf("Save Project Error: %v", gerror.Stack(err))
+		glog.Infof("SyncProjects %s", fileName)
+
+		projectID, err := db.Table("project").Value("id", "name", project.Name)
+		if err != nil {
+			glog.Fatalf("Find Project %s Error: %v", project.Name, err)
 		}
-
-		// project := new(model.Project)
-		// if err := j.Struct(project); err != nil {
-		// 	glog.Fatalf("SyncProjects %s Error: %v", fileName, err)
-		// }
-		// glog.Infof("SyncProjects %s", fileName)
-
-		// projectID, err := db.Table("project").Value("id", "project", project.Name)
-		// if err != nil {
-		// 	glog.Fatalf("Find Project %s Error: %v", project.Name, err)
-		// }
-		// if projectID.IsEmpty() {
-		// 	project.ID = guid.S()
-		// 	if _, err := db.Table("project").Data(project).Insert(); err != nil {
-		// 		glog.Fatalf("Create Project %s Error: %v", project.Name, err)
-		// 	}
-		// } else {
-		// 	project.ID = projectID.String()
-		// 	if _, err := db.Table("project").Where("id", project.ID).Data(project).Update(); err != nil {
-		// 		glog.Fatalf("Update Project %s-%s Error: %v", project.Name, project.ID, err)
-		// 	}
-		// }
+		if projectID.IsEmpty() {
+			project.ID = guid.S()
+			if _, err := db.Table("project").Data(project).Insert(); err != nil {
+				glog.Fatalf("Create Project %s Error: %v", project.Name, err)
+			}
+		} else {
+			project.ID = projectID.String()
+			if _, err := db.Table("project").Where("id", project.ID).Data(project).Update(); err != nil {
+				glog.Fatalf("Update Project %s-%s Error: %v", project.Name, project.ID, err)
+			}
+		}
 	}
 }
 
