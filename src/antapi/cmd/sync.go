@@ -89,7 +89,7 @@ func SyncSchemas() {
 		}
 
 		for idx, field := range schema.Fields {
-			fieldID, err := db.Table("schema_field").Value("id", "pid", schema.ID)
+			fieldID, err := db.Table("schema_field").Value("id", g.Map{"pid": schema.ID, "name": field.Name})
 			if err != nil {
 				glog.Fatalf("Find SchemaField %s-%s Error: %v", schema.Name, field.Name, err)
 			}
