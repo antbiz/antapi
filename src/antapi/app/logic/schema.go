@@ -178,13 +178,6 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 			Comment:  field.GetString("title"),
 		}
 
-		col.Nullable = col.Name != "id"
-		col.IsPrimaryKey = col.Name == "id"
-
-		if field.GetBool("can_index") {
-			col.IndexName = col.Name
-		}
-
 		if field.GetBool("is_multiple") {
 			col.Type = dbsmtyp.JSON
 		} else {
@@ -236,6 +229,14 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 			case fieldtype.Bool:
 				col.Type = dbsmtyp.BOOL
 			}
+		}
+
+		col.Nullable = col.Name != "id"
+		col.IsPrimaryKey = col.Name == "id"
+		if col.Name == "id" {
+			col.IndexName = ""
+		} else if field.GetBool("can_index") {
+			col.IndexName = col.Name
 		}
 
 		if defaultFieldNames.Contains(col.Name) {
