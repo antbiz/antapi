@@ -1,11 +1,10 @@
 package dao
 
 import (
-	"antapi/common/errcode"
 	"antapi/app/global"
+	"antapi/common/errcode"
 	"fmt"
 
-	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/util/guid"
@@ -14,10 +13,7 @@ import (
 // Update : 更新单个数据
 func Update(collectionName string, arg *UpdateFuncArg, id string, data interface{}) error {
 	db := g.DB()
-	dataGJson, err := gjson.LoadJson(data)
-	if err != nil {
-		return gerror.WrapCode(errcode.JSONError, err, errcode.JSONErrorMsg)
-	}
+	dataGJson := dataToJson(data)
 	schema := global.GetSchema(collectionName)
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子

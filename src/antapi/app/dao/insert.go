@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"antapi/common/errcode"
 	"antapi/app/global"
+	"antapi/common/errcode"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -34,11 +34,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 
 	dataGJsonSlice := make([]*gjson.Json, 0, dataLen)
 	for i := 0; i < dataLen; i++ {
-		dataGJson, err := gjson.LoadJson(data[i])
-		if err != nil {
-			return nil, gerror.WrapCode(errcode.JSONError, err, errcode.JSONErrorMsg)
-		}
-		dataGJsonSlice = append(dataGJsonSlice, dataGJson)
+		dataGJsonSlice = append(dataGJsonSlice, dataToJson(data[i]))
 	}
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子

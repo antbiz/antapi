@@ -2,18 +2,11 @@ package dao
 
 import (
 	"antapi/app/global"
-	"antapi/common/errcode"
-
-	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/errors/gerror"
 )
 
 // Save 保持或创建单个数据
 func Save(collectionName string, arg *SaveFuncArg, data interface{}) (string, error) {
-	dataGJson, err := gjson.LoadJson(data)
-	if err != nil {
-		return "", gerror.WrapCode(errcode.JSONError, err, errcode.JSONErrorMsg)
-	}
+	dataGJson := dataToJson(data)
 	schema := global.GetSchema(collectionName)
 
 	// 自动查找唯一列去获取唯一id，如果不存在则新建

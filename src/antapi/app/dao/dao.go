@@ -1,5 +1,7 @@
 package dao
 
+import "github.com/gogf/gf/encoding/gjson"
+
 // TODO: goframe 框架目前不支持嵌入式的where查询，所以目前只能全部放到where里
 
 // GetFuncArg .
@@ -73,4 +75,12 @@ type DeleteFuncArg struct {
 	OrArgs     interface{}
 	Having     interface{}
 	HavingArgs interface{}
+}
+
+// dataToJson 任意类型数据转gjson对象
+func dataToJson(data interface{}) *gjson.Json {
+	if val, ok := data.(*gjson.Json); ok {
+		return val
+	}
+	return gjson.New(data)
 }

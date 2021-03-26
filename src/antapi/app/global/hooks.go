@@ -7,21 +7,21 @@ import (
 // TODO: 目前为了避免循环引用只能开放hooks的注册方法，但是其实只允许初始化时执行，需要做优化
 // 勾子不对子表支持，批量操作时个别勾子不对子表数据起作用
 var (
-	afterFindHooks map[string][]func(data *gjson.Json) error
+	afterFindHooks = map[string][]func(data *gjson.Json) error{}
 
-	beforeSaveHooks map[string][]func(data *gjson.Json) error
-	afterSaveHooks  map[string][]func(data *gjson.Json) error
+	beforeSaveHooks = map[string][]func(data *gjson.Json) error{}
+	afterSaveHooks  = map[string][]func(data *gjson.Json) error{}
 
-	beforeUpdateHooks map[string][]func(data *gjson.Json) error
-	afterUpdateHooks  map[string][]func(data *gjson.Json) error
+	beforeUpdateHooks = map[string][]func(data *gjson.Json) error{}
+	afterUpdateHooks  = map[string][]func(data *gjson.Json) error{}
 
-	beforeInsertHooks map[string][]func(data *gjson.Json) error
-	afterInsertHooks  map[string][]func(data *gjson.Json) error
+	beforeInsertHooks = map[string][]func(data *gjson.Json) error{}
+	afterInsertHooks  = map[string][]func(data *gjson.Json) error{}
 
 	// beforeDeleteHooks 不关心子表数据
-	beforeDeleteHooks map[string][]func(data *gjson.Json) error
+	beforeDeleteHooks = map[string][]func(data *gjson.Json) error{}
 	// afterDeleteHooks 不关心子表数据
-	afterDeleteHooks map[string][]func(data *gjson.Json) error
+	afterDeleteHooks = map[string][]func(data *gjson.Json) error{}
 )
 
 func RegisterAfterFindHooks(collectionName string, hook ...func(data *gjson.Json) error) {
