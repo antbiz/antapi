@@ -9,6 +9,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gmode"
 )
 
 var Biz = new(bizApi)
@@ -26,13 +27,16 @@ func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 	arg := &dao.GetFuncArg{
-		Where: g.Map{"id": id},
+		Where:               "id",
+		WhereArgs:           id,
+		IncludeHiddenField:  gmode.IsDevelop(),
+		IncludePrivateField: gmode.IsDevelop(),
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
-		resp.Success(r).SetData(res.MustToJsonString()).Json()
+		resp.Success(r).SetData(res.Map()).Json()
 	}
 }
 
@@ -44,15 +48,17 @@ func (bizApi) GetList(r *ghttp.Request) {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
 	arg := &dao.GetListFuncArg{
-		PageNum:  reqArgs.Page,
-		PageSize: reqArgs.Size,
-		Order:    reqArgs.Sort,
+		PageNum:             reqArgs.Page,
+		PageSize:            reqArgs.Size,
+		Order:               reqArgs.Sort,
+		IncludeHiddenField:  gmode.IsDevelop(),
+		IncludePrivateField: gmode.IsDevelop(),
 	}
 
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
-		resp.Success(r).SetData(resp.ListsData{List: res.MustToJsonString(), Total: total}).Json()
+		resp.Success(r).SetData(resp.ListsData{List: res.Array(), Total: total}).Json()
 	}
 }
 

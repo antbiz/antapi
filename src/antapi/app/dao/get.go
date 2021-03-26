@@ -154,6 +154,11 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 
 	// 查询指定范围内主体数据list
 	m := db.Table(collectionName).Where(arg.Where, arg.WhereArgs).Or(arg.Or, arg.OrArgs).Having(arg.Having, arg.HavingArgs)
+
+	if total, err = m.Count(); err != nil {
+		return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+
 	if len(arg.Fields) > 0 {
 		if arg.IgnoreFieldsCheck {
 			m.Fields(arg.Fields)
@@ -184,10 +189,6 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 	}
 	if arg.PageNum > 0 && arg.PageSize > 0 {
 		m.Limit((arg.PageNum-1)*arg.PageSize, arg.PageSize)
-	}
-
-	if total, err = m.Count(); err != nil {
-		return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 	records, err := m.All()
 	if err != nil {
