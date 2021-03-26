@@ -175,7 +175,7 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 			Name:     field.GetString("name"),
 			Default:  field.GetString("default"),
 			IsUnique: field.GetBool("is_unique"),
-			Comment:  field.GetString("description"),
+			Comment:  field.GetString("title"),
 		}
 
 		col.Nullable = col.Name != "id"
