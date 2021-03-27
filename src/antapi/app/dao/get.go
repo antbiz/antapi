@@ -66,6 +66,9 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 		return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 	if record.IsEmpty() {
+		if arg.RaiseNotFound {
+			return nil, gerror.NewCode(errcode.SourceNotFound, errcode.SourceNotFoundMsg)
+		}
 		return nil, nil
 	}
 	dataGJson := gjson.New(record.Json())

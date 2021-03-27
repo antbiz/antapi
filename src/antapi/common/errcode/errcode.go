@@ -20,6 +20,7 @@ const (
 	ResubmitError         = 10015
 	JSONError             = 10016
 	DuplicateError        = 10017
+	SourceNotFound        = 10018
 
 	// 服务级错误代码 - 用户
 	IncorrectUsernameOrPassword = 20001
@@ -49,6 +50,7 @@ const (
 	ResubmitErrorMsg               = "请勿重复提交"
 	JSONErrorMsg                   = "无效的JSON"
 	DuplicateErrorMsg              = "(%s)已存在，请勿重新创建"
+	SourceNotFoundMsg              = "该资源不存在或已被删除"
 	IncorrectUsernameOrPasswordMsg = "账号或密码错误"
 	IncorrectOldPasswordMsg        = "旧密码错误"
 	IllegalUsernameMsg             = "非法用户名 (%s)"

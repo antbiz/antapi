@@ -39,8 +39,14 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 		}
 		content[field.Name] = val
 	}
-	if _, err := db.Table(collectionName).FieldsEx("id,created_by,created_at").Where("id", id).Update(content); err != nil {
+	if res, err := db.Table(collectionName).FieldsEx("id,created_by,created_at").Where("id", id).Update(content); err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	} else if arg.RaiseNotFound {
+		if rowsAffected, err := res.RowsAffected(); err != nil {
+			return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+		} else if rowsAffected == 0 {
+			return gerror.NewCode(errcode.SourceNotFound, errcode.SourceNotFoundMsg)
+		}
 	}
 
 	// 更新子表数据

@@ -22,7 +22,7 @@ func init() {
 		// 添加 {collection}
 		group.POST("/{collection}", api.Biz.Create)
 		// 修改 {collection}
-		group.PATCH("/{collection}/{id}", api.Biz.Update)
+		group.PUT("/{collection}/{id}", api.Biz.Update)
 		// 删除 {collection}
 		group.DELETE("/{collection}/{id}", api.Biz.Delete)
 	})

@@ -16,6 +16,7 @@ type GetFuncArg struct {
 	IgnoreFieldsCheck   bool
 	IncludeHiddenField  bool
 	IncludePrivateField bool
+	RaiseNotFound       bool
 }
 
 // GetListFuncArg .
@@ -58,6 +59,7 @@ type UpdateFuncArg struct {
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
+	RaiseNotFound         bool
 }
 
 // SaveFuncArg .

@@ -31,14 +31,12 @@ func (bizApi) Get(r *ghttp.Request) {
 		WhereArgs:           id,
 		IncludeHiddenField:  gmode.IsDevelop(),
 		IncludePrivateField: gmode.IsDevelop(),
+		RaiseNotFound:       true,
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
-		if res == nil {
-			resp.Success(r).Json()
-		}
 		resp.Success(r).SetData(res.Map()).Json()
 	}
 }
@@ -83,8 +81,11 @@ func (bizApi) Create(r *ghttp.Request) {
 func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
+	arg := &dao.UpdateFuncArg{
+		RaiseNotFound: true,
+	}
 
-	if err := dao.Update(collectionName, &dao.UpdateFuncArg{}, id, r.GetBodyString()); err != nil {
+	if err := dao.Update(collectionName, arg, id, r.GetBodyString()); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).Json()

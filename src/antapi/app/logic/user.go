@@ -36,6 +36,8 @@ func (u *userLogic) GetUserByLogin(login, pwd string) (data *gjson.Json, err err
 	}
 	if data, err = dao.Get(u.collectionName, arg); err != nil {
 		return
+	} else if data == nil {
+		return nil, gerror.NewCode(errcode.IncorrectUsernameOrPassword, errcode.IncorrectUsernameOrPasswordMsg)
 	}
 	username := data.GetString("username")
 	password := data.GetString("password")
