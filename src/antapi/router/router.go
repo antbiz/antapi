@@ -31,7 +31,7 @@ func init() {
 	// TODO: 集成三方登录
 	s.Group("/api/signin", func(group *ghttp.RouterGroup) {
 		// 账号登录
-		group.POST("/byuser", api.SignIn.SignInByUser)
+		group.POST("/user", api.SignIn.SignInByUser)
 	})
 
 	// 用户注册
