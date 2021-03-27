@@ -36,6 +36,9 @@ func (bizApi) Get(r *ghttp.Request) {
 	if res, err := dao.Get(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
+		if res == nil {
+			resp.Success(r).Json()
+		}
 		resp.Success(r).SetData(res.Map()).Json()
 	}
 }
@@ -58,6 +61,9 @@ func (bizApi) GetList(r *ghttp.Request) {
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
+		if res == nil {
+			resp.Success(r).SetData(resp.ListsData{List: g.SliceStr{}, Total: total}).Json()
+		}
 		resp.Success(r).SetData(resp.ListsData{List: res.Array(), Total: total}).Json()
 	}
 }
