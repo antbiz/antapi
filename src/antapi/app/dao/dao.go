@@ -6,35 +6,39 @@ import "github.com/gogf/gf/encoding/gjson"
 
 // GetFuncArg .
 type GetFuncArg struct {
-	Where               interface{}
-	WhereArgs           interface{}
-	Or                  interface{}
-	OrArgs              interface{}
-	Having              interface{}
-	HavingArgs          interface{}
-	Fields              []string
-	IgnoreFieldsCheck   bool
-	IncludeHiddenField  bool
-	IncludePrivateField bool
-	RaiseNotFound       bool
+	Where                 interface{}
+	WhereArgs             interface{}
+	Or                    interface{}
+	OrArgs                interface{}
+	Having                interface{}
+	HavingArgs            interface{}
+	Fields                []string
+	SessionUsername       string
+	IgnorePermissionCheck bool
+	IgnoreFieldsCheck     bool
+	IncludeHiddenField    bool
+	IncludePrivateField   bool
+	RaiseNotFound         bool
 }
 
 // GetListFuncArg .
 type GetListFuncArg struct {
-	Where               interface{}
-	WhereArgs           interface{}
-	Or                  interface{}
-	OrArgs              interface{}
-	Having              interface{}
-	HavingArgs          interface{}
-	Fields              []string
-	IgnoreFieldsCheck   bool
-	Group               string
-	Order               string
-	PageNum             int
-	PageSize            int
-	IncludeHiddenField  bool
-	IncludePrivateField bool
+	Where                 interface{}
+	WhereArgs             interface{}
+	Or                    interface{}
+	OrArgs                interface{}
+	Having                interface{}
+	HavingArgs            interface{}
+	Fields                []string
+	Group                 string
+	Order                 string
+	PageNum               int
+	PageSize              int
+	SessionUsername       string
+	IgnorePermissionCheck bool
+	IgnoreFieldsCheck     bool
+	IncludeHiddenField    bool
+	IncludePrivateField   bool
 }
 
 // ExistsAndCountFuncArg .
@@ -49,6 +53,8 @@ type ExistsAndCountFuncArg struct {
 
 // InsertFuncArg .
 type InsertFuncArg struct {
+	SessionUsername       string
+	IgnorePermissionCheck bool
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
@@ -56,6 +62,8 @@ type InsertFuncArg struct {
 
 // UpdateFuncArg .
 type UpdateFuncArg struct {
+	SessionUsername       string
+	IgnorePermissionCheck bool
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
@@ -64,6 +72,8 @@ type UpdateFuncArg struct {
 
 // SaveFuncArg .
 type SaveFuncArg struct {
+	SessionUsername       string
+	IgnorePermissionCheck bool
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
@@ -71,12 +81,14 @@ type SaveFuncArg struct {
 
 // DeleteFuncArg .
 type DeleteFuncArg struct {
-	Where      interface{}
-	WhereArgs  interface{}
-	Or         interface{}
-	OrArgs     interface{}
-	Having     interface{}
-	HavingArgs interface{}
+	SessionUsername       string
+	IgnorePermissionCheck bool
+	Where                 interface{}
+	WhereArgs             interface{}
+	Or                    interface{}
+	OrArgs                interface{}
+	Having                interface{}
+	HavingArgs            interface{}
 }
 
 // dataToJson 任意类型数据转gjson对象

@@ -29,10 +29,11 @@ func (userLogic) EncryptPwd(username, password string) string {
 // GetUserByLogin 根据 用户名/手机号/邮箱 + 密码 查询用户信息
 func (u *userLogic) GetUserByLogin(login, pwd string) (data *gjson.Json, err error) {
 	arg := &dao.GetFuncArg{
-		Where:               "username=? or phone=? or email=?",
-		WhereArgs:           g.Slice{login, login, login},
-		IncludeHiddenField:  true,
-		IncludePrivateField: true,
+		Where:                 "username=? or phone=? or email=?",
+		WhereArgs:             g.Slice{login, login, login},
+		IncludeHiddenField:    true,
+		IncludePrivateField:   true,
+		IgnorePermissionCheck: true,
 	}
 	if data, err = dao.Get(u.collectionName, arg); err != nil {
 		return
@@ -110,6 +111,7 @@ func (u *userLogic) SignUpWithEmail(req *model.UserSignUpWithEmailReq) error {
 		IgnoreFieldValueCheck: true,
 		IncludeHiddenField:    true,
 		IncludePrivateField:   true,
+		IgnorePermissionCheck: true,
 	}
 	data := g.Map{
 		"username": req.Username,
@@ -137,6 +139,7 @@ func (u *userLogic) SignUpWithPhone(req *model.UserSignUpWithPhoneReq) error {
 		IgnoreFieldValueCheck: true,
 		IncludeHiddenField:    true,
 		IncludePrivateField:   true,
+		IgnorePermissionCheck: true,
 	}
 	data := g.Map{
 		"username": req.Username,
@@ -153,10 +156,11 @@ func (u *userLogic) SignUpWithPhone(req *model.UserSignUpWithPhoneReq) error {
 // UpdatePassword 修改密码
 func (u *userLogic) UpdatePassword(userID string, req *model.UserUpdatePasswordReq) error {
 	getArg := &dao.GetFuncArg{
-		Where:               "id=?",
-		WhereArgs:           userID,
-		IncludeHiddenField:  true,
-		IncludePrivateField: true,
+		Where:                 "id=?",
+		WhereArgs:             userID,
+		IncludeHiddenField:    true,
+		IncludePrivateField:   true,
+		IgnorePermissionCheck: true,
 	}
 	data, err := dao.Get(u.collectionName, getArg)
 	if err != nil {
@@ -184,8 +188,9 @@ func (u *userLogic) UpdatePassword(userID string, req *model.UserUpdatePasswordR
 // GetProfileByID 获取个人信息
 func (u *userLogic) GetProfileByID(userID string) (*gjson.Json, error) {
 	arg := &dao.GetFuncArg{
-		Where:     "id=?",
-		WhereArgs: userID,
+		Where:                 "id=?",
+		WhereArgs:             userID,
+		IgnorePermissionCheck: true,
 	}
 	return dao.Get(u.collectionName, arg)
 }

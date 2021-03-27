@@ -58,6 +58,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 		ids = append(ids, id)
 		dataGJson := dataGJsonSlice[i]
 		dataGJson.Set("id", id)
+		dataGJson.Set("created_by", arg.SessionUsername)
 
 		content := map[string]interface{}{}
 		for _, field := range schema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
@@ -103,6 +104,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 				tableRowContent["idx"] = j
 				tableRowContent["pid"] = ids[i]
 				tableRowContent["pfd"] = field.Name
+				tableRowContent["created_by"] = arg.SessionUsername
 
 				// 更新 dataGJson 方便 执行 AfterInsertHooks 勾子的一些业务逻辑
 				for _, defaultField := range []string{"pcn", "id", "idx", "pid", "pfd"} {

@@ -26,9 +26,10 @@ func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 	arg := &dao.GetFuncArg{
-		Where:         "id",
-		WhereArgs:     id,
-		RaiseNotFound: true,
+		Where:           "id",
+		WhereArgs:       id,
+		RaiseNotFound:   true,
+		SessionUsername: r.Session.GetString("username"),
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
@@ -46,9 +47,10 @@ func (bizApi) GetList(r *ghttp.Request) {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
 	arg := &dao.GetListFuncArg{
-		PageNum:  reqArgs.Page,
-		PageSize: reqArgs.Size,
-		Order:    reqArgs.Sort,
+		PageNum:         reqArgs.Page,
+		PageSize:        reqArgs.Size,
+		Order:           reqArgs.Sort,
+		SessionUsername: r.Session.GetString("username"),
 	}
 
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
@@ -64,8 +66,11 @@ func (bizApi) GetList(r *ghttp.Request) {
 // Create : 新建数据
 func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
+	arg := &dao.InsertFuncArg{
+		SessionUsername: r.Session.GetString("username"),
+	}
 
-	if id, err := dao.Insert(collectionName, &dao.InsertFuncArg{}, r.GetBodyString()); err != nil {
+	if id, err := dao.Insert(collectionName, arg, r.GetBodyString()); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(g.Map{"id": id}).Json()
@@ -77,7 +82,8 @@ func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 	arg := &dao.UpdateFuncArg{
-		RaiseNotFound: true,
+		RaiseNotFound:   true,
+		SessionUsername: r.Session.GetString("username"),
 	}
 
 	if err := dao.Update(collectionName, arg, id, r.GetBodyString()); err != nil {
@@ -92,8 +98,9 @@ func (bizApi) Delete(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 	arg := &dao.DeleteFuncArg{
-		Where:     "id",
-		WhereArgs: gstr.SplitAndTrimSpace(id, ","),
+		Where:           "id",
+		WhereArgs:       gstr.SplitAndTrimSpace(id, ","),
+		SessionUsername: r.Session.GetString("username"),
 	}
 
 	if err := dao.Delete(collectionName, arg); err != nil {

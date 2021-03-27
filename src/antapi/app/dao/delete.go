@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"antapi/common/errcode"
 	"antapi/app/global"
+	"antapi/common/errcode"
 	"fmt"
 
 	"github.com/gogf/gf/encoding/gjson"
@@ -43,6 +43,9 @@ func Delete(collectionName string, arg *DeleteFuncArg) error {
 	}
 
 	// 删除主体数据
+	if arg.SessionUsername != "" {
+		_, _ = db.Table(collectionName).Where("id", delIds).Update("updated_by", arg.SessionUsername)
+	}
 	if _, err := db.Table(collectionName).Where("id", delIds).Delete(); err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
