@@ -29,7 +29,7 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 	}
 
 	// 更新主体数据
-	var content map[string]interface{}
+	content := map[string]interface{}{}
 	for _, field := range schema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 		val := dataGJson.Get(field.Name)
 		if !arg.IgnoreFieldValueCheck {
@@ -71,7 +71,7 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 			}
 			tableIds = append(tableIds, tableRowId)
 
-			var tableRowContent map[string]interface{}
+			tableRowContent := map[string]interface{}{}
 			for _, tableField := range tableSchema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 				val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, i, tableField.Name))
 				if !arg.IgnoreFieldValueCheck {

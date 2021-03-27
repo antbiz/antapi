@@ -51,7 +51,7 @@ func (u *userLogic) GetUserByLogin(login, pwd string) (data *gjson.Json, err err
 // CheckUserFieldUnique 用户唯一性校验
 func (u *userLogic) CheckUserUnique(fieldname, value string) error {
 	userSchema := global.GetSchema(u.collectionName)
-	if !garray.NewStrArrayFrom(userSchema.GetFieldNames(false, false)).Contains(fieldname) {
+	if !garray.NewStrArrayFrom(userSchema.GetFieldNames(true, true)).Contains(fieldname) {
 		return gerror.NewCode(errcode.IllegalRequest, errcode.IllegalRequestMsg)
 	}
 	arg := &dao.ExistsAndCountFuncArg{
@@ -108,6 +108,7 @@ func (u *userLogic) SignUpWithEmail(req *model.UserSignUpWithEmailReq) error {
 	// 创建用户时password字段需要暴露，前面做了数据检查，这里可以忽略
 	arg := &dao.InsertFuncArg{
 		IgnoreFieldValueCheck: true,
+		IncludeHiddenField:    true,
 		IncludePrivateField:   true,
 	}
 	data := g.Map{

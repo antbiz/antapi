@@ -59,7 +59,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 		dataGJson := dataGJsonSlice[i]
 		dataGJson.Set("id", id)
 
-		var content map[string]interface{}
+		content := map[string]interface{}{}
 		for _, field := range schema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 			val := dataGJson.Get(field.Name)
 			if !arg.IgnoreFieldValueCheck {
@@ -88,7 +88,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 			tableSchema := global.GetSchema(field.RelatedCollection)
 
 			for j := 0; j < tableRowsLen; j++ {
-				var tableRowContent map[string]interface{}
+				tableRowContent := map[string]interface{}{}
 				for _, tableField := range tableSchema.GetFields(arg.IncludeHiddenField, arg.IncludePrivateField) {
 					val := dataGJson.Get(fmt.Sprintf("%s.%d.%s", field.Name, j, tableField.Name))
 					if !arg.IgnoreFieldValueCheck {
