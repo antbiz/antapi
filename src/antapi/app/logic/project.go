@@ -18,14 +18,15 @@ func (projectLogic) AutoExportProjectData(data *gjson.Json) error {
 	glog.Info("Auto Export Project Data To app/model/project")
 	exportPath := gfile.Join(gfile.Pwd(), "app", "model", "project", fmt.Sprintf("%s.json", data.GetString("name")))
 
-	exportData := data.Map()
-	if exportData != nil {
-		for _, fieldName := range model.DefaultFieldNames {
-			delete(exportData, fieldName)
-		}
-		if err := gfile.PutContents(exportPath, gjson.New(exportData).MustToJsonIndentString()); err != nil {
-			glog.Fatal(err)
-		}
+	// 将data复制一份
+	_data := new(gjson.Json)
+	*_data = *data
+
+	for _, fieldName := range model.DefaultFieldNames {
+		_data.Remove(fieldName)
+	}
+	if err := gfile.PutContents(exportPath, _data.MustToJsonIndentString()); err != nil {
+		glog.Fatal(err)
 	}
 
 	return nil

@@ -5,8 +5,8 @@ import (
 	"antapi/app/logic"
 )
 
-// RegisterProjectHooks : 注册Project的所有勾子
-func RegisterProjectHooks() {
+// registerProjectHooks 注册Project的所有勾子
+func registerProjectHooks() {
 	collectionName := "project"
 	global.RegisterAfterSaveHooks(
 		collectionName,

@@ -5,8 +5,8 @@ import (
 	"antapi/app/logic"
 )
 
-// RegisterSchemaHooks : 注册Schema的所有勾子
-func RegisterSchemaHooks() {
+// registerSchemaHooks 注册Schema的所有勾子
+func registerSchemaHooks() {
 	collectionName := "schema"
 	global.RegisterBeforeSaveHooks(
 		collectionName,
@@ -16,9 +16,11 @@ func RegisterSchemaHooks() {
 		collectionName,
 		logic.Schema.MigrateCollectionSchema,
 		logic.Schema.ReloadGlobalSchemas,
+		logic.Schema.AutoExportSchemaData,
 	)
 	global.RegisterAfterDeleteHooks(
 		collectionName,
 		logic.Schema.ReloadGlobalSchemas,
+		logic.Schema.AutoDeleteExportedJsonFile,
 	)
 }

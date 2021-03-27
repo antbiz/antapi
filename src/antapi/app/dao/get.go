@@ -87,7 +87,7 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 		if err != nil {
 			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
-		dataGJson.Set(field.RelatedCollection, tableRecords.List())
+		dataGJson.Set(field.Name, tableRecords.List())
 	}
 
 	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配

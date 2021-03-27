@@ -13,6 +13,8 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/os/gfile"
+	"github.com/gogf/gf/os/glog"
 )
 
 var Schema = new(schemaLogic)
@@ -263,6 +265,41 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	}
 	if err := table.Sync(tx, dialect); err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+
+	return nil
+}
+
+// AutoExportSchemaData 保存数据到 app/model/collection 以便项目初始化
+func (schemaLogic) AutoExportSchemaData(data *gjson.Json) error {
+	glog.Info("Auto Export Schema Data To app/model/collection")
+	exportPath := gfile.Join(gfile.Pwd(), "app", "model", "collection", fmt.Sprintf("%s.json", data.GetString("name")))
+
+	// 将data复制一份
+	_data := new(gjson.Json)
+	*_data = *data
+
+	fieldsLen := len(_data.GetArray("fields"))
+	for _, fieldName := range model.DefaultFieldNames {
+		_data.Remove(fieldName)
+		for i := 0; i < fieldsLen; i++ {
+			_data.Remove(fmt.Sprintf("fields.%d.%s", i, fieldName))
+		}
+	}
+	if err := gfile.PutContents(exportPath, _data.MustToJsonIndentString()); err != nil {
+		glog.Fatal(err)
+	}
+
+	return nil
+}
+
+// AutoDeleteExportedJsonFile 删除导出的json文件
+func (schemaLogic) AutoDeleteExportedJsonFile(data *gjson.Json) error {
+	glog.Info("Auto Delete Exported Json File From app/model/collection")
+	jsonFilePath := gfile.Join(gfile.Pwd(), "app", "model", "collection", fmt.Sprintf("%s.json", data.GetString("name")))
+
+	if err := gfile.Remove(jsonFilePath); err != nil {
+		glog.Fatal(err)
 	}
 
 	return nil
