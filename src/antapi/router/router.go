@@ -14,7 +14,7 @@ func init() {
 
 	// 通用的biz增删改查
 	// TODO: 后台可配置鉴权
-	s.Group("/api/business", func(group *ghttp.RouterGroup) {
+	s.Group("/api/biz", func(group *ghttp.RouterGroup) {
 		// 查询 {collection} 列表
 		group.GET("/{collection}", api.Biz.GetList)
 		// 获取 {collection} 详情

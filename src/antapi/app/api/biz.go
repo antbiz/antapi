@@ -9,7 +9,6 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
-	"github.com/gogf/gf/util/gmode"
 )
 
 var Biz = new(bizApi)
@@ -27,11 +26,9 @@ func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
 	arg := &dao.GetFuncArg{
-		Where:               "id",
-		WhereArgs:           id,
-		IncludeHiddenField:  gmode.IsDevelop(),
-		IncludePrivateField: gmode.IsDevelop(),
-		RaiseNotFound:       true,
+		Where:         "id",
+		WhereArgs:     id,
+		RaiseNotFound: true,
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
@@ -49,11 +46,9 @@ func (bizApi) GetList(r *ghttp.Request) {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
 	arg := &dao.GetListFuncArg{
-		PageNum:             reqArgs.Page,
-		PageSize:            reqArgs.Size,
-		Order:               reqArgs.Sort,
-		IncludeHiddenField:  gmode.IsDevelop(),
-		IncludePrivateField: gmode.IsDevelop(),
+		PageNum:  reqArgs.Page,
+		PageSize: reqArgs.Size,
+		Order:    reqArgs.Sort,
 	}
 
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
