@@ -142,7 +142,7 @@ func CheckDuplicate(collectionName string, data *gjson.Json, excludeID ...string
 		}
 
 		for fieldName, fieldTitle := range fieldNameMap {
-			fieldVal := resJson.GetString(fmt.Sprintf("%d.%s", fieldName))
+			fieldVal := resJson.GetString(fmt.Sprintf("%d.%s", i, fieldName))
 			if fieldVal == data.GetString(fieldName) {
 				return gerror.NewCodef(errcode.DuplicateError, "已存在相同的%s: %s", fieldTitle, fieldVal)
 			}
