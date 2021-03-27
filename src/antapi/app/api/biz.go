@@ -70,7 +70,7 @@ func (bizApi) Create(r *ghttp.Request) {
 		SessionUsername: r.Session.GetString("username"),
 	}
 
-	if id, err := dao.Insert(collectionName, arg, r.GetBodyString()); err != nil {
+	if id, err := dao.Insert(collectionName, arg, r.GetFormMap()); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).SetData(g.Map{"id": id}).Json()
@@ -86,7 +86,7 @@ func (bizApi) Update(r *ghttp.Request) {
 		SessionUsername: r.Session.GetString("username"),
 	}
 
-	if err := dao.Update(collectionName, arg, id, r.GetBodyString()); err != nil {
+	if err := dao.Update(collectionName, arg, id, r.GetFormMap()); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else {
 		resp.Success(r).Json()
