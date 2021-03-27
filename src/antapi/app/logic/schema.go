@@ -65,6 +65,10 @@ func (schemaLogic) CheckFields(data *gjson.Json) error {
 		case "pfd":
 			hasPfdField = true
 		}
+
+		if data.GetBool(fmt.Sprintf("fields.%d.is_unique", i)) {
+			data.Set(fmt.Sprintf("fields.%d.is_required", i), true)
+		}
 	}
 
 	addField := func(v interface{}) {

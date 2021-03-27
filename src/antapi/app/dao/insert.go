@@ -54,9 +54,13 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 	// 批量插入主体数据
 	contents := make([]map[string]interface{}, 0, dataLen)
 	for i := 0; i < dataLen; i++ {
+		dataGJson := dataGJsonSlice[i]
+		if err := CheckDuplicate(collectionName, dataGJson); err != nil {
+			return nil, err
+		}
+
 		id := guid.S()
 		ids = append(ids, id)
-		dataGJson := dataGJsonSlice[i]
 		dataGJson.Set("id", id)
 		dataGJson.Set("created_by", arg.SessionUsername)
 

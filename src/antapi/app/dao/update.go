@@ -33,6 +33,10 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 		}
 	}
 
+	if err := CheckDuplicate(collectionName, dataGJson, id); err != nil {
+		return err
+	}
+
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
 	for _, hook := range global.GetBeforeUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
