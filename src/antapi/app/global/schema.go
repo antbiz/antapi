@@ -6,7 +6,6 @@ import (
 
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/glog"
-	"github.com/gogf/gf/util/gmode"
 )
 
 // 常驻内存数据
@@ -48,9 +47,6 @@ func LoadSchemas() error {
 	schemasMap = _schemasMap
 
 	glog.Info("LoadSchemas successfully!")
-	if gmode.IsDevelop() {
-		g.Dump(_schemasMap)
-	}
 	return nil
 }
 
