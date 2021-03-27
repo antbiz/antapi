@@ -67,6 +67,11 @@ func SyncSchemas() {
 			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
 		}
 
+		// 填充默认字段
+		if err := logic.Schema.CheckFields(j); err != nil {
+			glog.Fatalf("SyncSchemas %s Error When CheckFields: %v", fileName, err)
+		}
+
 		schema := new(model.Schema)
 		if err := j.Struct(schema); err != nil {
 			glog.Fatalf("SyncSchemas %s Error: %v", fileName, err)
