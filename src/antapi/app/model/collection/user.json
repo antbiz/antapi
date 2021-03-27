@@ -80,7 +80,7 @@
       "name": "password",
       "description": "",
       "is_required": false,
-      "is_hidden": false,
+      "is_hidden": true,
       "is_unique": false,
       "is_private": false,
       "is_encrypted": true,
