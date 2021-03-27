@@ -2,25 +2,26 @@ package errcode
 
 const (
 	// 系统级错误代码
-	UnknownError          = 10000
-	ServerError           = 10001
-	ServiceUnavailable    = 10002
-	TooManyRequests       = 10003
-	CallHTTPError         = 10004
-	IllegalRequest        = 10005
-	AuthorizationError    = 10006
-	IPDenied              = 10007
-	PermissionDenied      = 10008
-	IPRequestsLimit       = 10009
-	UserRequestsLimit     = 10010
-	APINotFound           = 10011
-	RequestMethodError    = 10012
-	ParameterBindError    = 10013
-	MissRequiredParameter = 10014
-	ResubmitError         = 10015
-	JSONError             = 10016
-	DuplicateError        = 10017
-	SourceNotFound        = 10018
+	UnknownError           = 10000
+	ServerError            = 10001
+	ServiceUnavailable     = 10002
+	TooManyRequests        = 10003
+	CallHTTPError          = 10004
+	IllegalRequest         = 10005
+	AuthorizationError     = 10006
+	IPDenied               = 10007
+	PermissionDenied       = 10008
+	IPRequestsLimit        = 10009
+	UserRequestsLimit      = 10010
+	APINotFound            = 10011
+	RequestMethodError     = 10012
+	ParameterBindError     = 10013
+	MissRequiredParameter  = 10014
+	ResubmitError          = 10015
+	JSONError              = 10016
+	DuplicateError         = 10017
+	SourceNotFound         = 10018
+	TimestampMismatchError = 10019
 
 	// 服务级错误代码 - 用户
 	IncorrectUsernameOrPassword = 20001
@@ -51,6 +52,7 @@ const (
 	JSONErrorMsg                   = "无效的JSON"
 	DuplicateErrorMsg              = "(%s)已存在，请勿重新创建"
 	SourceNotFoundMsg              = "该资源不存在或已被删除"
+	TimestampMismatchErrorMsg      = "提交失败，该资源已被她/他人更新，请刷新后重试"
 	IncorrectUsernameOrPasswordMsg = "账号或密码错误"
 	IncorrectOldPasswordMsg        = "旧密码错误"
 	IllegalUsernameMsg             = "非法用户名 (%s)"

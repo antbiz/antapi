@@ -16,6 +16,23 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 	dataGJson := dataToJson(data)
 	schema := global.GetSchema(collectionName)
 
+	// 检查数据的修改时间，如果提交数据中的修改时间要比数据库中的值小则不允许提交
+	oriRes, err := db.Table(collectionName).Fields("id", "updated_at").Where("id", id).One()
+	if err != nil {
+		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
+	}
+	if oriRes.IsEmpty() {
+		if arg.RaiseNotFound {
+			return gerror.NewCode(errcode.SourceNotFound, errcode.SourceNotFoundMsg)
+		}
+	} else {
+		oriUpdatedAtGTimeObj := oriRes.GMap().GetVar("updated_at").GTime()
+		curUpdatedAtGTimeObj := dataGJson.GetGTime("updated_at")
+		if oriUpdatedAtGTimeObj != nil && curUpdatedAtGTimeObj != nil && oriUpdatedAtGTimeObj.Second() > curUpdatedAtGTimeObj.Second() {
+			return gerror.NewCode(errcode.TimestampMismatchError, errcode.TimestampMismatchErrorMsg)
+		}
+	}
+
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
 	for _, hook := range global.GetBeforeUpdateHooksByCollectionName(collectionName) {
 		if err := hook(dataGJson); err != nil {
@@ -41,14 +58,8 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 		}
 		content[field.Name] = val
 	}
-	if res, err := db.Table(collectionName).FieldsEx("id,created_by,created_at").Where("id", id).Update(content); err != nil {
+	if _, err := db.Table(collectionName).FieldsEx("id,created_by,created_at").Where("id", id).Update(content); err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
-	} else if arg.RaiseNotFound {
-		if rowsAffected, err := res.RowsAffected(); err != nil {
-			return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
-		} else if rowsAffected == 0 {
-			return gerror.NewCode(errcode.SourceNotFound, errcode.SourceNotFoundMsg)
-		}
 	}
 
 	// 更新子表数据
