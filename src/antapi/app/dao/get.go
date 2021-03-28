@@ -71,7 +71,7 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 		}
 		return nil, nil
 	}
-	dataGJson := gjson.New(record.Json())
+	dataGJson := gjson.New(ConvertDbRecordBySelfSchemaFieldType(collectionName, record, arg.IncludeHiddenField, arg.IncludePrivateField))
 
 	// 查询子表数据
 	for _, field := range schema.GetTableFields() {
@@ -87,7 +87,7 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 		if err != nil {
 			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
-		dataGJson.Set(field.Name, tableRecords.List())
+		dataGJson.Set(field.Name, ConvertDbResultBySelfSchemaFieldType(field.RelatedCollection, tableRecords, arg.IncludeHiddenField, arg.IncludePrivateField))
 	}
 
 	// 填充LinkInfo, 查询指定范围内父子Link字段的关联的数据，先批量获取然后再按属性分配
@@ -120,7 +120,7 @@ func Get(collectionName string, arg *GetFuncArg) (*gjson.Json, error) {
 		if err != nil {
 			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
-		linkRecordsMap := linkRecords.MapKeyStr("id")
+		linkRecordsMap := ConvertDbResultBySelfSchemaFieldTypeMapKeyStr(linkCollectionName, linkRecords, arg.IncludeHiddenField, arg.IncludePrivateField, "id")
 		for _, path := range linkPaths {
 			_path := strings.Split(path, ".")
 			isTableInner := len(_path) > 1
@@ -202,7 +202,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 	}
 
 	recordsLen := records.Len()
-	list = gjson.New(records.Json())
+	list = gjson.New(ConvertDbResultBySelfSchemaFieldType(collectionName, records, arg.IncludeHiddenField, arg.IncludePrivateField))
 
 	ids := make([]string, 0, recordsLen)
 	for i := 0; i < recordsLen; i++ {
@@ -224,7 +224,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 		}
 
 		var (
-			tableGroupRecords map[string][]string
+			tableGroupRecords = make(map[string][]map[string]interface{})
 			pfdArr            = garray.NewStrArray()
 		)
 		for _, tableRecord := range tableRecords {
@@ -234,7 +234,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 			if !pfdArr.Contains(pfd) {
 				pfdArr.Append(pfd)
 			}
-			tableGroupRecords[fmt.Sprintf("%s@%s", pid, pfd)] = append(tableGroupRecords[pid], tableRecord.Json())
+			tableGroupRecords[fmt.Sprintf("%s@%s", pid, pfd)] = append(tableGroupRecords[pid], ConvertDbRecordBySelfSchemaFieldType(tableCollectionName, tableRecord, arg.IncludeHiddenField, arg.IncludePrivateField))
 		}
 
 		pfdSlice := pfdArr.Slice()
@@ -279,7 +279,7 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 		if err != nil {
 			return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
-		linkRecordsMap := linkRecords.MapKeyStr("id")
+		linkRecordsMap := ConvertDbResultBySelfSchemaFieldTypeMapKeyStr(linkCollectionName, linkRecords, arg.IncludeHiddenField, arg.IncludePrivateField, "id")
 		for _, path := range linkPaths {
 			_path := strings.Split(path, ".")
 			isTableInner := len(_path) > 1

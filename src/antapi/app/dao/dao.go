@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/gogf/gf/container/garray"
+	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
@@ -150,4 +151,34 @@ func CheckDuplicate(collectionName string, data *gjson.Json, excludeID ...string
 	}
 
 	return nil
+}
+
+// ConvertDbRecordBySelfSchemaFieldType 将数据库查询的单个结果按照schema中定义的字段类型做数据转换
+func ConvertDbRecordBySelfSchemaFieldType(collectionName string, record gdb.Record, includeHidden, includePrivate bool) map[string]interface{} {
+	schema := global.GetSchema(collectionName)
+	convertedRecord := make(map[string]interface{})
+	for _, field := range schema.GetFields(includeHidden, includePrivate) {
+		convertedRecord[field.Name] = field.ConvertFieldValue(record[field.Name])
+	}
+	return convertedRecord
+}
+
+// ConvertDbResultBySelfSchemaFieldType 将数据库查询的数据集合按照schema中定义的字段类型做数据转换
+func ConvertDbResultBySelfSchemaFieldType(collectionName string, result gdb.Result, includeHidden, includePrivate bool) []map[string]interface{} {
+	convertedResult := make([]map[string]interface{}, 0)
+	for _, record := range result {
+		convertedResult = append(convertedResult, ConvertDbRecordBySelfSchemaFieldType(collectionName, record, includeHidden, includePrivate))
+	}
+	return convertedResult
+}
+
+// ConvertDbResultBySelfSchemaFieldType 将数据库查询的数据集合按照schema中定义的字段类型做数据转换，并按照指定key转换成键值对
+func ConvertDbResultBySelfSchemaFieldTypeMapKeyStr(collectionName string, result gdb.Result, includeHidden, includePrivate bool, key string) map[string]map[string]interface{} {
+	convertedResult := make(map[string]map[string]interface{})
+	for _, record := range result {
+		if v, ok := record[key]; ok {
+			convertedResult[v.String()] = ConvertDbRecordBySelfSchemaFieldType(collectionName, record, includeHidden, includePrivate)
+		}
+	}
+	return convertedResult
 }

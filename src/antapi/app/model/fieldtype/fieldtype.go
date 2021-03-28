@@ -35,3 +35,13 @@ const (
 	Link      FieldType = "Link"
 	Table     FieldType = "Table"
 )
+
+// EnumType .
+type EnumType string
+
+const (
+	EnumString EnumType = "String"
+	EnumInt    EnumType = "Int"
+	EnumFloat  EnumType = "Float"
+	EnumBool   EnumType = "Bool"
+)

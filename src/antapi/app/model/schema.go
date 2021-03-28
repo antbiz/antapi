@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/gogf/gf/container/garray"
+	"github.com/gogf/gf/database/gdb"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gtime"
@@ -352,4 +353,31 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 	}
 
 	return nil
+}
+
+// ConvertFieldValue 根据自己的数据类型对数据库中查询结果做转换
+func (field *SchemaField) ConvertFieldValue(val gdb.Value) interface{} {
+	switch fieldtype.FieldType(field.Type) {
+	case fieldtype.Enum:
+		switch fieldtype.EnumType(field.EnumType) {
+		case fieldtype.EnumInt:
+			return val.Int()
+		case fieldtype.EnumFloat:
+			return val.Float64()
+		case fieldtype.EnumBool:
+			return val.Bool()
+		default:
+			return val.String()
+		}
+	case fieldtype.JSON:
+		return gjson.New(val.String()).Map()
+	case fieldtype.Int, fieldtype.BigInt, fieldtype.Money:
+		return val.Int()
+	case fieldtype.Float:
+		return val.Float64()
+	case fieldtype.Bool:
+		return val.Bool()
+	default:
+		return val.String()
+	}
 }
