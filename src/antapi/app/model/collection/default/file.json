@@ -48,5 +48,27 @@
         "enum_type": "",
         "enum_options": "",
         "is_multiple": false
+    }, {
+        "type": "String",
+        "title": "URL",
+        "name": "url",
+        "description": "",
+        "is_required": true,
+        "is_hidden": false,
+        "is_unique": true,
+        "is_private": false,
+        "is_encrypted": false,
+        "can_sort": false,
+        "can_index": true,
+        "default": "",
+        "related_collection": "",
+        "related_display_field": "",
+        "min": 0,
+        "max": 0,
+        "validator": "",
+        "style": "",
+        "enum_type": "",
+        "enum_options": "",
+        "is_multiple": false
     }]
 }
