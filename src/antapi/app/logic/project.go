@@ -13,10 +13,10 @@ var Project = new(projectLogic)
 
 type projectLogic struct{}
 
-// AutoExportProjectData 保存数据到 app/model/project 以便项目初始化
+// AutoExportProjectData 保存数据到 app/model/project/biz 以便项目初始化
 func (projectLogic) AutoExportProjectData(data *gjson.Json) error {
-	glog.Info("Auto Export Project Data To app/model/project")
-	exportPath := gfile.Join(gfile.Pwd(), "app", "model", "project", fmt.Sprintf("%s.json", data.GetString("name")))
+	glog.Info("Auto Export Project Data To app/model/project/biz")
+	exportPath := gfile.Join(gfile.Pwd(), "app", "model", "project", "biz", fmt.Sprintf("%s.json", data.GetString("name")))
 
 	// 将data复制一份
 	_data := new(gjson.Json)
@@ -34,8 +34,8 @@ func (projectLogic) AutoExportProjectData(data *gjson.Json) error {
 
 // AutoDeleteExportedJsonFile 删除导出的json文件
 func (projectLogic) AutoDeleteExportedJsonFile(data *gjson.Json) error {
-	glog.Info("Auto Delete Exported Json File From app/model/project")
-	jsonFilePath := gfile.Join(gfile.Pwd(), "app", "model", "project", fmt.Sprintf("%s.json", data.GetString("name")))
+	glog.Info("Auto Delete Exported Json File From app/model/project/biz")
+	jsonFilePath := gfile.Join(gfile.Pwd(), "app", "model", "project", "biz", fmt.Sprintf("%s.json", data.GetString("name")))
 
 	if err := gfile.Remove(jsonFilePath); err != nil {
 		glog.Fatal(err)

@@ -270,10 +270,10 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 	return nil
 }
 
-// AutoExportSchemaData 保存数据到 app/model/collection 以便项目初始化
+// AutoExportSchemaData 保存数据到 app/model/collection/biz 以便项目初始化
 func (schemaLogic) AutoExportSchemaData(data *gjson.Json) error {
 	glog.Info("Auto Export Schema Data To app/model/collection")
-	exportPath := gfile.Join(gfile.Pwd(), "app", "model", "collection", fmt.Sprintf("%s.json", data.GetString("name")))
+	exportPath := gfile.Join(gfile.Pwd(), "app", "model", "collection", "biz", fmt.Sprintf("%s.json", data.GetString("name")))
 
 	// 将data复制一份
 	_data := new(gjson.Json)
@@ -295,8 +295,8 @@ func (schemaLogic) AutoExportSchemaData(data *gjson.Json) error {
 
 // AutoDeleteExportedJsonFile 删除导出的json文件
 func (schemaLogic) AutoDeleteExportedJsonFile(data *gjson.Json) error {
-	glog.Info("Auto Delete Exported Json File From app/model/collection")
-	jsonFilePath := gfile.Join(gfile.Pwd(), "app", "model", "collection", fmt.Sprintf("%s.json", data.GetString("name")))
+	glog.Info("Auto Delete Exported Json File From app/model/collection/biz")
+	jsonFilePath := gfile.Join(gfile.Pwd(), "app", "model", "collection", "biz", fmt.Sprintf("%s.json", data.GetString("name")))
 
 	if err := gfile.Remove(jsonFilePath); err != nil {
 		glog.Fatal(err)
