@@ -77,7 +77,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 
 		contents = append(contents, content)
 	}
-	if _, err := db.Table(collectionName).Insert(contents); err != nil {
+	if _, err := db.Table(collectionName).FieldsEx("deleted_at").Insert(contents); err != nil {
 		return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 
@@ -121,7 +121,7 @@ func InsertList(collectionName string, arg *InsertFuncArg, data ...interface{}) 
 			dataGJsonSlice[i] = dataGJson
 		}
 
-		if _, err := db.Table(field.RelatedCollection).Insert(tableContent); err != nil {
+		if _, err := db.Table(field.RelatedCollection).FieldsEx("deleted_at").Insert(tableContent); err != nil {
 			return nil, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 	}

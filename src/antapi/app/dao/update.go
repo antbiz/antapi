@@ -62,7 +62,7 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 		}
 		content[field.Name] = val
 	}
-	if _, err := db.Table(collectionName).FieldsEx("id,created_by,created_at").Where("id", id).Update(content); err != nil {
+	if _, err := db.Table(collectionName).FieldsEx("id,created_by,created_at,deleted_at").Where("id", id).Update(content); err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
 
@@ -105,7 +105,7 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 
 		// 执行save操作，如果存在则更新，否则插入
 		// TODO: 优化这里，为了保证对所有数据库做兼容，不应该使用save方法
-		if _, err := db.Table(field.RelatedCollection).Save(tableContent); err != nil {
+		if _, err := db.Table(field.RelatedCollection).FieldsEx("deleted_at").Save(tableContent); err != nil {
 			return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 		}
 
