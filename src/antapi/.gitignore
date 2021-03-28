@@ -8,6 +8,7 @@
 .vscode/
 vender/
 log/
+upload/
 composer.lock
 gitpush.sh
 bin/
