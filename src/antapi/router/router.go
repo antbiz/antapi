@@ -50,4 +50,13 @@ func init() {
 		// 个人信息
 		group.GET("/me", api.User.MyProfile)
 	})
+
+	// 文件上传
+	s.Group("/api/file", func(group *ghttp.RouterGroup) {
+		group.Middleware(middleware.Auth)
+		// 上传
+		group.POST("/upload", api.File.Upload)
+	})
+	// 文件预览或下载
+	s.BindHandler("GET:/upload/{year}/{month}/{day}/{filename}", api.File.Preview)
 }

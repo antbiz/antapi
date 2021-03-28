@@ -23,13 +23,19 @@ const (
 	SourceNotFound         = 10018
 	TimestampMismatchError = 10019
 
-	// 服务级错误代码 - 用户
+	// 服务级错误代码
+	// - 用户
 	IncorrectUsernameOrPassword = 20001
 	IncorrectOldPassword        = 20002
 	IllegalUsername             = 20003
 	ExistsUserName              = 20004
 	ExistsUserEmail             = 20005
 	ExistsUserPhone             = 20006
+	// - 文件
+	FileUploadError           = 20101
+	FileNotFound              = 20102
+	FilePreviewParameterError = 20103
+	FileNotSupportPreview     = 20104
 )
 
 const (
@@ -59,4 +65,8 @@ const (
 	ExistsUserNameMsg              = "用户名 (%s) 已被占用"
 	ExistsUserEmailMsg             = "邮箱 (%s) 已被占用"
 	ExistsUserPhoneMsg             = "手机号 (%s) 已被占用"
+	FileUploadErrorMsg             = "文件上传失败，请稍后再试吧！"
+	FileNotFoundMsg                = "该文件不存在"
+	FilePreviewParameterErrorMsg   = "文件预览参数错误"
+	FileNotSupportPreviewMsg       = "该文件不支持预览"
 )
