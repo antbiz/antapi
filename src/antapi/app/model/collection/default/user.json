@@ -136,5 +136,27 @@
         "enum_type": "",
         "enum_options": "",
         "is_multiple": false
+    }, {
+        "type": "AutoComplete",
+        "title": "Roles",
+        "name": "roles",
+        "description": "",
+        "is_required": false,
+        "is_hidden": false,
+        "is_unique": false,
+        "is_private": false,
+        "is_encrypted": false,
+        "can_sort": false,
+        "can_index": false,
+        "default": "",
+        "related_collection": "Role",
+        "related_display_field": "name",
+        "min": 0,
+        "max": 0,
+        "validator": "",
+        "style": "",
+        "enum_type": "",
+        "enum_options": "",
+        "is_multiple": true
     }]
 }

@@ -93,6 +93,7 @@ func (u *userLogic) SignIn(req *model.UserSignInReq) (map[string]interface{}, er
 		"email":      data.GetString("email"),
 		"blocked":    data.GetBool("blocked"),
 		"is_sysuser": data.GetBool("is_sysuser"),
+		"roles":      data.GetStrings("roles"),
 	}
 	return sessionData, nil
 }

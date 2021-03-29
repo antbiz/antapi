@@ -47,7 +47,7 @@ const (
 	IllegalRequestMsg              = "非法请求"
 	AuthorizationErrorMsg          = "未登录或非法访问"
 	IPDeniedMsg                    = "IP(%s) 限制不能请求该资源"
-	PermissionDeniedMsg            = "权限限制不能请求该资源"
+	PermissionDeniedMsg            = "权限不足"
 	IPRequestsLimitMsg             = "IP(%s) 请求频次超过上限"
 	UserRequestsLimitMsg           = "用户 (%s) 请求频次超过上限"
 	APINotFoundMsg                 = "你迷路了，当前请求: %s"

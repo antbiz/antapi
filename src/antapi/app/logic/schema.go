@@ -188,7 +188,7 @@ func (schemaLogic) MigrateCollectionSchema(collection *gjson.Json) error {
 			col.Type = dbsmtyp.JSON
 		} else {
 			switch fieldType {
-			case fieldtype.String, fieldtype.Enum:
+			case fieldtype.String, fieldtype.Enum, fieldtype.AutoComplete:
 				col.Type = dbsmtyp.VARCHAR
 			case fieldtype.UUID, fieldtype.Link:
 				col.Type = dbsmtyp.VARCHAR
