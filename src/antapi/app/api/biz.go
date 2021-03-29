@@ -3,6 +3,7 @@ package api
 import (
 	"antapi/app/dao"
 	"antapi/common/errcode"
+	"antapi/common/req"
 	"antapi/common/resp"
 
 	"github.com/gogf/gf/errors/gerror"
@@ -15,12 +16,6 @@ var Biz = new(bizApi)
 
 type bizApi struct{}
 
-type getListReq struct {
-	Page int `d:"1"  v:"min:1#分页号码错误"`     // 分页号码
-	Size int `d:"10" v:"max:50#分页数量最大50条"` // 分页数量，最大50
-	Sort string
-}
-
 // Get : 查询详情
 func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
@@ -29,7 +24,7 @@ func (bizApi) Get(r *ghttp.Request) {
 		Where:           "id",
 		WhereArgs:       id,
 		RaiseNotFound:   true,
-		SessionUsername: r.Session.GetString("username"),
+		SessionUsername: req.GetSessionUsername(r),
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
@@ -41,16 +36,16 @@ func (bizApi) Get(r *ghttp.Request) {
 
 // GetList : 查询列表数据
 func (bizApi) GetList(r *ghttp.Request) {
-	var reqArgs *getListReq
 	collectionName := r.GetString("collection")
-	if err := r.ParseQuery(&reqArgs); err != nil {
+	query, err := req.GetFilter(r)
+	if err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
 	}
 	arg := &dao.GetListFuncArg{
-		PageNum:         reqArgs.Page,
-		PageSize:        reqArgs.Size,
-		Order:           reqArgs.Sort,
-		SessionUsername: r.Session.GetString("username"),
+		Limit:           query.Limit,
+		Offset:          query.Offset,
+		Order:           query.GetOrderBy(),
+		SessionUsername: req.GetSessionUsername(r),
 	}
 
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
@@ -67,7 +62,7 @@ func (bizApi) GetList(r *ghttp.Request) {
 func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	arg := &dao.InsertFuncArg{
-		SessionUsername: r.Session.GetString("username"),
+		SessionUsername: req.GetSessionUsername(r),
 	}
 
 	if id, err := dao.Insert(collectionName, arg, r.GetFormMap()); err != nil {
@@ -83,7 +78,7 @@ func (bizApi) Update(r *ghttp.Request) {
 	id := r.GetString("id")
 	arg := &dao.UpdateFuncArg{
 		RaiseNotFound:   true,
-		SessionUsername: r.Session.GetString("username"),
+		SessionUsername: req.GetSessionUsername(r),
 	}
 
 	if err := dao.Update(collectionName, arg, id, r.GetFormMap()); err != nil {
@@ -100,7 +95,7 @@ func (bizApi) Delete(r *ghttp.Request) {
 	arg := &dao.DeleteFuncArg{
 		Where:           "id",
 		WhereArgs:       gstr.SplitAndTrimSpace(id, ","),
-		SessionUsername: r.Session.GetString("username"),
+		SessionUsername: req.GetSessionUsername(r),
 	}
 
 	if err := dao.Delete(collectionName, arg); err != nil {

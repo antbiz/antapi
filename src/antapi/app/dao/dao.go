@@ -42,8 +42,8 @@ type GetListFuncArg struct {
 	Fields                []string
 	Group                 string
 	Order                 string
-	PageNum               int
-	PageSize              int
+	Limit                 int
+	Offset                int
 	SessionUsername       string
 	IgnorePermissionCheck bool
 	IgnoreFieldsCheck     bool

@@ -190,9 +190,14 @@ func GetList(collectionName string, arg *GetListFuncArg) (list *gjson.Json, tota
 	} else {
 		m.Fields(schema.GetFieldNames(arg.IncludeHiddenField, arg.IncludePrivateField))
 	}
-	if arg.PageNum > 0 && arg.PageSize > 0 {
-		m.Limit((arg.PageNum-1)*arg.PageSize, arg.PageSize)
+
+	if arg.Limit >= 0 && arg.Offset > 0 {
+		m.Limit(arg.Limit).Offset(arg.Offset)
 	}
+	if arg.Order != "" {
+		m.Order(arg.Order)
+	}
+
 	records, err := m.All()
 	if err != nil {
 		return nil, 0, gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
