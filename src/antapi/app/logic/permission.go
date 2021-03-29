@@ -53,8 +53,6 @@ func (p *permissionLogic) getPermissionLevel(action, collectionName string, role
 	return &canDo{PermissionVal: maxLevel}, nil
 }
 
-func (p *permissionLogic) CanDo()
-
 // GetCreatePermission 增
 func (p *permissionLogic) GetCreatePermission(collectionName string, roleNames ...string) (*canDo, error) {
 	return p.getPermissionLevel("can_create", collectionName, roleNames...)
