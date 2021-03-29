@@ -11,7 +11,7 @@
         "description": "",
         "is_required": true,
         "is_hidden": false,
-        "is_unique": false,
+        "is_unique": true,
         "is_private": false,
         "is_encrypted": false,
         "can_sort": false,
