@@ -10,7 +10,6 @@ import (
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
-	"github.com/gogf/gf/text/gstr"
 )
 
 var Biz = new(bizApi)
@@ -20,19 +19,23 @@ type bizApi struct{}
 // Get : 查询详情
 func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
-
-	if canRead, err := logic.Permission.CanRead(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if !canRead {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+	id := r.GetString("id")
+	sessionUsername := req.GetSessionUsername(r)
+	arg := &dao.GetFuncArg{
+		RaiseNotFound:   true,
+		SessionUsername: sessionUsername,
 	}
 
-	id := r.GetString("id")
-	arg := &dao.GetFuncArg{
-		Where:           "id",
-		WhereArgs:       id,
-		RaiseNotFound:   true,
-		SessionUsername: req.GetSessionUsername(r),
+	if perm, err := logic.Permission.GetReadPermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+	} else if perm.CanNot() {
+		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+	} else if perm.CanDoOnlyOwner() {
+		arg.Where = "id=? AND created_by=?"
+		arg.WhereArgs = []string{id, sessionUsername}
+	} else {
+		arg.Where = "id"
+		arg.WhereArgs = id
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
@@ -45,13 +48,7 @@ func (bizApi) Get(r *ghttp.Request) {
 // GetList : 查询列表数据
 func (bizApi) GetList(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
-
-	if canRead, err := logic.Permission.CanRead(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if !canRead {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
-	}
-
+	sessionUsername := req.GetSessionUsername(r)
 	query, err := req.GetFilter(r)
 	if err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
@@ -60,7 +57,16 @@ func (bizApi) GetList(r *ghttp.Request) {
 		Limit:           query.Limit,
 		Offset:          query.Offset,
 		Order:           query.GetOrderBy(),
-		SessionUsername: req.GetSessionUsername(r),
+		SessionUsername: sessionUsername,
+	}
+
+	if perm, err := logic.Permission.GetReadPermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+	} else if perm.CanNot() {
+		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+	} else if perm.CanDoOnlyOwner() {
+		arg.Where = "created_by"
+		arg.WhereArgs = sessionUsername
 	}
 
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
@@ -77,9 +83,9 @@ func (bizApi) GetList(r *ghttp.Request) {
 func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 
-	if canCreate, err := logic.Permission.CanCreate(collectionName, req.GetSessionUserRoles(r)...); err != nil {
+	if perm, err := logic.Permission.GetCreatePermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if !canCreate {
+	} else if perm.CanNot() {
 		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
 	}
 
@@ -97,17 +103,20 @@ func (bizApi) Create(r *ghttp.Request) {
 // Update : 更新数据
 func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
-
-	if canUpdate, err := logic.Permission.CanUpdate(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if !canUpdate {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
-	}
-
 	id := r.GetString("id")
+	sessionUsername := req.GetSessionUsername(r)
 	arg := &dao.UpdateFuncArg{
 		RaiseNotFound:   true,
-		SessionUsername: req.GetSessionUsername(r),
+		SessionUsername: sessionUsername,
+	}
+
+	if perm, err := logic.Permission.GetUpdatePermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+	} else if perm.CanNot() {
+		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+	} else if perm.CanDoOnlyOwner() {
+		arg.Where = "created_by"
+		arg.WhereArgs = sessionUsername
 	}
 
 	if err := dao.Update(collectionName, arg, id, r.GetFormMap()); err != nil {
@@ -120,18 +129,23 @@ func (bizApi) Update(r *ghttp.Request) {
 // Delete : 删除数据
 func (bizApi) Delete(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
-
-	if canDelete, err := logic.Permission.CanDelete(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if !canDelete {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+	id := r.GetString("id")
+	sessionUsername := req.GetSessionUsername(r)
+	arg := &dao.DeleteFuncArg{
+		SessionUsername: sessionUsername,
+		RaiseNotFound:   true,
 	}
 
-	id := r.GetString("id")
-	arg := &dao.DeleteFuncArg{
-		Where:           "id",
-		WhereArgs:       gstr.SplitAndTrimSpace(id, ","),
-		SessionUsername: req.GetSessionUsername(r),
+	if perm, err := logic.Permission.GetDeletePermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
+		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+	} else if perm.CanNot() {
+		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+	} else if perm.CanDoOnlyOwner() {
+		arg.Where = "id=? AND created_by=?"
+		arg.WhereArgs = []string{id, sessionUsername}
+	} else {
+		arg.Where = "id"
+		arg.WhereArgs = id
 	}
 
 	if err := dao.Delete(collectionName, arg); err != nil {

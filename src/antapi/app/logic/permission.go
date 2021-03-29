@@ -4,6 +4,7 @@ import (
 	"antapi/app/dao"
 	"fmt"
 
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/frame/g"
 )
 
@@ -15,31 +16,63 @@ type permissionLogic struct {
 	collectionName string
 }
 
+type canDo struct {
+	PermissionVal int
+}
+
+func (c *canDo) CanDo() bool {
+	return c.PermissionVal > 0
+}
+
+func (c *canDo) CanNot() bool {
+	return c.PermissionVal == 0
+}
+
+func (c *canDo) CanDoOnlyOwner() bool {
+	return c.PermissionVal == 1
+}
+
 // TODO: 数据缓存
-func (p *permissionLogic) canDo(action, collectionName string, roleNames ...string) (bool, error) {
-	arg := &dao.ExistsAndCountFuncArg{
+func (p *permissionLogic) getPermissionLevel(action, collectionName string, roleNames ...string) (*canDo, error) {
+	arg := &dao.GetListFuncArg{
 		Where:     fmt.Sprintf("%s=? AND collection_name=? AND role_name IN(?)", action),
 		WhereArgs: g.Slice{true, roleNames},
+		Fields:    []string{action},
 	}
-	return dao.Exists(collectionName, arg)
+	data, total, err := dao.GetList(collectionName, arg)
+	if err != nil {
+		return nil, err
+	} else if data == nil {
+		return &canDo{PermissionVal: 0}, nil
+	}
+	allLevels := garray.NewIntArray(true)
+	for i := 0; i < total; i++ {
+		allLevels.Append(data.GetInt(fmt.Sprintf("%d.%s", i, action)))
+	}
+	maxLevel, _ := allLevels.Sort().PopRight()
+	return &canDo{PermissionVal: maxLevel}, nil
+
+	// return dao.Exists(collectionName, arg)
 }
 
-// CanCreate 增
-func (p *permissionLogic) CanCreate(collectionName string, roleNames ...string) (bool, error) {
-	return p.canDo("can_create", collectionName, roleNames...)
+func (p *permissionLogic) CanDo()
+
+// GetCreatePermission 增
+func (p *permissionLogic) GetCreatePermission(collectionName string, roleNames ...string) (*canDo, error) {
+	return p.getPermissionLevel("can_create", collectionName, roleNames...)
 }
 
-// CanRead 查
-func (p *permissionLogic) CanRead(collectionName string, roleNames ...string) (bool, error) {
-	return p.canDo("can_read", collectionName, roleNames...)
+// GetReadPermission 查
+func (p *permissionLogic) GetReadPermission(collectionName string, roleNames ...string) (*canDo, error) {
+	return p.getPermissionLevel("can_read", collectionName, roleNames...)
 }
 
-// CanUpdate 改
-func (p *permissionLogic) CanUpdate(collectionName string, roleNames ...string) (bool, error) {
-	return p.canDo("can_update", collectionName, roleNames...)
+// GetUpdatePermission 改
+func (p *permissionLogic) GetUpdatePermission(collectionName string, roleNames ...string) (*canDo, error) {
+	return p.getPermissionLevel("can_update", collectionName, roleNames...)
 }
 
-// CanDelete 删
-func (p *permissionLogic) CanDelete(collectionName string, roleNames ...string) (bool, error) {
-	return p.canDo("can_delete", collectionName, roleNames...)
+// GetDeletePermission 删
+func (p *permissionLogic) GetDeletePermission(collectionName string, roleNames ...string) (*canDo, error) {
+	return p.getPermissionLevel("can_delete", collectionName, roleNames...)
 }

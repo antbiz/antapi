@@ -21,7 +21,10 @@ func Delete(collectionName string, arg *DeleteFuncArg) error {
 	if err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
-	if records.Len() == 0 {
+	if records.IsEmpty() {
+		if arg.RaiseNotFound {
+			return gerror.NewCode(errcode.SourceNotFound, errcode.SourceNotFoundMsg)
+		}
 		return nil
 	}
 

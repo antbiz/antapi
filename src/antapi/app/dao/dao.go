@@ -72,6 +72,8 @@ type InsertFuncArg struct {
 
 // UpdateFuncArg .
 type UpdateFuncArg struct {
+	Where                 interface{}
+	WhereArgs             interface{}
 	SessionUsername       string
 	IgnorePermissionCheck bool
 	IgnoreFieldValueCheck bool
@@ -91,14 +93,15 @@ type SaveFuncArg struct {
 
 // DeleteFuncArg .
 type DeleteFuncArg struct {
-	SessionUsername       string
-	IgnorePermissionCheck bool
 	Where                 interface{}
 	WhereArgs             interface{}
 	Or                    interface{}
 	OrArgs                interface{}
 	Having                interface{}
 	HavingArgs            interface{}
+	SessionUsername       string
+	IgnorePermissionCheck bool
+	RaiseNotFound         bool
 }
 
 // dataToJson 任意类型数据转gjson对象

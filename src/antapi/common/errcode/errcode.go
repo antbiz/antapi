@@ -57,7 +57,7 @@ const (
 	ResubmitErrorMsg               = "请勿重复提交"
 	JSONErrorMsg                   = "无效的JSON"
 	DuplicateErrorMsg              = "(%s)已存在，请勿重新创建"
-	SourceNotFoundMsg              = "该资源不存在或已被删除"
+	SourceNotFoundMsg              = "该资源不存在或权限不足"
 	TimestampMismatchErrorMsg      = "提交失败，该资源已被她/他人更新，请刷新后重试"
 	IncorrectUsernameOrPasswordMsg = "账号或密码错误"
 	IncorrectOldPasswordMsg        = "旧密码错误"

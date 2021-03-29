@@ -17,7 +17,7 @@ func Update(collectionName string, arg *UpdateFuncArg, id string, data interface
 	schema := global.GetSchema(collectionName)
 
 	// 检查数据的修改时间，如果提交数据中的修改时间要比数据库中的值小则不允许提交
-	oriRes, err := db.Table(collectionName).Fields("id", "updated_at").Where("id", id).One()
+	oriRes, err := db.Table(collectionName).Fields("id", "updated_at").Where("id", id).Where(arg.Where, arg.WhereArgs).One()
 	if err != nil {
 		return gerror.WrapCode(errcode.ServerError, err, errcode.ServerErrorMsg)
 	}
