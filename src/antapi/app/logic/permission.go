@@ -36,10 +36,10 @@ func (c *canDo) CanDoOnlyOwner() bool {
 func (p *permissionLogic) getPermissionLevel(action, collectionName string, roleNames ...string) (*canDo, error) {
 	arg := &dao.GetListFuncArg{
 		Where:     fmt.Sprintf("%s=? AND collection_name=? AND role_name IN(?)", action),
-		WhereArgs: g.Slice{true, roleNames},
+		WhereArgs: g.Slice{true, collectionName, roleNames},
 		Fields:    []string{action},
 	}
-	data, total, err := dao.GetList(collectionName, arg)
+	data, total, err := dao.GetList(p.collectionName, arg)
 	if err != nil {
 		return nil, err
 	} else if data == nil {
