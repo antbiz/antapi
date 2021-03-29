@@ -51,8 +51,6 @@ func (p *permissionLogic) getPermissionLevel(action, collectionName string, role
 	}
 	maxLevel, _ := allLevels.Sort().PopRight()
 	return &canDo{PermissionVal: maxLevel}, nil
-
-	// return dao.Exists(collectionName, arg)
 }
 
 func (p *permissionLogic) CanDo()
