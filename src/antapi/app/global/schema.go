@@ -9,13 +9,13 @@ import (
 	"github.com/gogf/gf/util/gconv"
 )
 
-// 常驻内存数据
+// schema 常驻内存数据
 var (
 	schemaLocker sync.RWMutex
 	schemasMap   map[string]*model.Schema
 )
 
-// LoadSchemas : 加载全部Collection的Schema
+// LoadSchemas 加载全部Collection的Schema
 func LoadSchemas() error {
 	db := g.DB()
 	schemas := ([]*model.Schema)(nil)
@@ -48,7 +48,7 @@ func LoadSchemas() error {
 	schemaLocker.Lock()
 	defer schemaLocker.Unlock()
 
-	_schemasMap := map[string]*model.Schema{}
+	schemasMap = make(map[string]*model.Schema)
 	for _, schema := range schemas {
 
 		for _, field := range schemaFields {
@@ -57,9 +57,8 @@ func LoadSchemas() error {
 			}
 		}
 
-		_schemasMap[schema.Name] = schema
+		schemasMap[schema.Name] = schema
 	}
-	schemasMap = _schemasMap
 
 	glog.Info("LoadSchemas successfully!")
 	return nil

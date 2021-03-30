@@ -50,8 +50,8 @@
         "is_multiple": false
     }, {
         "type": "Int",
-        "title": "Can Create",
-        "name": "can_create",
+        "title": "Create Level",
+        "name": "create_level",
         "description": "",
         "is_required": false,
         "is_hidden": false,
@@ -72,8 +72,8 @@
         "is_multiple": false
     }, {
         "type": "Int",
-        "title": "Can Read",
-        "name": "can_read",
+        "title": "Read Level",
+        "name": "read_level",
         "description": "",
         "is_required": false,
         "is_hidden": false,
@@ -94,8 +94,8 @@
         "is_multiple": false
     }, {
         "type": "Int",
-        "title": "Can Update",
-        "name": "can_update",
+        "title": "Update Level",
+        "name": "update_level",
         "description": "",
         "is_required": false,
         "is_hidden": false,
@@ -116,8 +116,8 @@
         "is_multiple": false
     }, {
         "type": "Int",
-        "title": "Can Delete",
-        "name": "can_delete",
+        "title": "Delete Level",
+        "name": "delete_level",
         "description": "",
         "is_required": false,
         "is_hidden": false,
