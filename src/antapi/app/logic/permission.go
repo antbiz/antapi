@@ -22,9 +22,12 @@ type permissionLogic struct {
 
 // CheckDuplicatePermission 不允许创建 collection&role 名称均相同的权限
 func (p *permissionLogic) CheckDuplicatePermission(data *gjson.Json) error {
-	permID := data.GetString("id")
 	permCollectionName := data.GetString("collection_name")
 	permRoleName := data.GetString("role_name")
+	if permCollectionName == "" || permRoleName == "" {
+		return nil
+	}
+	permID := data.GetString("id")
 	arg := &dao.ExistsAndCountFuncArg{}
 
 	if permID == "" {
