@@ -46,6 +46,11 @@ func (dialect *MySQLDialect) SQLType(column *Column) string {
 	case types.BOOL:
 		res = types.TINYINT
 		column.Size = 1
+		if strings.ToLower(column.Default) == "true" {
+			column.Default = "1"
+		} else {
+			column.Default = "0"
+		}
 	default:
 		res = t
 	}
