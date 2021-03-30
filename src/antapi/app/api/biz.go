@@ -20,22 +20,23 @@ type bizApi struct{}
 func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
-	sessionUsername := req.GetSessionUsername(r)
+	sessionUser := req.GetSessionUserInfo(r)
 	arg := &dao.GetFuncArg{
+		Where:           "id",
+		WhereArgs:       id,
 		RaiseNotFound:   true,
-		SessionUsername: sessionUsername,
+		SessionUsername: sessionUser.Username,
 	}
 
-	if perm, err := logic.Permission.GetReadPermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if perm.CanNot() {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
-	} else if perm.CanDoOnlyOwner() {
-		arg.Where = "id=? AND created_by=?"
-		arg.WhereArgs = []string{id, sessionUsername}
-	} else {
-		arg.Where = "id"
-		arg.WhereArgs = id
+	if !sessionUser.IsSysuser {
+		if perm, err := logic.Permission.GetReadPermission(collectionName, sessionUser.Roles...); err != nil {
+			resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+		} else if perm.CanNot() {
+			resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+		} else if perm.CanDoOnlyOwner() {
+			arg.Where = "id=? AND created_by=?"
+			arg.WhereArgs = []string{id, sessionUser.Username}
+		}
 	}
 
 	if res, err := dao.Get(collectionName, arg); err != nil {
@@ -48,7 +49,7 @@ func (bizApi) Get(r *ghttp.Request) {
 // GetList : 查询列表数据
 func (bizApi) GetList(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
-	sessionUsername := req.GetSessionUsername(r)
+	sessionUser := req.GetSessionUserInfo(r)
 	query, err := req.GetFilter(r)
 	if err != nil {
 		resp.Error(r).SetError(err).SetCode(errcode.ParameterBindError).Json()
@@ -57,16 +58,18 @@ func (bizApi) GetList(r *ghttp.Request) {
 		Limit:           query.Limit,
 		Offset:          query.Offset,
 		Order:           query.GetOrderBy(),
-		SessionUsername: sessionUsername,
+		SessionUsername: sessionUser.Username,
 	}
 
-	if perm, err := logic.Permission.GetReadPermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if perm.CanNot() {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
-	} else if perm.CanDoOnlyOwner() {
-		arg.Where = "created_by"
-		arg.WhereArgs = sessionUsername
+	if !sessionUser.IsSysuser {
+		if perm, err := logic.Permission.GetReadPermission(collectionName, sessionUser.Roles...); err != nil {
+			resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+		} else if perm.CanNot() {
+			resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+		} else if perm.CanDoOnlyOwner() {
+			arg.Where = "created_by"
+			arg.WhereArgs = sessionUser.Username
+		}
 	}
 
 	if res, total, err := dao.GetList(collectionName, arg); err != nil {
@@ -82,15 +85,16 @@ func (bizApi) GetList(r *ghttp.Request) {
 // Create : 新建数据
 func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
+	sessionUser := req.GetSessionUserInfo(r)
 
-	if perm, err := logic.Permission.GetCreatePermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
+	if perm, err := logic.Permission.GetCreatePermission(collectionName, sessionUser.Roles...); err != nil {
 		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
 	} else if perm.CanNot() {
 		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
 	}
 
 	arg := &dao.InsertFuncArg{
-		SessionUsername: req.GetSessionUsername(r),
+		SessionUsername: sessionUser.Username,
 	}
 
 	if id, err := dao.Insert(collectionName, arg, r.GetFormMap()); err != nil {
@@ -104,19 +108,21 @@ func (bizApi) Create(r *ghttp.Request) {
 func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
-	sessionUsername := req.GetSessionUsername(r)
+	sessionUser := req.GetSessionUserInfo(r)
 	arg := &dao.UpdateFuncArg{
 		RaiseNotFound:   true,
-		SessionUsername: sessionUsername,
+		SessionUsername: sessionUser.Username,
 	}
 
-	if perm, err := logic.Permission.GetUpdatePermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if perm.CanNot() {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
-	} else if perm.CanDoOnlyOwner() {
-		arg.Where = "created_by"
-		arg.WhereArgs = sessionUsername
+	if !sessionUser.IsSysuser {
+		if perm, err := logic.Permission.GetUpdatePermission(collectionName, sessionUser.Roles...); err != nil {
+			resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+		} else if perm.CanNot() {
+			resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+		} else if perm.CanDoOnlyOwner() {
+			arg.Where = "created_by"
+			arg.WhereArgs = sessionUser.Username
+		}
 	}
 
 	if err := dao.Update(collectionName, arg, id, r.GetFormMap()); err != nil {
@@ -130,22 +136,23 @@ func (bizApi) Update(r *ghttp.Request) {
 func (bizApi) Delete(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
-	sessionUsername := req.GetSessionUsername(r)
+	sessionUser := req.GetSessionUserInfo(r)
 	arg := &dao.DeleteFuncArg{
-		SessionUsername: sessionUsername,
+		Where:           "id",
+		WhereArgs:       id,
+		SessionUsername: sessionUser.Username,
 		RaiseNotFound:   true,
 	}
 
-	if perm, err := logic.Permission.GetDeletePermission(collectionName, req.GetSessionUserRoles(r)...); err != nil {
-		resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
-	} else if perm.CanNot() {
-		resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
-	} else if perm.CanDoOnlyOwner() {
-		arg.Where = "id=? AND created_by=?"
-		arg.WhereArgs = []string{id, sessionUsername}
-	} else {
-		arg.Where = "id"
-		arg.WhereArgs = id
+	if !sessionUser.IsSysuser {
+		if perm, err := logic.Permission.GetDeletePermission(collectionName, sessionUser.Roles...); err != nil {
+			resp.Error(r).SetError(gerror.Current(err)).SetCode(gerror.Code(err)).Json()
+		} else if perm.CanNot() {
+			resp.Error(r).SetCode(errcode.PermissionDenied).SetMsg(errcode.PermissionDeniedMsg).Json()
+		} else if perm.CanDoOnlyOwner() {
+			arg.Where = "id=? AND created_by=?"
+			arg.WhereArgs = []string{id, sessionUser.Username}
+		}
 	}
 
 	if err := dao.Delete(collectionName, arg); err != nil {

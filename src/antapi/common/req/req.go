@@ -1,24 +1,25 @@
 package req
 
 import (
+	"antapi/app/model"
 	"antapi/pkg/rqp"
 
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
 )
 
-// GetSessionUsername 获取当前会话用户名
-func GetSessionUsername(r *ghttp.Request) string {
-	return r.Session.GetString("username")
-}
-
-// GetSessionRoles 获取当前会话用户角色
-func GetSessionUserRoles(r *ghttp.Request) []string {
-	roles := r.Session.GetStrings("roles")
-	if len(roles) == 0 {
-		return []string{"Guest"}
+// GetSessionUserInfo 获取当前会话用户信息
+func GetSessionUserInfo(r *ghttp.Request) *model.SessionUser {
+	sess := r.Session
+	return &model.SessionUser{
+		ID:        sess.GetString("id"),
+		Username:  sess.GetString("username"),
+		Phone:     sess.GetString("phone"),
+		Email:     sess.GetString("email"),
+		Blocked:   sess.GetBool("blocked"),
+		IsSysuser: sess.GetBool("is_sysuser"),
+		Roles:     sess.GetStrings("roles"),
 	}
-	return roles
 }
 
 // GetFilter 获取过滤器

@@ -31,3 +31,14 @@ type UserUpdatePasswordReq struct {
 	Password    string `v:"required|length:6,16#请输入新密码|密码长度应当在:min到:max之间"`
 	Password2   string `v:"required|length:6,16|same:Password#请输入确认密码|密码长度应当在:min到:max之间|两次密码输入不相等"`
 }
+
+// SessionUser .
+type SessionUser struct {
+	ID        string   `json:"id"`
+	Username  string   `json:"username"`
+	Phone     string   `json:"phone"`
+	Email     string   `json:"email"`
+	Blocked   bool     `json:"blocked"`
+	IsSysuser bool     `json:"is_sysuser"`
+	Roles     []string `json:"roles"`
+}
