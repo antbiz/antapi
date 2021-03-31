@@ -46,6 +46,7 @@ const ProjectLayout: React.FC = ({ children, location }) => {
   return (
     <ProLayout
       rightContentRender={() => <RightContent />}
+      disableContentMargin={true}
       menu={{ defaultOpenAll: true }}
       location={location}
       onMenuHeaderClick={() => {
