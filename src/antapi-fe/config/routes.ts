@@ -18,28 +18,26 @@
     menuRender: false,
   },
   {
-    name: 'overview',
-    path: '/project/:projectId/overview',
-    icon: 'eye',
-    component: './project/overview',
-  },
-  {
-    name: 'schema',
-    path: '/project/:projectId/schema',
-    icon: 'gold',
-    component: './project/schema',
-  },
-  {
-    name: 'content',
-    path: '/project/:projectId/content',
-    icon: 'database',
-    component: './project/content',
-  },
-  {
-    name: 'setting',
-    path: '/project/:projectId/setting',
-    icon: 'setting',
-    component: './project/setting',
+    component: '../layouts/ProjectLayout',
+    layout: false,
+    routes: [
+      {
+        path: '/project/:projectId/overview',
+        component: './project/overview',
+      },
+      {
+        path: '/project/:projectId/schema',
+        component: './project/schema',
+      },
+      {
+        path: '/project/:projectId/content',
+        component: './project/content',
+      },
+      {
+        path: '/project/:projectId/setting',
+        component: './project/setting',
+      },
+    ]
   },
   {
     component: './404',
