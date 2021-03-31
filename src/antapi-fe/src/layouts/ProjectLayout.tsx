@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { history, Link, matchPath } from 'umi';
 import RightContent from '@/components/RightContent';
-import type { MenuDataItem, BasicLayoutProps } from '@ant-design/pro-layout';
+import type { MenuDataItem } from '@ant-design/pro-layout';
 import ProLayout from '@ant-design/pro-layout';
 import {
   EyeTwoTone,
@@ -42,32 +42,10 @@ const customMenuData: MenuDataItem[] = [
   },
 ];
 
-const layoutProps: BasicLayoutProps = {
-  // disableContentMargin: true,
-  rightContentRender: () => <RightContent />,
-  // 面包屑渲染
-  itemRender: () => null,
-  ...defaultSettings,
-};
-
 const ProjectLayout: React.FC = ({ children, location }) => {
-  useEffect(() => {
-    // 匹配 Path，获取 projectId
-    const match = matchPath<{ projectId?: string }>(history.location.pathname, {
-      path: '/project/:projectId/*',
-      exact: true,
-      strict: false,
-    });
-
-    // projectId 无效时，重定向到首页
-    const { projectId = '' } = match?.params || {};
-    if (projectId === ':projectId' || !projectId) {
-      history.push('/home');
-    }
-  }, []);
-
   return (
     <ProLayout
+      rightContentRender={() => <RightContent />}
       menu={{ defaultOpenAll: true }}
       location={location}
       onMenuHeaderClick={() => {
@@ -101,7 +79,7 @@ const ProjectLayout: React.FC = ({ children, location }) => {
 
         return defaultDom;
       }}
-      {...layoutProps}
+      {...defaultSettings}
     >
       {children}
     </ProLayout>
