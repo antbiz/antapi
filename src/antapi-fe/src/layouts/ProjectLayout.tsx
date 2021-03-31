@@ -33,7 +33,6 @@ const customMenuData: MenuDataItem[] = [
     path: '/project/:projectId/content',
     name: '内容集合',
     icon: <DatabaseTwoTone />,
-    children: [],
   },
   {
     authority: 'isAdmin',
@@ -51,9 +50,7 @@ const layoutProps: BasicLayoutProps = {
   ...defaultSettings,
 };
 
-const ProjectLayout: React.FC<any> = (props) => {
-  const { children, location } = props;
-
+const ProjectLayout: React.FC = ({ children, location }) => {
   useEffect(() => {
     // 匹配 Path，获取 projectId
     const match = matchPath<{ projectId?: string }>(history.location.pathname, {
