@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSetState } from 'react-use';
 import { useRequest, useAccess } from 'umi';
-import { useLocalStorageState } from '@umijs/hooks';
+import { useLocalStorage } from 'react-use';
 import { setTwoToneColor, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { Tooltip, Typography, Empty } from 'antd';
 import ProLayout from '@ant-design/pro-layout';
@@ -24,7 +24,7 @@ const toggleIconStyle: React.CSSProperties = {
 
 export default (): React.ReactNode => {
   // 布局设置持久化到本地
-  const [currentLayout, setLocalLayout] = useLocalStorageState('ANTAPI_CMS_PROJECT_LAYOUT', 'card');
+  const [currentLayout, setLocalLayout] = useLocalStorage('ANTAPI_CMS_PROJECT_LAYOUT', 'card');
   const [{ modalVisible, reload }, setState] = useSetState({
     reload: 0,
     modalVisible: false,
