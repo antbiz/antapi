@@ -51,7 +51,7 @@ export default function ProjectListView({
         <div className='project-item'
           key={`${project.id}`}
           onClick={() => {
-            history.push(`/${project.id}/home`);
+            history.push(`/project/${project.id}/overview`);
           }}
         >
           <Card bordered={false} style={cardStyle} bodyStyle={cardBodyStyle}>
