@@ -2,7 +2,7 @@ import type { Effect, Reducer } from 'umi';
 import { getSchemas } from '@/services/schema';
 
 export interface SchemaState {
-  data: any;
+  schemas: Partial<API.Schema[]>;
 }
 
 export interface SchemaModelType {
@@ -22,7 +22,7 @@ const SchemaModel: SchemaModelType = {
   namespace: 'schema',
 
   state: {
-    data: {},
+    schemas: [],
   },
 
   effects: {
@@ -40,13 +40,14 @@ const SchemaModel: SchemaModelType = {
     loadSchemas(state, action) {
       return {
         ...(state as SchemaState),
-        data: action.payload,
+        // schemas: action.payload?.data?.list || [],
+        schemas: action.payload?.data || [],
       }
     },
     clean(state) {
       return {
         ...(state as SchemaState),
-        data: {},
+        schemas: [],
       }
     }
   },
