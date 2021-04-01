@@ -2,7 +2,7 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import { notification } from 'antd';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
-import { history } from 'umi';
+import { history, Link, matchPath } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import type { ResponseError } from 'umi-request';
@@ -84,6 +84,30 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     },
     links: [],
     menuHeaderRender: undefined,
+    menuItemRender: (menuItemProps, defaultDom) => {
+      const match = matchPath<{ projectId?: string }>(history.location.pathname, {
+        path: '/project/:projectId/*',
+        exact: true,
+      });
+
+      // 项目 Id
+      const { projectId = '' } = match?.params || {};
+
+      if (menuItemProps.isUrl || menuItemProps.children) {
+        return defaultDom;
+      }
+
+      if (menuItemProps.path) {
+        return (
+          <Link
+            to={menuItemProps.path.replace(':projectId', projectId)}
+          >
+            {defaultDom}
+          </Link>
+        );
+      }
+      return defaultDom;
+    },
     // 自定义 403 页面
     // unAccessible: <div>unAccessible</div>,
     ...initialState?.settings,
