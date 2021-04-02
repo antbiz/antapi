@@ -30,6 +30,12 @@
     component: './project/schema',
   },
   {
+    name: 'schemaEdit',
+    path: '/project/:projectId/schema/edit',
+    component: './project/schema/edit',
+    hideInMenu: true,
+  },
+  {
     name: 'content',
     icon: 'database',
     path: '/project/:projectId/content',

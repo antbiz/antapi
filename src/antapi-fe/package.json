@@ -57,13 +57,12 @@
     "@umijs/route-utils": "^1.0.36",
     "antd": "^4.15.0",
     "classnames": "^2.2.6",
-    "css.gg": "^2.0.0",
+    "form-render": "^0.10.5",
+    "fr-generator": "^1.1.0",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "omit.js": "^2.0.2",
     "react": "^17.0.2",
-    "react-beautiful-dnd": "^13.1.0",
-    "react-dev-inspector": "^1.5.3",
     "react-dom": "^17.0.2",
     "react-helmet-async": "^1.0.9",
     "react-use": "^17.2.1",
@@ -103,7 +102,8 @@
     "prettier": "^2.2.1",
     "puppeteer-core": "^8.0.0",
     "stylelint": "^13.12.0",
-    "typescript": "^4.2.3"
+    "typescript": "^4.2.3",
+    "webpack-plugin-fr-theme": "^0.2.0"
   },
   "engines": {
     "node": ">=10.0.0"

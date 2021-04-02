@@ -47,6 +47,7 @@ export default {
   'menu.account.logout': '退出登录',
   'menu.overview': '概览',
   'menu.schema': '内容模型',
+  'menu.schemaEdit': '模型编辑',
   'menu.content': '内容集合',
   'menu.setting': '项目设置',
 };

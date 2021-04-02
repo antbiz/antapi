@@ -47,7 +47,7 @@ const SchemaList: React.FC = () => {
       valueType: 'option',
       render: (_, record) => [
         <div key="option">
-          <Link to={`/project/${projectId}/schema/${record.id}`}>编辑</Link>
+          <Link to={`/project/${projectId}/schema/edit?id=${record.id}`}>编辑</Link>
           <Divider type="vertical" />
           <Popconfirm
             title="确定删除？"

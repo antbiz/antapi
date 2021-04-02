@@ -7,6 +7,8 @@ import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
 
+const WebpackPluginFrTheme = require('webpack-plugin-fr-theme');
+
 export default defineConfig({
   hash: true,
   antd: {},
@@ -63,4 +65,13 @@ export default defineConfig({
   //   schemaPath: join(__dirname, 'oneapi.json'),
   //   mock: false,
   // },
+  chainWebpack: (memo, { env, webpack, createCSSRule  }) => {
+    // memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
+    //   {
+    //     // available options are documented at https://github.com/Microsoft/monaco-editor-webpack-plugin#options
+    //     languages: ['json', 'sql']
+    //   }
+    // ]);
+    memo.plugin('WebpackPluginFrTheme').use(WebpackPluginFrTheme);
+  },
 });

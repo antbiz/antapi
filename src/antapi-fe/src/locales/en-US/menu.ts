@@ -47,6 +47,7 @@ export default {
   'menu.account.logout': 'Logout',
   'menu.overview': 'Overview',
   'menu.schema': 'Schema',
+  'menu.schemaEdit': 'Schema Edit',
   'menu.content': 'Content',
   'menu.setting': 'Settings',
 };
