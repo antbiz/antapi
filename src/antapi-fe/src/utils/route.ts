@@ -18,4 +18,4 @@ export const getProjectId = () => {
   const { projectId = '' } = match?.params || {};
 
   return projectId;
-}
+};

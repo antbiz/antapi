@@ -18,9 +18,9 @@ const cardBodyStyle = {
 
 const CreateProject: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
-    <div className='project-item' onClick={onClick}>
+    <div className="project-item" onClick={onClick}>
       <Card bordered={false} style={cardStyle} bodyStyle={cardBodyStyle}>
-        <div className='project-icon' style={{ backgroundColor: '#fff' }}>
+        <div className="project-icon" style={{ backgroundColor: '#fff' }}>
           <PlusCircleTwoTone style={{ fontSize: '46px' }} />
         </div>
       </Card>
@@ -46,9 +46,10 @@ export default function ProjectListView({
   const { isAdmin } = useAccess();
 
   return (
-    <div className='project-container'>
+    <div className="project-container">
       {projects.map((project) => (
-        <div className='project-item'
+        <div
+          className="project-item"
           key={`${project.id}`}
           onClick={() => {
             history.push(`/project/${project.id}/overview`);

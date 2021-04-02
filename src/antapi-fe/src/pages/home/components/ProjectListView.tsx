@@ -45,7 +45,10 @@ export default function ProjectListView({
         </div>
       ))}
       {isAdmin && (
-        <div className="project-list-item flex items-center py-5 px-5" onClick={() => onCreateProject()}>
+        <div
+          className="project-list-item flex items-center py-5 px-5"
+          onClick={() => onCreateProject()}
+        >
           <div className="w-2/4 flex items-center">
             <div className="item-icon create-icon">
               <PlusCircleOutlined style={{ fontSize: '24px', color: '#0052d9' }} />

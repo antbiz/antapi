@@ -17,7 +17,7 @@ const handleRemove = async (id: string) => {
   const hide = message.loading('正在删除');
   if (!id) return true;
   try {
-    await deleteSchema({id});
+    await deleteSchema({ id });
     hide();
     message.success('删除成功，即将刷新');
     return true;
@@ -59,7 +59,7 @@ const SchemaList: React.FC = () => {
           >
             <a href="#">删除</a>
           </Popconfirm>
-        </div>
+        </div>,
       ],
     },
   ];
@@ -73,16 +73,12 @@ const SchemaList: React.FC = () => {
           labelWidth: 120,
         }}
         toolBarRender={() => [
-          <Button
-            type="primary"
-            key="primary"
-            onClick={() => {
-            }}
-          >
-            <PlusOutlined />新建
+          <Button type="primary" key="primary" onClick={() => {}}>
+            <PlusOutlined />
+            新建
           </Button>,
         ]}
-        params={{projectId}}
+        params={{ projectId }}
         request={getSchemas}
         columns={columns}
         rowSelection={{

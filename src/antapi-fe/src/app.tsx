@@ -93,13 +93,7 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       if (menuItemProps.path) {
         // 项目 Id
         const projectId = getProjectId;
-        return (
-          <Link
-            to={menuItemProps.path.replace(':projectId', projectId)}
-          >
-            {defaultDom}
-          </Link>
-        );
+        return <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link>;
       }
       return defaultDom;
     },
