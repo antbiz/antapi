@@ -7,6 +7,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import type { ResponseError } from 'umi-request';
 import { currentUser as queryCurrentUser } from './services/api';
+import { getProjectId } from './utils';
 
 const loginPath = '/login';
 
@@ -71,9 +72,9 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
   return {
     rightContentRender: () => <RightContent />,
     disableContentMargin: false,
-    waterMarkProps: {
-      content: initialState?.currentUser?.name,
-    },
+    // waterMarkProps: {
+    //   content: initialState?.currentUser?.name,
+    // },
     footerRender: () => <Footer />,
     onPageChange: () => {
       const { location } = history;
@@ -85,19 +86,13 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
     links: [],
     menuHeaderRender: undefined,
     menuItemRender: (menuItemProps, defaultDom) => {
-      const match = matchPath<{ projectId?: string }>(history.location.pathname, {
-        path: '/project/:projectId/*',
-        exact: true,
-      });
-
-      // 项目 Id
-      const { projectId = '' } = match?.params || {};
-
       if (menuItemProps.isUrl || menuItemProps.children) {
         return defaultDom;
       }
 
       if (menuItemProps.path) {
+        // 项目 Id
+        const projectId = getProjectId;
         return (
           <Link
             to={menuItemProps.path.replace(':projectId', projectId)}

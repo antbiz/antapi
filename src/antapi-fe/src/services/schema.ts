@@ -3,8 +3,18 @@
 import { request } from 'umi';
 
 /** 获取内容模型列表 GET `/api/project/${projectId}/schema` */
-export async function getSchemas(projectId: string) {
-  return request<{ data: API.Schema[] }>(`/api/project/${projectId}/schema`, {
+export async function getSchemas(
+  params: {
+    // query
+    /** 当前的页码 */
+    current?: number;
+    /** 页面的容量 */
+    pageSize?: number;
+    projectId: string;
+  },
+  options?: { [key: string]: any },
+) {
+  return request<{ data: API.Schema[] }>(`/api/project/${params.projectId}/schema`, {
     method: 'GET',
   });
 }

@@ -1,88 +1,98 @@
-import { useParams, connect } from 'umi';
-import type { Dispatch } from 'umi';
-import React, { useEffect, useState } from 'react';
-import { Layout, Button, Space } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import ProCard from '@ant-design/pro-card';
+import { Button, Divider, Popconfirm, message } from 'antd';
+import React, { useRef } from 'react';
+import { Link } from 'umi';
 import { PageContainer } from '@ant-design/pro-layout';
-import SchemaMenuList from './SchemaMenuList';
-import SchemaContent from './SchemaContent';
-import './index.less';
+import type { ProColumns, ActionType } from '@ant-design/pro-table';
+import ProTable from '@ant-design/pro-table';
+import { getSchemas } from '@/services/schema';
+import { getProjectId } from '@/utils';
 
-interface SchemasProps {
-  dispatch: Dispatch;
-  schemas: Partial<API.Schema[]>;
-  loading: boolean;
-}
-
-const SchemaList: React.FC<SchemasProps> = (props) => {
-  const { projectId } = useParams<{projectId: string}>();
-  const { dispatch, schemas } = props;
-  const [ currentSchemaId, setCurrentSchemaId ] = useState<string>('');
-  // const isLoading = loading || !schemas;
-  // const menuRef = useRef<API.Schema[]>(schemas || []);
-
-  useEffect(() => {
-    dispatch({
-      type: 'schema/getSchemas',
-      payload: {
-        projectId
-      }
-    });
-  }, [projectId, dispatch]);
-
-  const onSelectSchema = (schemaId: string) => {
-    // menuRef.current.onSelectSchema(schemaId);
-    setCurrentSchemaId(schemaId);
+// /**
+//  * 删除节点
+//  *
+//  * @param id
+//  */
+const handleRemove = async (id: string) => {
+  const hide = message.loading('正在删除');
+  if (!id) return true;
+  try {
+    await deleteSchema({id});
+    hide();
+    message.success('删除成功，即将刷新');
+    return true;
+  } catch (error) {
+    hide();
+    message.error('删除失败，请重试');
+    return false;
   }
+};
 
-  return (
-    <PageContainer
-      className="schema-page-container"
-      fixedHeader
-      affixProps={{ offsetTop: 48 }}
-      extra={
-        <Space>
-          <Button
-            type="primary"
-            onClick={() => {
-              console.log("todo create")
+const SchemaList: React.FC = () => {
+  const actionRef = useRef<ActionType>();
+  const projectId = getProjectId();
+
+  const columns: ProColumns<API.Schema>[] = [
+    {
+      title: '标题',
+      dataIndex: 'displayName',
+    },
+    {
+      title: '名称',
+      dataIndex: 'collectionName',
+    },
+    {
+      title: '操作',
+      dataIndex: 'option',
+      valueType: 'option',
+      render: (_, record) => [
+        <div key="option">
+          <Link to={`/project/${projectId}/schema/${record.id}`}>编辑</Link>
+          <Divider type="vertical" />
+          <Popconfirm
+            title="确定删除？"
+            okText="是"
+            cancelText="否"
+            onConfirm={() => {
+              handleRemove(record.id);
             }}
           >
-            <PlusOutlined />
-            新建模型
-          </Button>
-        </Space>
-      }
-    >
-      <ProCard split="vertical" gutter={[16, 16]} style={{ background: 'inherit' }}>
-        {/* 模型菜单 */}
-        <ProCard colSpan="220px" className="card-left" style={{ marginBottom: 0 }}>
-          <SchemaMenuList
-            // ref={menuRef}
-            currentSchemaId={currentSchemaId}
-            schemas={schemas}
-            onSelect={onSelectSchema}
-          />
-        </ProCard>
-        {/* 模型字段 */}
-        <Layout className="schema-layout">
-          <SchemaContent currentSchema={currentSchemaId ? schemas?.find( element => element.id === currentSchemaId) : schemas[0]} />
-        </Layout>
-      </ProCard>
+            <a href="#">删除</a>
+          </Popconfirm>
+        </div>
+      ],
+    },
+  ];
+
+  return (
+    <PageContainer>
+      <ProTable<API.Schema, API.PageParams>
+        actionRef={actionRef}
+        rowKey="id"
+        search={{
+          labelWidth: 120,
+        }}
+        toolBarRender={() => [
+          <Button
+            type="primary"
+            key="primary"
+            onClick={() => {
+            }}
+          >
+            <PlusOutlined />新建
+          </Button>,
+        ]}
+        params={{projectId}}
+        request={getSchemas}
+        columns={columns}
+        rowSelection={{
+          onChange: (_, selectedRows) => {
+            setSelectedRows(selectedRows);
+          },
+        }}
+      />
     </PageContainer>
   );
 };
 
-export default connect(
-  ({
-    schema,
-    loading
-  }: {
-    schema: PageState;
-    loading: { effects: Record<string, boolean> };
-  }) => ({
-    schemas: schema.schemas,
-    loading: loading.effects['schema/getSchemas'],
-  }),
-)(SchemaList);
+export default SchemaList;
