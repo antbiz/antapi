@@ -9,12 +9,12 @@ export default (): React.ReactNode => {
   const [schemas, setSchemas] = useState<API.Schema[]>([]);
   const projectId = getProjectId();
   const onLoadSchemas = async () => {
-    const { data } = await getSchemas({projectId});
+    const { data } = await getSchemas({ projectId });
     if (data.length > 0) {
       setCurrentSchema(data[0]);
       setSchemas(data);
     }
-  }
+  };
 
   useEffect(() => {
     onLoadSchemas();
@@ -25,16 +25,14 @@ export default (): React.ReactNode => {
       defaultSelectedKeys={[schemas[0].collectionName]}
       mode="inline"
       onClick={(item) => {
-        setCurrentSchema(schemas.find(schema => schema.collectionName === item.key));
+        setCurrentSchema(schemas.find((schema) => schema.collectionName === item.key));
       }}
     >
-      {schemas.map(schema => {
-        return (
-          <Menu.Item key={schema.collectionName}>{schema.displayName}</Menu.Item>
-        )
+      {schemas.map((schema) => {
+        return <Menu.Item key={schema.collectionName}>{schema.displayName}</Menu.Item>;
       })}
     </Menu>
   ) : (
     <Spin tip="加载中..." />
-  )
-}
+  );
+};

@@ -1,5 +1,5 @@
 import { PlusOutlined } from '@ant-design/icons';
-import { Button, Popconfirm, message, Modal} from 'antd';
+import { Button, Popconfirm, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
@@ -34,7 +34,7 @@ const handleAdd = async (schema: API.Schema) => {
 const handleUpdate = async (schema: API.Schema) => {
   const hide = message.loading('正在更新');
   try {
-    await updateRule({...schema});
+    await updateRule({ ...schema });
     hide();
     message.success('更新成功');
     return true;
@@ -97,7 +97,9 @@ export default (): React.ReactNode => {
             handleRemove(record.id);
           }}
         >
-          <a style={{color: '#ff7875'}} href="#">删除</a>
+          <a style={{ color: '#ff7875' }} href="#">
+            删除
+          </a>
         </Popconfirm>,
         <a
           key="update"
@@ -137,9 +139,9 @@ export default (): React.ReactNode => {
         columns={columns}
       />
       <Modal
-        title={currentItem?.id ? "更新模型" : "新建模型"}
+        title={currentItem?.id ? '更新模型' : '新建模型'}
         width="90%"
-        bodyStyle={{ height: '70vh'}}
+        bodyStyle={{ height: '70vh' }}
         maskClosable={false}
         visible={editModalVisible}
         cancelText="取消"
@@ -147,8 +149,10 @@ export default (): React.ReactNode => {
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
           const value = genRef.current.getValue();
-          console.log(value)
-          const success = value?.id ? await handleUpdate(value as API.Schema) : await handleAdd(value as API.Schema);
+          console.log(value);
+          const success = value?.id
+            ? await handleUpdate(value as API.Schema)
+            : await handleAdd(value as API.Schema);
           if (success) {
             handleEditModalVisible(false);
             if (actionRef.current) {

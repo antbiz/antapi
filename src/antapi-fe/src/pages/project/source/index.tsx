@@ -35,7 +35,7 @@ const handleAdd = async (schema: API.Schema) => {
 const handleUpdate = async (schema: API.Schema) => {
   const hide = message.loading('正在更新');
   try {
-    await updateSchema({...schema});
+    await updateSchema({ ...schema });
     hide();
     message.success('更新成功');
     return true;
@@ -95,9 +95,32 @@ export default (): React.ReactNode => {
           className="content-container"
           extra={
             <>
-              <Button key="deleteSchema" danger onClick={() => { handleDelete(currentSchema.id) }}>删除模型</Button>
-              <Button key="updateSchema" onClick={() => { handleEditModalVisible(true) }}>更新模型</Button>
-              <Button key="addSchema" type="primary" onClick={() => { handleEditModalVisible(true) }}>新建模型</Button>
+              <Button
+                key="deleteSchema"
+                danger
+                onClick={() => {
+                  handleDelete(currentSchema.id);
+                }}
+              >
+                删除模型
+              </Button>
+              <Button
+                key="updateSchema"
+                onClick={() => {
+                  handleEditModalVisible(true);
+                }}
+              >
+                更新模型
+              </Button>
+              <Button
+                key="addSchema"
+                type="primary"
+                onClick={() => {
+                  handleEditModalVisible(true);
+                }}
+              >
+                新建模型
+              </Button>
             </>
           }
         >
@@ -105,9 +128,9 @@ export default (): React.ReactNode => {
         </ProCard>
       </ProCard>
       <Modal
-        title={currentSchema?.id ? "更新模型" : "新建模型"}
+        title={currentSchema?.id ? '更新模型' : '新建模型'}
         width="90%"
-        bodyStyle={{ height: '70vh'}}
+        bodyStyle={{ height: '70vh' }}
         maskClosable={false}
         visible={editModalVisible}
         cancelText="取消"
@@ -115,8 +138,10 @@ export default (): React.ReactNode => {
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
           const value = genRef.current.getValue();
-          console.log(value)
-          const success = value?.id ? await handleUpdate(value as API.Schema) : await handleAdd(value as API.Schema);
+          console.log(value);
+          const success = value?.id
+            ? await handleUpdate(value as API.Schema)
+            : await handleAdd(value as API.Schema);
           if (success) {
             handleEditModalVisible(false);
             if (actionRef.current) {
@@ -125,10 +150,7 @@ export default (): React.ReactNode => {
           }
         }}
       >
-        <Generator
-          ref={genRef}
-          extraButtons={[true, true, false, false]}
-        />
+        <Generator ref={genRef} extraButtons={[true, true, false, false]} />
       </Modal>
     </SourceCtx.Provider>
   );
