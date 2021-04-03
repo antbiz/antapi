@@ -46,8 +46,6 @@ export default {
   'menu.account.trigger': '触发报错',
   'menu.account.logout': '退出登录',
   'menu.overview': '概览',
-  'menu.schema': '内容模型',
-  'menu.schemaEdit': '模型编辑',
-  'menu.content': '内容集合',
+  'menu.source': '资源',
   'menu.setting': '项目设置',
 };

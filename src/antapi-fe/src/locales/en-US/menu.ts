@@ -46,8 +46,6 @@ export default {
   'menu.account.trigger': 'Trigger Error',
   'menu.account.logout': 'Logout',
   'menu.overview': 'Overview',
-  'menu.schema': 'Schema',
-  'menu.schemaEdit': 'Schema Edit',
-  'menu.content': 'Content',
+  'menu.source': 'Source',
   'menu.setting': 'Settings',
 };

@@ -24,16 +24,10 @@
     component: './project/overview',
   },
   {
-    name: 'schema',
-    icon: 'gold',
-    path: '/project/:projectId/schema',
-    component: './project/schema',
-  },
-  {
-    name: 'content',
+    name: 'source',
     icon: 'database',
-    path: '/project/:projectId/content',
-    component: './project/content',
+    path: '/project/:projectId/source',
+    component: './project/source',
   },
   {
     name: 'setting',

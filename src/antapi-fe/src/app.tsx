@@ -2,7 +2,7 @@ import type { Settings as LayoutSettings } from '@ant-design/pro-layout';
 import { PageLoading } from '@ant-design/pro-layout';
 import { notification } from 'antd';
 import type { RequestConfig, RunTimeLayoutConfig } from 'umi';
-import { history, Link, matchPath } from 'umi';
+import { history, Link } from 'umi';
 import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import type { ResponseError } from 'umi-request';
@@ -92,8 +92,8 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
 
       if (menuItemProps.path) {
         // 项目 Id
-        const projectId = getProjectId;
-        return <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link>;
+        const projectId = getProjectId();
+        return projectId ? <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link> : '';
       }
       return defaultDom;
     },

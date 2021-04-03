@@ -1,7 +1,6 @@
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, Popconfirm, message, Modal} from 'antd';
 import React, { useRef, useState } from 'react';
-import { PageContainer } from '@ant-design/pro-layout';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { getSchemas } from '@/services/schema';
@@ -66,7 +65,7 @@ const handleRemove = async (id: string) => {
   }
 };
 
-const SchemaList: React.FC = () => {
+export default (): React.ReactNode => {
   /** 新建窗口的弹窗 */
   const [editModalVisible, handleEditModalVisible] = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<API.Schema>({});
@@ -98,7 +97,7 @@ const SchemaList: React.FC = () => {
             handleRemove(record.id);
           }}
         >
-          <a href="#">删除</a>
+          <a style={{color: '#ff7875'}} href="#">删除</a>
         </Popconfirm>,
         <a
           key="update"
@@ -114,7 +113,7 @@ const SchemaList: React.FC = () => {
   ];
 
   return (
-    <PageContainer>
+    <>
       <ProTable<API.Schema, API.PageParams>
         actionRef={actionRef}
         rowKey="id"
@@ -164,8 +163,6 @@ const SchemaList: React.FC = () => {
           // defaultValue={currentItem}
         />
       </Modal>
-    </PageContainer>
+    </>
   );
 };
-
-export default SchemaList;

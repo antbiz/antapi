@@ -51,6 +51,7 @@
     "@ant-design/pro-descriptions": "^1.6.10",
     "@ant-design/pro-form": "^1.19.0",
     "@ant-design/pro-layout": "^6.15.5",
+    "@ant-design/pro-list": "^1.5.13",
     "@ant-design/pro-table": "^2.32.0",
     "@umijs/openapi": "^1.1.15",
     "@umijs/plugin-openapi": "^1.2.1",
