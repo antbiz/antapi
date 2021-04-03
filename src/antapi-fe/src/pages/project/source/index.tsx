@@ -129,7 +129,7 @@ export default (): React.ReactNode => {
       </ProCard>
       <Modal
         title={currentSchema?.id ? '更新模型' : '新建模型'}
-        width="90%"
+        width="100%"
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}
         visible={editModalVisible}
@@ -138,7 +138,6 @@ export default (): React.ReactNode => {
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
           const value = genRef.current.getValue();
-          console.log(value);
           const success = value?.id
             ? await handleUpdate(value as API.Schema)
             : await handleAdd(value as API.Schema);
@@ -150,7 +149,7 @@ export default (): React.ReactNode => {
           }
         }}
       >
-        <Generator ref={genRef} extraButtons={[true, true, false, false]} />
+        <Generator ref={genRef} extraButtons={[true, true, false, false]} defaultValue={currentSchema} />
       </Modal>
     </SourceCtx.Provider>
   );

@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { getSchemas } from '@/services/schema';
-import { getProjectId } from '@/utils';
-import { Menu, Spin } from 'antd';
+import { getProjectName } from '@/utils';
+import { Menu, Spin, Empty } from 'antd';
 import { useSourceCtx } from '../context';
 
 export default (): React.ReactNode => {
   const { setCurrentSchema } = useSourceCtx();
   const [schemas, setSchemas] = useState<API.Schema[]>([]);
-  const projectId = getProjectId();
+  const projectName = getProjectName();
   const onLoadSchemas = async () => {
-    const { data } = await getSchemas({ projectId });
+    const { data } = await getSchemas({ projectName });
     if (data.length > 0) {
       setCurrentSchema(data[0]);
       setSchemas(data);
@@ -20,19 +20,32 @@ export default (): React.ReactNode => {
     onLoadSchemas();
   }, []);
 
-  return schemas?.length ? (
+  if (schemas === null) {
+    return (
+      <Spin tip="加载中..." style={{ marginTop: '30vh', marginLeft: '5vw' }} />
+    )
+  }
+
+  return schemas.length ? (
     <Menu
-      defaultSelectedKeys={[schemas[0].collectionName]}
+      defaultSelectedKeys={[schemas[0].name]}
       mode="inline"
       onClick={(item) => {
-        setCurrentSchema(schemas.find((schema) => schema.collectionName === item.key));
+        setCurrentSchema(schemas.find((schema) => schema.name === item.key));
       }}
     >
       {schemas.map((schema) => {
-        return <Menu.Item key={schema.collectionName}>{schema.displayName}</Menu.Item>;
+        return <Menu.Item key={schema.name}>{schema.title}</Menu.Item>;
       })}
     </Menu>
   ) : (
-    <Spin tip="加载中..." />
+    <div>
+      <Empty
+        description="先去创建模型吧"
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        imageStyle={{ height: 60 }}
+        style={{ marginTop: '26vh' }}
+      />
+    </div>
   );
 };

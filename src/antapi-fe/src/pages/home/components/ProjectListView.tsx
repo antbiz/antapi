@@ -26,14 +26,14 @@ export default function ProjectListView({
           key={`${project.id}`}
           className="project-list-item flex items-center py-5 px-5"
           onClick={() => {
-            history.push(`/project/${project.id}/overview`);
+            history.push(`/project/${project.name}/overview`);
           }}
         >
           <div className="w-2/4 flex items-center">
-            <div className="item-icon">{project.name.slice(0, 1)}</div>
-            <Tooltip title={project.name}>
+            <div className="item-icon">{project.title.slice(0, 1)}</div>
+            <Tooltip title={project.title}>
               <Title level={5} ellipsis className="ml-5 mb-0" style={{ maxWidth: '80%' }}>
-                {project.name}
+                {project.title}
               </Title>
             </Tooltip>
           </div>

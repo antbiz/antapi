@@ -20,19 +20,19 @@
   {
     name: 'overview',
     icon: 'eye',
-    path: '/project/:projectId/overview',
+    path: '/project/:projectName/overview',
     component: './project/overview',
   },
   {
     name: 'source',
     icon: 'database',
-    path: '/project/:projectId/source',
+    path: '/project/:projectName/source',
     component: './project/source',
   },
   {
     name: 'setting',
     icon: 'setting',
-    path: '/project/:projectId/setting',
+    path: '/project/:projectName/setting',
     component: './project/setting',
   },
   {

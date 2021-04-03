@@ -52,16 +52,16 @@ export default function ProjectListView({
           className="project-item"
           key={`${project.id}`}
           onClick={() => {
-            history.push(`/project/${project.id}/overview`);
+            history.push(`/project/${project.name}/overview`);
           }}
         >
           <Card bordered={false} style={cardStyle} bodyStyle={cardBodyStyle}>
-            <div className="project-icon flex items-center">{project.name.slice(0, 1)}</div>
+            <div className="project-icon flex items-center">{project.title.slice(0, 1)}</div>
           </Card>
           <div className="ml-5 flex-1" style={{ maxWidth: '140px' }}>
-            <Tooltip title={project.name} placement="topLeft">
+            <Tooltip title={project.title} placement="topLeft">
               <Title level={4} ellipsis>
-                {project.name}
+                {project.title}
               </Title>
             </Tooltip>
             <Tooltip title={project.description} placement="bottomLeft">

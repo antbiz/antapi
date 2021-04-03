@@ -2,7 +2,7 @@
 /* eslint-disable */
 import { request } from 'umi';
 
-/** 获取项目列表 GET /api/project */
+/** 获取项目列表 GET /api/admin/project */
 export async function getProjects(
   params?: {
     // query
@@ -13,7 +13,7 @@ export async function getProjects(
   },
   options?: { [key: string]: any },
 ) {
-  return request<{ data: API.Project[] }>('/api/project', {
+  return request<{ data: API.Project[] }>('/api/admin/project', {
     method: 'GET',
     params: {
       ...params,
@@ -22,17 +22,17 @@ export async function getProjects(
   });
 }
 
-/** 获取项目详情  GET /api/project */
+/** 获取项目详情  GET /api/project/${projectId} */
 export async function getProject(projectId: string, options?: { [key: string]: any }) {
-  return request<{ data: API.Project }>(`/api/project/${projectId}`, {
+  return request<{ data: API.Project }>(`/api/admin/project/${projectId}`, {
     method: 'GET',
     ...(options || {}),
   });
 }
 
-/** 新建项目 PUT /api/project */
-export async function updateProject(options?: { [key: string]: any }) {
-  return request<{ data: API.Project }>('/api/project', {
+/** 更新项目 PUT /api/admin/project */
+export async function updateProject(projectId: string, options?: { [key: string]: any }) {
+  return request<{ data: API.Project }>(`/api/admin/project/${projectId}`, {
     method: 'PUT',
     ...(options || {}),
   });
@@ -40,15 +40,15 @@ export async function updateProject(options?: { [key: string]: any }) {
 
 /** 新建项目 POST /api/project */
 export async function createProject(options?: { [key: string]: any }) {
-  return request<{ data: API.Project }>('/api/project', {
+  return request<{ data: API.Project }>('/api/admin/project', {
     method: 'POST',
     ...(options || {}),
   });
 }
 
 /** 删除项目 DELETE /api/project */
-export async function deleteProject(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/project', {
+export async function deleteProject(projectId: string, options?: { [key: string]: any }) {
+  return request(`/api/admin/project/${projectId}`, {
     method: 'DELETE',
     ...(options || {}),
   });

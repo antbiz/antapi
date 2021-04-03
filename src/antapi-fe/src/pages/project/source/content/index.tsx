@@ -5,17 +5,18 @@ import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
 import { getSchemas } from '@/services/schema';
 import Generator from 'fr-generator';
-import { getProjectId } from '@/utils';
+import { getProjectName } from '@/utils';
+import { createOne, updateOne, deleteOne } from '@/services/crud';
 
 /**
  * 添加
  *
- * @param schema
+ * @param data
  */
-const handleAdd = async (schema: API.Schema) => {
+const handleAdd = async (data: Record<string, unknown>) => {
   const hide = message.loading('正在添加');
   try {
-    await addRule({ ...schema });
+    await createOne({ ...data });
     hide();
     message.success('添加成功');
     return true;
@@ -29,12 +30,12 @@ const handleAdd = async (schema: API.Schema) => {
 /**
  * 更新
  *
- * @param fields
+ * @param data
  */
-const handleUpdate = async (schema: API.Schema) => {
+const handleUpdate = async (data: Record<string, unknown>) => {
   const hide = message.loading('正在更新');
   try {
-    await updateRule({ ...schema });
+    await updateOne({ ...data });
     hide();
     message.success('更新成功');
     return true;
@@ -54,7 +55,7 @@ const handleRemove = async (id: string) => {
   const hide = message.loading('正在删除');
   if (!id) return true;
   try {
-    await deleteSchema({ id });
+    await deleteOne({ id });
     hide();
     message.success('删除成功，即将刷新');
     return true;
@@ -72,7 +73,7 @@ export default (): React.ReactNode => {
 
   const actionRef = useRef<ActionType>();
   const genRef = useRef();
-  const projectId = getProjectId();
+  const projectName = getProjectName();
 
   const columns: ProColumns<API.Schema>[] = [
     {
@@ -134,7 +135,7 @@ export default (): React.ReactNode => {
             新建
           </Button>,
         ]}
-        params={{ projectId }}
+        params={{projectName}}
         request={getSchemas}
         columns={columns}
       />

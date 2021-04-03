@@ -6,22 +6,16 @@ import { parse } from 'url';
 const genList = (current: number, pageSize: number) => {
   const projectListDataSource: API.Project[] = [];
 
-  for (let i = 0; i < pageSize; i += 1) {
+  for (let i = 1; i < pageSize; i += 1) {
     const index = (current - 1) * 10 + i;
     projectListDataSource.push({
       id: index.toString(),
+      createdAt: '2021-03-28',
+      updatedAt: '2021-03-28',
+      title: `使用示例 ${index}`,
       cover: ['https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png', ''][i % 2],
-      name: `使用示例 ${index}`,
-      customId: `cmstest${index}`,
-      createdAt: 1612438962519,
-      updatedAt: 1612438962519,
+      name: `example${index}`,
       description: 'CMS使用示例',
-      enableApiAccess: true,
-      apiAccessPath: 'api1',
-      keepApiPath: false,
-      deletableCollections: [],
-      modifiableCollections: [],
-      readableCollections: ['news'],
     });
   }
   return projectListDataSource;
@@ -51,14 +45,16 @@ function getProjects(req: Request, res: Response, u: string) {
 }
 
 export default {
-  'GET /api/project': getProjects,
-  'GET /api/project/0': {
+  'GET /api/admin/project': getProjects,
+  'GET /api/admin/project/1': {
     data: {
-      id: '79550af2600e8de600da8ad13724cd98',
-      customId: 'sms',
-      name: '短信测试',
-      createdAt: 1611566566279,
-      enableApiAccess: true,
+      id: "1",
+      createdAt: '2021-03-28',
+      updatedAt: '2021-03-28',
+      title: `使用示例1`,
+      cover: 'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
+      name: `example1`,
+      description: 'CMS使用示例',
     },
   },
 };

@@ -6,16 +6,16 @@ const reg = /(((^https?:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+(?::\d+)?|(
 export const isUrl = (path: string): boolean => reg.test(path);
 
 /**
- * 从 url 中获取项目 id
+ * 从 url 中获取项目名
  */
-export const getProjectId = () => {
-  const match = matchPath<{ projectId?: string }>(history.location.pathname, {
-    path: '/project/:projectId/*',
+export const getProjectName = () => {
+  const match = matchPath<{ projectName?: string }>(history.location.pathname, {
+    path: '/project/:projectName/*',
     exact: true,
   });
 
   // 项目 Id
-  const { projectId = '' } = match?.params || {};
+  const { projectName = '' } = match?.params || {};
 
-  return projectId;
+  return projectName;
 };

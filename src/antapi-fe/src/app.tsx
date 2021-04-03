@@ -7,7 +7,7 @@ import RightContent from '@/components/RightContent';
 import Footer from '@/components/Footer';
 import type { ResponseError } from 'umi-request';
 import { currentUser as queryCurrentUser } from './services/api';
-import { getProjectId } from './utils';
+import { getProjectName } from './utils';
 
 const loginPath = '/login';
 
@@ -89,12 +89,11 @@ export const layout: RunTimeLayoutConfig = ({ initialState }) => {
       if (menuItemProps.isUrl || menuItemProps.children) {
         return defaultDom;
       }
-
       if (menuItemProps.path) {
-        // 项目 Id
-        const projectId = getProjectId();
-        return projectId ? (
-          <Link to={menuItemProps.path.replace(':projectId', projectId)}>{defaultDom}</Link>
+        // 项目名
+        const projectName = getProjectName();
+        return projectName ? (
+          <Link to={menuItemProps.path.replace(':projectName', projectName)}>{defaultDom}</Link>
         ) : (
           ''
         );

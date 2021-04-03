@@ -4,15 +4,13 @@
 // API 唯一标识：
 import * as api from './api';
 import * as login from './login';
-import * as rule from './rule';
 import * as project from './project';
-import * as content from './content';
 import * as schema from './schema';
+import * as crud from './crud';
 export default {
   api,
   login,
-  rule,
   project,
-  content,
   schema,
+  crud,
 };
