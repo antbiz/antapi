@@ -3,10 +3,10 @@ import { Button, Popconfirm, message, Modal } from 'antd';
 import React, { useRef, useState } from 'react';
 import type { ProColumns, ActionType } from '@ant-design/pro-table';
 import ProTable from '@ant-design/pro-table';
-import { getSchemas } from '@/services/schema';
-import Generator from 'fr-generator';
-import { getProjectName } from '@/utils';
-import { createOne, updateOne, deleteOne } from '@/services/crud';
+import { createOne, updateOne, deleteOne, getMany } from '@/services/crud';
+import { frSchema2ProTableCols } from './utils';
+import { useSourceCtx } from '../context';
+import FormRender from 'form-render/lib/antd';
 
 /**
  * 添加
@@ -70,20 +70,11 @@ export default (): React.ReactNode => {
   /** 新建窗口的弹窗 */
   const [editModalVisible, handleEditModalVisible] = useState<boolean>(false);
   const [currentItem, setCurrentItem] = useState<API.Schema>({});
-
   const actionRef = useRef<ActionType>();
-  const genRef = useRef();
-  const projectName = getProjectName();
+  const { currentSchema } = useSourceCtx();
 
-  const columns: ProColumns<API.Schema>[] = [
-    {
-      title: '标题',
-      dataIndex: 'displayName',
-    },
-    {
-      title: '名称',
-      dataIndex: 'collectionName',
-    },
+  let columns: ProColumns<Record<string, unknown>>[] = frSchema2ProTableCols(currentSchema.schema);
+  columns = columns.concat([
     {
       title: '操作',
       dataIndex: 'option',
@@ -113,11 +104,11 @@ export default (): React.ReactNode => {
         </a>,
       ],
     },
-  ];
+  ]);
 
   return (
     <>
-      <ProTable<API.Schema, API.PageParams>
+      <ProTable<Record<string, unknown>, API.PageParams>
         actionRef={actionRef}
         rowKey="id"
         search={{
@@ -135,12 +126,12 @@ export default (): React.ReactNode => {
             新建
           </Button>,
         ]}
-        params={{projectName}}
-        request={getSchemas}
+        params={{ schemaName: currentSchema.name}}
+        request={getMany}
         columns={columns}
       />
       <Modal
-        title={currentItem?.id ? '更新模型' : '新建模型'}
+        title={currentItem?.id ? `更新${currentSchema.title}` : `新建${currentSchema.title}`}
         width="90%"
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}
@@ -162,10 +153,9 @@ export default (): React.ReactNode => {
           }
         }}
       >
-        <Generator
-          ref={genRef}
-          extraButtons={[true, true, false, false]}
-          // defaultValue={currentItem}
+        <FormRender
+          schema={currentSchema.schema}
+          formData={currentItem}
         />
       </Modal>
     </>

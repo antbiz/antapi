@@ -8,10 +8,12 @@ import { request } from 'umi';
 
 /** 查询列表 */
 export async function getMany(
-  schemaName: string,
-  params?: { [key: string]: any },
+  params: {
+    schemaName: string,
+    [key: string]: any
+  },
 ) {
-  return request<{ data: object[] }>(`/api/admin/${schemaName}`, {
+  return request<{ data: object[] }>(`/api/admin/${params.schemaName}`, {
     method: 'GET',
     params: {
       ...params,

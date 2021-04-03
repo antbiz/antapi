@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ProCard from '@ant-design/pro-card';
-import { Button, message, Modal } from 'antd';
+import { Button, message, Modal, Spin } from 'antd';
 import SourceMenu from './menu';
 import Content from './content';
 import { SourceCtx } from './context';
@@ -87,45 +87,49 @@ export default (): React.ReactNode => {
         >
           <SourceMenu />
         </ProCard>
-        <ProCard
-          bordered
-          headerBordered
-          direction="column"
-          gutter={[0, 16]}
-          className="content-container"
-          extra={
-            <>
-              <Button
-                key="deleteSchema"
-                danger
-                onClick={() => {
-                  handleDelete(currentSchema.id);
-                }}
-              >
-                删除模型
-              </Button>
-              <Button
-                key="updateSchema"
-                onClick={() => {
-                  handleEditModalVisible(true);
-                }}
-              >
-                更新模型
-              </Button>
-              <Button
-                key="addSchema"
-                type="primary"
-                onClick={() => {
-                  handleEditModalVisible(true);
-                }}
-              >
-                新建模型
-              </Button>
-            </>
-          }
-        >
-          <Content />
-        </ProCard>
+        {currentSchema?.id ? (
+          <ProCard
+            bordered
+            headerBordered
+            direction="column"
+            gutter={[0, 16]}
+            className="content-container"
+            extra={
+              <>
+                <Button
+                  key="deleteSchema"
+                  danger
+                  onClick={() => {
+                    handleDelete(currentSchema.id);
+                  }}
+                >
+                  删除模型
+                </Button>
+                <Button
+                  key="updateSchema"
+                  onClick={() => {
+                    handleEditModalVisible(true);
+                  }}
+                >
+                  更新模型
+                </Button>
+                <Button
+                  key="addSchema"
+                  type="primary"
+                  onClick={() => {
+                    handleEditModalVisible(true);
+                  }}
+                >
+                  新建模型
+                </Button>
+              </>
+            }
+          >
+            <Content />
+          </ProCard>
+        ) : (
+          <Spin tip="Loading..." />
+        )}
       </ProCard>
       <Modal
         title={currentSchema?.id ? '更新模型' : '新建模型'}
