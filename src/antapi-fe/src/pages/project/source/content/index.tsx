@@ -129,7 +129,7 @@ export default (): React.ReactNode => {
             新建
           </Button>,
         ]}
-        params={{ collectionName: currentSchema.collectionName}}
+        params={{ collectionName: currentSchema.collectionName }}
         request={getMany}
         columns={columns}
       />

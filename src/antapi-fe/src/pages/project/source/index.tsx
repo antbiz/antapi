@@ -154,7 +154,11 @@ export default (): React.ReactNode => {
           }
         }}
       >
-        <Generator ref={genRef} extraButtons={[true, true, false, false]} defaultValue={currentSchema} />
+        <Generator
+          ref={genRef}
+          extraButtons={[true, true, false, false]}
+          defaultValue={currentSchema}
+        />
       </Modal>
     </SourceCtx.Provider>
   );

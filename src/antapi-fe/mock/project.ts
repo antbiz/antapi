@@ -57,4 +57,15 @@ export default {
       description: 'CMS使用示例',
     },
   },
+  'GET /api/biz/project/example1': {
+    data: {
+      id: "1",
+      createdAt: '2021-03-28',
+      updatedAt: '2021-03-28',
+      title: `使用示例1`,
+      cover: 'https://gw.alipayobjects.com/zos/rmsportal/eeHMaZBwmTvLdIwMfBpg.png',
+      name: `example1`,
+      description: 'CMS使用示例',
+    },
+  },
 };

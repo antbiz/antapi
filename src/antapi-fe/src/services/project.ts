@@ -33,9 +33,8 @@ export async function createProject(options?: { [key: string]: any }) {
 }
 
 /** 删除项目 DELETE /api/project */
-export async function deleteProject(projectId: string, options?: { [key: string]: any }) {
+export async function deleteProject(projectId: string) {
   return request(`/api/biz/project/${projectId}`, {
     method: 'DELETE',
-    ...(options || {}),
   });
 }

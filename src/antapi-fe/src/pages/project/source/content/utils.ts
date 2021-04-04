@@ -3,12 +3,8 @@
  */
 export const frSchema2ProTableCols = (schema) => {
   const props = schema.properties;
-  return Object.keys(props).map(
-    field => (
-      {
-        title: props[field].title,
-        dataIndex: field,
-      }
-    )
-  )
+  return Object.keys(props).map((field) => ({
+    title: props[field].title,
+    dataIndex: field,
+  }));
 };

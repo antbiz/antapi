@@ -7,12 +7,7 @@ import { request } from 'umi';
  */
 
 /** 查询列表 */
-export async function getMany(
-  params: {
-    collectionName: string,
-    [key: string]: any
-  },
-) {
+export async function getMany(params: { collectionName: string; [key: string]: any }) {
   const collectionName = params.collectionName;
   delete params['collectionName'];
   return request<{ data: object[] }>(`/api/biz/${collectionName}`, {
@@ -24,11 +19,7 @@ export async function getMany(
 }
 
 /** 查询详情 */
-export async function getOne(
-  collectionName: string,
-  id: string,
-  options?: { [key: string]: any }
-) {
+export async function getOne(collectionName: string, id: string, options?: { [key: string]: any }) {
   return request<{ data: object }>(`/api/biz/${collectionName}/${id}`, {
     method: 'GET',
     ...(options || {}),
@@ -39,7 +30,7 @@ export async function getOne(
 export async function updateOne(
   collectionName: string,
   id: string,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request<{ data: object }>(`/api/biz/${collectionName}/${id}`, {
     method: 'PUT',
@@ -48,10 +39,7 @@ export async function updateOne(
 }
 
 /** 新建 */
-export async function createOne(
-  collectionName: string,
-  options?: { [key: string]: any }
-) {
+export async function createOne(collectionName: string, options?: { [key: string]: any }) {
   return request<{ data: object }>(`/api/biz/${collectionName}`, {
     method: 'POST',
     ...(options || {}),
@@ -62,7 +50,7 @@ export async function createOne(
 export async function deleteOne(
   collectionName: string,
   id: string,
-  options?: { [key: string]: any }
+  options?: { [key: string]: any },
 ) {
   return request(`/api/biz/${collectionName}/${id}`, {
     method: 'DELETE',

@@ -21,9 +21,7 @@ export default (): React.ReactNode => {
   }, []);
 
   if (schemas === null) {
-    return (
-      <Spin tip="加载中..." style={{ marginTop: '30vh', marginLeft: '5vw' }} />
-    )
+    return <Spin tip="加载中..." style={{ marginTop: '30vh', marginLeft: '5vw' }} />;
   }
 
   return schemas.length ? (
