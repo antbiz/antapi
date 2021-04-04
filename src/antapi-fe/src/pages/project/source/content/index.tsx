@@ -140,11 +140,10 @@ export default (): React.ReactNode => {
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
-          const value = genRef.current.getValue();
-          console.log(value);
-          const success = value?.id
-            ? await handleUpdate(value as API.Schema)
-            : await handleAdd(value as API.Schema);
+          console.log(currentItem);
+          const success = currentItem?.id
+            ? await handleUpdate(currentItem as API.Schema)
+            : await handleAdd(currentItem as API.Schema);
           if (success) {
             handleEditModalVisible(false);
             if (actionRef.current) {
@@ -156,6 +155,7 @@ export default (): React.ReactNode => {
         <FormRender
           schema={currentSchema.schema}
           formData={currentItem}
+          onChange={setCurrentItem}
         />
       </Modal>
     </>

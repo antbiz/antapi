@@ -24,18 +24,20 @@ const (
 	TimestampMismatchError = 10019
 
 	// 服务级错误代码
+	// - Schema
+	JSONSchemaBadFormat = 20001
 	// - 用户
-	IncorrectUsernameOrPassword = 20001
-	IncorrectOldPassword        = 20002
-	IllegalUsername             = 20003
-	ExistsUserName              = 20004
-	ExistsUserEmail             = 20005
-	ExistsUserPhone             = 20006
+	IncorrectUsernameOrPassword = 20101
+	IncorrectOldPassword        = 20102
+	IllegalUsername             = 20103
+	ExistsUserName              = 20104
+	ExistsUserEmail             = 20105
+	ExistsUserPhone             = 20106
 	// - 文件
-	FileUploadError           = 20101
-	FileNotFound              = 20102
-	FilePreviewParameterError = 20103
-	FileNotSupportPreview     = 20104
+	FileUploadError           = 20201
+	FileNotFound              = 20202
+	FilePreviewParameterError = 20203
+	FileNotSupportPreview     = 20204
 )
 
 const (
@@ -59,6 +61,7 @@ const (
 	DuplicateErrorMsg              = "(%s)已存在，请勿重新创建"
 	SourceNotFoundMsg              = "该资源不存在或权限不足"
 	TimestampMismatchErrorMsg      = "提交失败，该资源已被她/他人更新，请刷新后重试"
+	JSONSchemaBadFormatMsg         = "无效的schema"
 	IncorrectUsernameOrPasswordMsg = "账号或密码错误"
 	IncorrectOldPasswordMsg        = "旧密码错误"
 	IllegalUsernameMsg             = "非法用户名 (%s)"

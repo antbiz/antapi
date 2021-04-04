@@ -142,6 +142,7 @@ export default (): React.ReactNode => {
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
           const value = genRef.current.getValue();
+          console.log(value);
           const success = value?.id
             ? await handleUpdate(value as API.Schema)
             : await handleAdd(value as API.Schema);

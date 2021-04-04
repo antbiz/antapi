@@ -1,17 +1,27 @@
 package req
 
 import (
-	"antapi/app/model"
 	"antapi/pkg/rqp"
 
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
 )
 
+// SessionUser .
+type SessionUser struct {
+	ID        string   `json:"id"`
+	Username  string   `json:"username"`
+	Phone     string   `json:"phone"`
+	Email     string   `json:"email"`
+	Blocked   bool     `json:"blocked"`
+	IsSysuser bool     `json:"is_sysuser"`
+	Roles     []string `json:"roles"`
+}
+
 // GetSessionUserInfo 获取当前会话用户信息
-func GetSessionUserInfo(r *ghttp.Request) *model.SessionUser {
+func GetSessionUserInfo(r *ghttp.Request) *SessionUser {
 	sess := r.Session
-	return &model.SessionUser{
+	return &SessionUser{
 		ID:        sess.GetString("id"),
 		Username:  sess.GetString("username"),
 		Phone:     sess.GetString("phone"),

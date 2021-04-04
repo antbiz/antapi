@@ -18,5 +18,6 @@ main
 .vscode
 go.sum
 
-app/model/collection/biz/*.json
-app/model/project/biz/*.json
+boot/schemas/biz/*.json
+boot/projects/biz/*.json
+boot/contents/biz/*.json
