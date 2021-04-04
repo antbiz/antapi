@@ -9,13 +9,12 @@ import (
 
 // SessionUser .
 type SessionUser struct {
-	ID        string   `json:"id"`
-	Username  string   `json:"username"`
-	Phone     string   `json:"phone"`
-	Email     string   `json:"email"`
-	Blocked   bool     `json:"blocked"`
-	IsSysuser bool     `json:"is_sysuser"`
-	Roles     []string `json:"roles"`
+	ID        string `json:"id"`
+	Username  string `json:"username"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	Blocked   bool   `json:"blocked"`
+	IsSysuser bool   `json:"is_sysuser"`
 }
 
 // GetSessionUserInfo 获取当前会话用户信息
@@ -28,7 +27,6 @@ func GetSessionUserInfo(r *ghttp.Request) *SessionUser {
 		Email:     sess.GetString("email"),
 		Blocked:   sess.GetBool("blocked"),
 		IsSysuser: sess.GetBool("is_sysuser"),
-		Roles:     sess.GetStrings("roles"),
 	}
 }
 

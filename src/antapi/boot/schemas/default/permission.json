@@ -40,14 +40,7 @@
                 "ui:hidden": true
             },
             "collection_name": {
-                "title": "模型",
-                "type": "string",
-                "index": true,
-                "required": true,
-                "pattern": "^([a-z]{1,})(_[a-z0-9]{1,})*$"
-            },
-            "role_name": {
-                "title": "角色",
+                "title": "模型ID",
                 "type": "string",
                 "index": true,
                 "required": true,

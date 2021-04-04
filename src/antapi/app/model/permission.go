@@ -3,7 +3,6 @@ package model
 // Permission .
 type Permission struct {
 	CollectionName string `orm:"collection_name"`
-	RoleName       string `orm:"role_name"`
 	CreateLevel    int    `orm:"create_level"`
 	ReadLevel      int    `orm:"read_level"`
 	UpdateLevel    int    `orm:"update_level"`
@@ -13,10 +12,11 @@ type Permission struct {
 // PermissionName 权限等级字段
 type PermissionName string
 
-// 权限等级分为3个等级
+// 权限等级分为 4 个等级
 // 0: 无权限
-// 1: 仅自己
-// 2: 全部
+// 1: 仅创建者
+// 2: 仅登录者
+// 3: 所有人
 const (
 	CreateLevel PermissionName = "create_level"
 	ReadLevel   PermissionName = "read_level"

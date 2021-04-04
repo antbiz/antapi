@@ -69,11 +69,6 @@
             "is_sysuser": {
                 "title": "是否系统用户",
                 "type": "boolean"
-            },
-            "roles": {
-                "title": "角色",
-                "type": "array",
-                "format": "auto"
             }
         }
     }

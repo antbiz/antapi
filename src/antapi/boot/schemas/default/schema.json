@@ -44,14 +44,14 @@
                 "type": "string"
             },
             "collection_name": {
-                "title": "模型名",
+                "title": "模型ID",
                 "type": "string",
                 "unique": true,
                 "required": true,
                 "pattern": "^([a-z]{1,})(_[a-z0-9]{1,})*$"
             },
             "project_name": {
-                "title": "项目名",
+                "title": "项目ID",
                 "type": "string",
                 "unique": true,
                 "required": true,

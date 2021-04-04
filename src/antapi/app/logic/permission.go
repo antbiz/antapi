@@ -7,7 +7,6 @@ import (
 	"antapi/common/errcode"
 	"fmt"
 
-	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/errors/gerror"
 )
@@ -31,17 +30,17 @@ func (p *permissionLogic) CheckDuplicatePermission(data *gjson.Json) error {
 	arg := &dao.ExistsAndCountFuncArg{}
 
 	if permID == "" {
-		arg.Where = "collection_name=? AND role_name=?"
-		arg.WhereArgs = []string{permCollectionName, permRoleName}
+		arg.Where = "collection_name=?"
+		arg.WhereArgs = []string{permCollectionName}
 	} else {
-		arg.Where = "id<>? collection_name=? AND role_name=?"
-		arg.WhereArgs = []string{permID, permCollectionName, permRoleName}
+		arg.Where = "id<>? collection_name=?"
+		arg.WhereArgs = []string{permID, permCollectionName}
 	}
 
 	if exists, err := dao.Exists(p.collectionName, arg); err != nil {
 		return err
 	} else if exists {
-		return gerror.NewCodef(errcode.DuplicateError, errcode.DuplicateErrorMsg, fmt.Sprintf("%s 角色的权限", permRoleName))
+		return gerror.NewCodef(errcode.DuplicateError, errcode.DuplicateErrorMsg, fmt.Sprintf("%s 模型的权限", permCollectionName))
 	}
 	return nil
 }
@@ -56,10 +55,6 @@ type canDo struct {
 	PermissionVal int
 }
 
-func (c *canDo) CanDo() bool {
-	return c.PermissionVal > 0
-}
-
 func (c *canDo) CanNot() bool {
 	return c.PermissionVal == 0
 }
@@ -68,40 +63,36 @@ func (c *canDo) CanDoOnlyOwner() bool {
 	return c.PermissionVal == 1
 }
 
-// getPermission 从内存中获取权限等级。0-没有权限，1-仅创建者，2-有完全的权限
-func (p *permissionLogic) getPermission(permName model.PermissionName, collectionName string, roleNames ...string) (*canDo, error) {
-	var (
-		permissions = global.GetPermissions(collectionName)
-		levelsArr   = garray.NewIntArray(true)
-		rolesArr    = garray.NewStrArrayFrom(roleNames, true)
-	)
+func (c *canDo) CanDoOnlyLogin() bool {
+	return c.PermissionVal == 2
+}
 
-	for _, perm := range permissions {
-		if rolesArr.Contains(perm.RoleName) {
-			levelsArr.Append(perm.GetPermissionLevel(permName))
-		}
-	}
-	// 取最大权限值
-	maxLevel, _ := levelsArr.Sort().PopRight()
-	return &canDo{PermissionVal: maxLevel}, nil
+func (c *canDo) CanDo() bool {
+	return c.PermissionVal == 3
+}
+
+// getPermission 从内存中获取权限等级。0-没有权限，1-仅创建者，2-仅登录者, 3-所有人
+func (p *permissionLogic) getPermission(permName model.PermissionName, collectionName string) (*canDo, error) {
+	perm := global.GetPermission(collectionName)
+	return &canDo{PermissionVal: perm.GetPermissionLevel(permName)}, nil
 }
 
 // GetCreatePermission 增
-func (p *permissionLogic) GetCreatePermission(collectionName string, roleNames ...string) (*canDo, error) {
-	return p.getPermission(model.CreateLevel, collectionName, roleNames...)
+func (p *permissionLogic) GetCreatePermission(collectionName string) (*canDo, error) {
+	return p.getPermission(model.CreateLevel, collectionName)
 }
 
 // GetReadPermission 查
-func (p *permissionLogic) GetReadPermission(collectionName string, roleNames ...string) (*canDo, error) {
-	return p.getPermission(model.ReadLevel, collectionName, roleNames...)
+func (p *permissionLogic) GetReadPermission(collectionName string) (*canDo, error) {
+	return p.getPermission(model.ReadLevel, collectionName)
 }
 
 // GetUpdatePermission 改
-func (p *permissionLogic) GetUpdatePermission(collectionName string, roleNames ...string) (*canDo, error) {
-	return p.getPermission(model.UpdateLevel, collectionName, roleNames...)
+func (p *permissionLogic) GetUpdatePermission(collectionName string) (*canDo, error) {
+	return p.getPermission(model.UpdateLevel, collectionName)
 }
 
 // GetDeletePermission 删
-func (p *permissionLogic) GetDeletePermission(collectionName string, roleNames ...string) (*canDo, error) {
-	return p.getPermission(model.DeleteLevel, collectionName, roleNames...)
+func (p *permissionLogic) GetDeletePermission(collectionName string) (*canDo, error) {
+	return p.getPermission(model.DeleteLevel, collectionName)
 }
