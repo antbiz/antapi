@@ -10,8 +10,13 @@ type Permission struct {
 	DeleteLevel    int    `orm:"delete_level"`
 }
 
+// PermissionName 权限等级字段
 type PermissionName string
 
+// 权限等级分为3个等级
+// 0: 无权限
+// 1: 仅自己
+// 2: 全部
 const (
 	CreateLevel PermissionName = "create_level"
 	ReadLevel   PermissionName = "read_level"
@@ -19,6 +24,7 @@ const (
 	DeleteLevel PermissionName = "delete_level"
 )
 
+// GetPermissionLevel 获取权限等级
 func (p *Permission) GetPermissionLevel(name PermissionName) int {
 	switch name {
 	case CreateLevel:
