@@ -38,7 +38,21 @@ func ParseFormRenderSchema(jsonSchema *gjson.Json) (schemas []*model.Schema) {
 			fieldFormat := data.GetString(fmt.Sprintf("properties.%s.format", fieldName))
 			switch fmt.Sprintf("%s:%s", fieldType, fieldFormat) {
 			case "string:":
-				field.Type = fieldtype.String
+				enumVals := data.GetStrings(fmt.Sprintf("properties.%s.enum", fieldName))
+				enumLabels := data.GetStrings(fmt.Sprintf("properties.%s.enumNames", fieldName))
+				enumValsLen := len(enumVals)
+				if enumValsLen > 0 {
+					if len(enumLabels) != enumValsLen {
+						enumLabels = enumVals
+					}
+					field.Type = fieldtype.Enum
+					field.EnumOptions = &model.EnumOption{
+						Labels: enumLabels,
+						Values: enumVals,
+					}
+				} else {
+					field.Type = fieldtype.String
+				}
 			case "string:textarea":
 				field.Type = fieldtype.Text
 			case "string:richtext":

@@ -28,6 +28,12 @@ type JSONSchema struct {
 	Column         int         `orm:"column"`
 }
 
+// EnumOption .
+type EnumOption struct {
+	Labels []string
+	Values []string
+}
+
 // Schema .
 type Schema struct {
 	Title          string
@@ -54,7 +60,7 @@ type SchemaField struct {
 	RelatedDisplayField string
 	Validator           string
 	EnumType            fieldtype.EnumType
-	EnumOptions         string
+	EnumOptions         *EnumOption
 }
 
 // DefaultFieldNames : 所有默认的字段
@@ -323,17 +329,11 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 	case fieldtype.Bool:
 		rule = "boolean"
 	case fieldtype.Enum:
-		var enumOptions []string
-		if field.EnumOptions != "" {
-			if j, err := gjson.LoadContent(fmt.Sprintf(`{"options":%s}`, field.EnumOptions)); err == nil {
-				for i := 0; i < len(j.GetArray("options")); i++ {
-					enumOptions = append(enumOptions, j.GetString(fmt.Sprintf("%d.value", i)))
-				}
-			}
+		enumOpt := field.EnumOptions
+		if field.EnumOptions != nil {
+			rule = fmt.Sprintf("in:%s", strings.Join(enumOpt.Values, ","))
+			msg = fmt.Sprintf("%s不存在于%s", field.Title, strings.Join(enumOpt.Labels, ","))
 		}
-		enumOptionsStr := strings.Join(enumOptions, ",")
-		rule = fmt.Sprintf("in:%s", enumOptionsStr)
-		msg = fmt.Sprintf("%s不存在于%s", field.Title, enumOptionsStr)
 	}
 	if rule != "" {
 		if err = gvalid.Check(value, rule, msg); err != nil {
