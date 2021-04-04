@@ -2,6 +2,8 @@ package model
 
 // Permission .
 type Permission struct {
+	Title          string `orm:"title"`
+	ProjectName    string `orm:"project_name"`
 	CollectionName string `orm:"collection_name"`
 	CreateLevel    int    `orm:"create_level"`
 	ReadLevel      int    `orm:"read_level"`

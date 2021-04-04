@@ -18,9 +18,14 @@ func registerSchemaHooks() {
 		logic.Schema.ReloadGlobalSchemas,
 		logic.Schema.AutoExportSchemaData,
 	)
+	global.RegisterAfterInsertHooks(
+		collectionName,
+		logic.Schema.AutoCreateCollectionPermission,
+	)
 	global.RegisterAfterDeleteHooks(
 		collectionName,
 		logic.Schema.ReloadGlobalSchemas,
 		logic.Schema.AutoDeleteExportedJsonFile,
+		logic.Schema.AutoDeleteCollectionPermission,
 	)
 }

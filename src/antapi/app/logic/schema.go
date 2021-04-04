@@ -1,6 +1,7 @@
 package logic
 
 import (
+	"antapi/app/dao"
 	"antapi/app/global"
 	"antapi/app/model"
 	"antapi/app/model/fieldtype"
@@ -249,6 +250,63 @@ func (schemaLogic) MigrateSchema(data *gjson.Json) error {
 		}
 
 		return nil
+	}
+	return nil
+}
+
+// AutoCreateCollectionPermission 新建模型后初始化权限设置
+func (schemaLogic) AutoCreateCollectionPermission(data *gjson.Json) error {
+	if exists, err := dao.Exists("permission", &dao.ExistsAndCountFuncArg{
+		Where:     "collection_name",
+		WhereArgs: data.GetString("collection_name"),
+	}); err != nil {
+		return nil
+	} else if !exists {
+		arg := &dao.InsertFuncArg{
+			IgnoreFieldValueCheck: true,
+			IncludeHiddenField:    true,
+			IncludePrivateField:   true,
+			IgnorePermissionCheck: true,
+		}
+		permData := g.Map{
+			"title":           data.GetString("title"),
+			"project_name":    data.GetString("project_name"),
+			"collection_name": data.GetString("collection_name"),
+			"create_level":    0,
+			"read_level":      0,
+			"update_level":    0,
+			"delete_level":    0,
+		}
+		if _, err := dao.Insert("permission", arg, permData); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// AutoDeleteCollectionPermission 删除模型后移除对应的权限设置
+func (schemaLogic) AutoDeleteCollectionPermission(data *gjson.Json) error {
+	getArg := &dao.GetFuncArg{
+		Where:                 "collection_name",
+		WhereArgs:             data.GetString("collection_name"),
+		IgnorePermissionCheck: true,
+		IgnoreFieldsCheck:     true,
+		IncludeHiddenField:    true,
+		IncludePrivateField:   true,
+		RaiseNotFound:         false,
+	}
+	if record, err := dao.Get("permission", getArg); err != nil {
+		return err
+	} else if record != nil {
+		delArg := &dao.DeleteFuncArg{
+			Where:                 "id",
+			WhereArgs:             record.GetString("id"),
+			IgnorePermissionCheck: true,
+			RaiseNotFound:         false,
+		}
+		if err := dao.Delete("permission", delArg); err != nil {
+			return err
+		}
 	}
 	return nil
 }
