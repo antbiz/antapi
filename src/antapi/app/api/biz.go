@@ -17,7 +17,7 @@ var Biz = bizApi{}
 
 type bizApi struct{}
 
-// Get : 查询详情
+// Get 查询详情
 func (bizApi) Get(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
@@ -47,7 +47,7 @@ func (bizApi) Get(r *ghttp.Request) {
 	}
 }
 
-// GetList : 查询列表数据
+// GetList 查询列表数据
 func (bizApi) GetList(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	sessionUser := req.GetSessionUserInfo(r)
@@ -83,7 +83,7 @@ func (bizApi) GetList(r *ghttp.Request) {
 	}
 }
 
-// Create : 新建数据
+// Create 新建数据
 func (bizApi) Create(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	sessionUser := req.GetSessionUserInfo(r)
@@ -105,7 +105,7 @@ func (bizApi) Create(r *ghttp.Request) {
 	}
 }
 
-// Update : 更新数据
+// Update 更新数据
 func (bizApi) Update(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
@@ -133,7 +133,7 @@ func (bizApi) Update(r *ghttp.Request) {
 	}
 }
 
-// Delete : 删除数据
+// Delete 删除数据
 func (bizApi) Delete(r *ghttp.Request) {
 	collectionName := r.GetString("collection")
 	id := r.GetString("id")
