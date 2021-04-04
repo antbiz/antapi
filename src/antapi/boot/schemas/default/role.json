@@ -1,0 +1,56 @@
+{
+    "title": "角色",
+    "collection_name": "role",
+    "project_name": "system",
+    "description": "",
+    "column": 2,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "title": "编号",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "created_at": {
+                "title": "创建时间",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updated_at": {
+                "title": "更新时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "deleted_at": {
+                "title": "删除时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "created_by": {
+                "title": "创建者",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updated_by": {
+                "title": "修改者",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "name": {
+                "title": "角色名",
+                "type": "string",
+                "unique": true,
+                "required": true,
+                "pattern": "^([a-z]{1,})(_[a-z0-9]{1,})*$"
+            },
+            "description": {
+                "title": "描述",
+                "type": "string",
+                "format": "textarea"
+            }
+        }
+    }
+}

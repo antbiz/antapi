@@ -1,0 +1,80 @@
+{
+    "title": "用户",
+    "collection_name": "user",
+    "project_name": "system",
+    "description": "",
+    "column": 2,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "title": "编号",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "created_at": {
+                "title": "创建时间",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updated_at": {
+                "title": "更新时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "deleted_at": {
+                "title": "删除时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "created_by": {
+                "title": "创建者",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updated_by": {
+                "title": "修改者",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "username": {
+                "title": "用户名字",
+                "type": "string",
+                "unique": true,
+                "required": true
+            },
+            "phone": {
+                "title": "手机号",
+                "type": "string",
+                "format": "phone",
+                "unique": true
+            },
+            "email": {
+                "title": "邮箱",
+                "type": "string",
+                "format": "email",
+                "unique": true
+            },
+            "password": {
+                "title": "密码",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "blocked": {
+                "title": "是否停用",
+                "type": "boolean"
+            },
+            "is_sysuser": {
+                "title": "是否系统用户",
+                "type": "boolean"
+            },
+            "roles": {
+                "title": "角色",
+                "type": "array",
+                "format": "auto"
+            }
+        }
+    }
+}

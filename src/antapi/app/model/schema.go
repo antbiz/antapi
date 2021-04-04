@@ -20,12 +20,12 @@ type JSONSchema struct {
 	DeletedAt      *gtime.Time `orm:"deleted_at"`
 	CreatedBy      string      `orm:"created_by"`
 	UpdatedBy      string      `orm:"updated_by"`
+	Title          string      `orm:"title"`
 	CollectionName string      `orm:"collection_name"`
 	ProjectName    string      `orm:"project_name"`
 	Description    string      `orm:"description"`
 	Schema         string      `orm:"schema"`
-	DisplayType    string      `orm:"display_type"`
-	ShowDescIcon   bool        `orm:"show_desc_icon"`
+	Column         int         `orm:"column"`
 }
 
 // Schema .

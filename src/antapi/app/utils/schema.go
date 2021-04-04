@@ -39,9 +39,9 @@ func ParseFormRenderSchema(jsonSchema *gjson.Json) (schemas []*model.Schema) {
 			switch fmt.Sprintf("%s:%s", fieldType, fieldFormat) {
 			case "string:":
 				field.Type = fieldtype.String
-			case "string:text":
+			case "string:textarea":
 				field.Type = fieldtype.Text
-			case "string:richText":
+			case "string:richtext":
 				field.Type = fieldtype.RichText
 			case "string:markdown":
 				field.Type = fieldtype.Markdown
@@ -75,6 +75,8 @@ func ParseFormRenderSchema(jsonSchema *gjson.Json) (schemas []*model.Schema) {
 				field.Type = fieldtype.Float
 			case "number:money":
 				field.Type = fieldtype.Money
+			case "boolean:":
+				field.Type = fieldtype.Bool
 			case "object:", "array:", "range:", "range:dateTime":
 				field.Type = fieldtype.JSON
 			case "table:":

@@ -1,0 +1,90 @@
+{
+    "title": "权限",
+    "collection_name": "permission",
+    "project_name": "system",
+    "description": "",
+    "column": 2,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "id": {
+                "title": "编号",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "created_at": {
+                "title": "创建时间",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updated_at": {
+                "title": "更新时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "deleted_at": {
+                "title": "删除时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "created_by": {
+                "title": "创建者",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updated_by": {
+                "title": "修改者",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "collection_name": {
+                "title": "模型",
+                "type": "string",
+                "index": true,
+                "required": true,
+                "pattern": "^([a-z]{1,})(_[a-z0-9]{1,})*$"
+            },
+            "role_name": {
+                "title": "角色",
+                "type": "string",
+                "index": true,
+                "required": true,
+                "pattern": "^([a-z]{1,})(_[a-z0-9]{1,})*$"
+            },
+            "create_level": {
+                "title": "创建权限等级",
+                "type": "number",
+                "format": "int",
+                "default": 0,
+                "min": 0,
+                "max": 2
+            },
+            "read_level": {
+                "title": "查询权限等级",
+                "type": "number",
+                "format": "int",
+                "default": 0,
+                "min": 0,
+                "max": 2
+            },
+            "update_level": {
+                "title": "更新权限等级",
+                "type": "number",
+                "format": "int",
+                "default": 0,
+                "min": 0,
+                "max": 2
+            },
+            "delete_level": {
+                "title": "删除权限等级",
+                "type": "number",
+                "format": "int",
+                "default": 0,
+                "min": 0,
+                "max": 2
+            }
+        }
+    }
+}

@@ -76,6 +76,7 @@ func (schemaLogic) CheckJSONSchema(data *gjson.Json) error {
 			data.Set(fmt.Sprintf("%s.%s", propPath, "created_at"), g.Map{
 				"title":     "创建时间",
 				"type":      "string",
+				"index":     true,
 				"ui:hidden": true,
 			})
 		}
@@ -97,6 +98,7 @@ func (schemaLogic) CheckJSONSchema(data *gjson.Json) error {
 			data.Set(fmt.Sprintf("%s.%s", propPath, "created_by"), g.Map{
 				"title":     "创建者",
 				"type":      "string",
+				"index":     true,
 				"ui:hidden": true,
 			})
 		}
@@ -119,6 +121,7 @@ func (schemaLogic) CheckJSONSchema(data *gjson.Json) error {
 				data.Set(fmt.Sprintf("%s.%s", propPath, "pid"), g.Map{
 					"title":     "父级编号",
 					"type":      "string",
+					"index":     true,
 					"ui:hidden": true,
 				})
 			}
