@@ -2,51 +2,51 @@
 /* eslint-disable */
 import { request } from 'umi';
 
-/** 获取内容模型列表 GET `/api/admin/schema?project_name=${projectName}` */
+/** 获取内容模型列表 GET `/api/biz/schema?projectName=${projectName}` */
 export async function getSchemas(
   params: {
     projectName: string
   }
 ) {
-  return request<{ data: API.Schema[] }>(`/api/admin/schema?projectName=${params.projectName}`, {
+  return request<{ data: API.Schema[] }>(`/api/biz/schema?projectName[eq]${params.projectName}`, {
     method: 'GET',
   });
 }
 
-/** 获取内容模型详情  GET `/api/admin/schema/${schemaId}` */
+/** 获取内容模型详情  GET `/api/biz/schema/${schemaId}` */
 export async function getSchema(schemaId: string) {
-  return request<{ data: API.Schema }>(`/api/admin/schema/${schemaId}`, {
+  return request<{ data: API.Schema }>(`/api/biz/schema/${schemaId}`, {
     method: 'GET',
   });
 }
 
-/** 新建内容模型 PUT `/api/admin/schema/${schemaId}`*/
+/** 新建内容模型 PUT `/api/biz/schema/${schemaId}`*/
 export async function updateSchema(
   schemaId: string,
   options?: { [key: string]: any },
 ) {
-  return request<{ data: API.Schema }>(`/api/admin/schema/${schemaId}`, {
+  return request<{ data: API.Schema }>(`/api/biz/schema/${schemaId}`, {
     method: 'PUT',
     ...(options || {}),
   });
 }
 
-/** 新建内容模型 POST `/api/admin/schema`*/
+/** 新建内容模型 POST `/api/biz/schema`*/
 export async function createSchema(
   options?: { [key: string]: any },
 ) {
-  return request<{ data: API.Schema }>(`/api/admin/schema`, {
+  return request<{ data: API.Schema }>(`/api/biz/schema`, {
     method: 'POST',
     ...(options || {}),
   });
 }
 
-/** 删除内容模型 DELETE `/api/admin/schema/${schemaId}`*/
+/** 删除内容模型 DELETE `/api/biz/schema/${schemaId}`*/
 export async function deleteSchema(
   schemaId: string,
   options?: { [key: string]: any },
 ) {
-  return request(`/api/admin/schema/${schemaId}`, {
+  return request(`/api/biz/schema/${schemaId}`, {
     method: 'DELETE',
     ...(options || {}),
   });

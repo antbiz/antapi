@@ -45,8 +45,8 @@ function getProjects(req: Request, res: Response, u: string) {
 }
 
 export default {
-  'GET /api/admin/project': getProjects,
-  'GET /api/admin/project/1': {
+  'GET /api/biz/project': getProjects,
+  'GET /api/biz/project/1': {
     data: {
       id: "1",
       createdAt: '2021-03-28',

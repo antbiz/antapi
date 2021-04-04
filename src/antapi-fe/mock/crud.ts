@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 export default {
-  'GET /api/admin/test_a': {
+  'GET /api/biz/test_a': {
     data: [
       {
         id: '1',
@@ -15,21 +15,21 @@ export default {
       },
     ],
   },
-  'GET /api/admin/test_a/1': {
+  'GET /api/biz/test_a/1': {
     data: {
       id: '1',
       username: 'bean',
       phone: '666666',
     },
   },
-  'GET /api/admin/test_a/2': {
+  'GET /api/biz/test_a/2': {
     data: {
       id: '2',
       username: 'dou',
       phone: '888888',
     },
   },
-  'GET /api/admin/test_b': {
+  'GET /api/biz/test_b': {
     data: [
       {
         id: '1',
@@ -43,14 +43,14 @@ export default {
       },
     ],
   },
-  'GET /api/admin/test_b/1': {
+  'GET /api/biz/test_b/1': {
     data: {
       id: '1',
       title: 'this is a test',
       desc: '这是一个测试',
     },
   },
-  'GET /api/admin/test_b/2': {
+  'GET /api/biz/test_b/2': {
     data: {
       id: '2',
       title: 'this is a tttttest',

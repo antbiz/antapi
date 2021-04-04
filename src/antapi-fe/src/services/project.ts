@@ -2,37 +2,23 @@
 /* eslint-disable */
 import { request } from 'umi';
 
-/** 获取项目列表 GET /api/admin/project */
-export async function getProjects(
-  params?: {
-    // query
-    /** 当前的页码 */
-    current?: number;
-    /** 页面的容量 */
-    pageSize?: number;
-  },
-  options?: { [key: string]: any },
-) {
-  return request<{ data: API.Project[] }>('/api/admin/project', {
+/** 获取项目列表 GET /api/biz/project */
+export async function getProjects() {
+  return request<{ data: API.Project[] }>('/api/biz/project?name[neq]=system', {
     method: 'GET',
-    params: {
-      ...params,
-    },
-    ...(options || {}),
   });
 }
 
 /** 获取项目详情  GET /api/project/${projectId} */
-export async function getProject(projectId: string, options?: { [key: string]: any }) {
-  return request<{ data: API.Project }>(`/api/admin/project/${projectId}`, {
+export async function getProject(projectId: string) {
+  return request<{ data: API.Project }>(`/api/biz/project/${projectId}`, {
     method: 'GET',
-    ...(options || {}),
   });
 }
 
-/** 更新项目 PUT /api/admin/project */
+/** 更新项目 PUT /api/biz/project */
 export async function updateProject(projectId: string, options?: { [key: string]: any }) {
-  return request<{ data: API.Project }>(`/api/admin/project/${projectId}`, {
+  return request<{ data: API.Project }>(`/api/biz/project/${projectId}`, {
     method: 'PUT',
     ...(options || {}),
   });
@@ -40,7 +26,7 @@ export async function updateProject(projectId: string, options?: { [key: string]
 
 /** 新建项目 POST /api/project */
 export async function createProject(options?: { [key: string]: any }) {
-  return request<{ data: API.Project }>('/api/admin/project', {
+  return request<{ data: API.Project }>('/api/biz/project', {
     method: 'POST',
     ...(options || {}),
   });
@@ -48,7 +34,7 @@ export async function createProject(options?: { [key: string]: any }) {
 
 /** 删除项目 DELETE /api/project */
 export async function deleteProject(projectId: string, options?: { [key: string]: any }) {
-  return request(`/api/admin/project/${projectId}`, {
+  return request(`/api/biz/project/${projectId}`, {
     method: 'DELETE',
     ...(options || {}),
   });

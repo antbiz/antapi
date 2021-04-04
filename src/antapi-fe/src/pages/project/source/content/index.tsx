@@ -11,12 +11,13 @@ import FormRender from 'form-render/lib/antd';
 /**
  * 添加
  *
+ * @param collectionName
  * @param data
  */
-const handleAdd = async (data: Record<string, unknown>) => {
+const handleAdd = async (collectionName: string, data: Record<string, unknown>) => {
   const hide = message.loading('正在添加');
   try {
-    await createOne({ ...data });
+    await createOne(collectionName, data);
     hide();
     message.success('添加成功');
     return true;
@@ -30,12 +31,13 @@ const handleAdd = async (data: Record<string, unknown>) => {
 /**
  * 更新
  *
+ * @param collectionName
  * @param data
  */
-const handleUpdate = async (data: Record<string, unknown>) => {
+const handleUpdate = async (collectionName: string, id: string, data: Record<string, unknown>) => {
   const hide = message.loading('正在更新');
   try {
-    await updateOne({ ...data });
+    await updateOne(collectionName, id, data);
     hide();
     message.success('更新成功');
     return true;
@@ -49,13 +51,14 @@ const handleUpdate = async (data: Record<string, unknown>) => {
 /**
  * 删除
  *
+ * @param collectionName
  * @param id
  */
-const handleRemove = async (id: string) => {
+const handleDelete = async (collectionName: string, id: string) => {
   const hide = message.loading('正在删除');
   if (!id) return true;
   try {
-    await deleteOne({ id });
+    await deleteOne(collectionName, id);
     hide();
     message.success('删除成功，即将刷新');
     return true;
@@ -86,7 +89,7 @@ export default (): React.ReactNode => {
           okText="是"
           cancelText="否"
           onConfirm={() => {
-            handleRemove(record.id);
+            handleDelete(currentSchema.collectionName, record.id);
           }}
         >
           <a style={{ color: '#ff7875' }} href="#">
@@ -126,7 +129,7 @@ export default (): React.ReactNode => {
             新建
           </Button>,
         ]}
-        params={{ schemaName: currentSchema.name}}
+        params={{ collectionName: currentSchema.collectionName}}
         request={getMany}
         columns={columns}
       />
@@ -142,8 +145,8 @@ export default (): React.ReactNode => {
         onOk={async () => {
           console.log(currentItem);
           const success = currentItem?.id
-            ? await handleUpdate(currentItem as API.Schema)
-            : await handleAdd(currentItem as API.Schema);
+            ? await handleUpdate(currentSchema.collectionName, currentItem as API.Schema)
+            : await handleAdd(currentSchema.collectionName, currentItem as API.Schema);
           if (success) {
             handleEditModalVisible(false);
             if (actionRef.current) {

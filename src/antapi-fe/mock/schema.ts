@@ -25,7 +25,7 @@ const fakeSchemas = [
     createdAt: '2021-03-28',
     updatedAt: '2021-03-28',
     projectName: 'example1',
-    name: 'test_a',
+    collectionName: 'test_a',
     title: '测试A',
     description: '这是一个测试'
   },
@@ -53,20 +53,20 @@ const fakeSchemas = [
     createdAt: '2021-03-28',
     updatedAt: '2021-03-28',
     projectName: 'example1',
-    name: 'test_b',
+    collectionName: 'test_b',
     title: '测试B',
     description: '这是一个测试'
   },
 ]
 
 export default {
-  'GET /api/admin/schema': {
+  'GET /api/biz/schema': {
     data: fakeSchemas,
   },
-  'GET /api/admin/schema/1': {
+  'GET /api/biz/schema/1': {
     data: fakeSchemas[0],
   },
-  'GET /api/admin/schema/2': {
+  'GET /api/biz/schema/2': {
     data: fakeSchemas[1],
   },
 };

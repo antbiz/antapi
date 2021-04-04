@@ -120,7 +120,7 @@ declare namespace API {
     updatedAt: string;
     projectName: string;
     title: string;
-    name: string;
+    collectionName: string;
     description: string;
     schema: object;
     displayType?: string;
