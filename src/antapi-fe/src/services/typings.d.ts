@@ -126,4 +126,20 @@ declare namespace API {
     displayType?: string;
     showDescIcon?: boolean;
   };
+
+  /**
+   * 权限
+   */
+  type Permission = {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    title: string;
+    projectName: string;
+    collectionName: string;
+    createLevel: int;
+    readLevel: int;
+    updateLevel: int;
+    deleteLevel: int;
+  }
 }

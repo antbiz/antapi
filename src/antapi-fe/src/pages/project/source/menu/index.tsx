@@ -6,14 +6,14 @@ import { useSourceCtx } from '../context';
 
 export default (): React.ReactNode => {
   const { setCurrentSchema } = useSourceCtx();
-  const [schemas, setSchemas] = useState<API.Schema[]>([]);
+  const [schemas, setSchemas] = useState<API.Schema[]>(null);
   const projectName = getProjectName();
   const onLoadSchemas = async () => {
-    const { data } = await getSchemas({ projectName });
+    const { data = [] } = await getSchemas({ projectName });
     if (data.length > 0) {
       setCurrentSchema(data[0]);
-      setSchemas(data);
     }
+    setSchemas(data);
   };
 
   useEffect(() => {

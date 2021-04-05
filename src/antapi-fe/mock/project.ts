@@ -68,4 +68,32 @@ export default {
       description: 'CMS使用示例',
     },
   },
+  'GET /api/biz/permission': {
+    data: [
+      {
+        id: '624748504',
+        createdAt: '2020-05-26T09:42:56Z',
+        updatedAt: '2020-05-26T08:19:22Z',
+        title: '测试A',
+        projectName: 'example1',
+        collectionName: 'test_a',
+        createLevel: 0,
+        readLevel: 0,
+        updateLevel: 0,
+        deleteLevel: 0,
+      },
+      {
+        id: '624691229',
+        createdAt: '2020-05-26T08:19:22Z',
+        updatedAt: '2020-05-26T08:19:22Z',
+        title: '测试B',
+        projectName: 'example1',
+        collectionName: 'test_b',
+        createLevel: 0,
+        readLevel: 0,
+        updateLevel: 0,
+        deleteLevel: 0,
+      },
+    ]
+  }
 };

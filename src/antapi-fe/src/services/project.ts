@@ -38,3 +38,18 @@ export async function deleteProject(projectId: string) {
     method: 'DELETE',
   });
 }
+
+/** 获取项目权限 GET `/api/biz/permission?projectName=${projectName}` */
+export async function getPermissions(params: { projectName: string }) {
+  return request<{ data: API.Permission[] }>(`/api/biz/permission?projectName[eq]${params.projectName}`, {
+    method: 'GET',
+  });
+}
+
+/** 更新项目权限 PUT `/api/biz/permission/${id}`*/
+export async function updatePermission(id: string, options?: { [key: string]: any }) {
+  return request<{ data: API.Permission }>(`/api/biz/permission/${schemaId}`, {
+    method: 'PUT',
+    ...(options || {}),
+  });
+}
