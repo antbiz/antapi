@@ -1,3 +1,4 @@
+.DS_Store
 .buildpath
 .hgignore.swp
 .project
@@ -8,8 +9,13 @@
 .vscode/
 vender/
 log/
+tmp
 composer.lock
 gitpush.sh
+bin/
 cbuild
 */.DS_Store
+config/config.toml
+main
 .vscode
+go.sum

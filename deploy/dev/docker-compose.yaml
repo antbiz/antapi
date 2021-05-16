@@ -1,0 +1,15 @@
+version: '3.6'
+services:
+  mongo:
+    image: mongo
+    container_name: antapi-mongo
+    restart: always
+    ports:
+      - 27017:27017
+
+  redis:
+    image: redis
+    container_name: antapi-redis
+    hostname: redis
+    ports:
+      - 6379:6379
