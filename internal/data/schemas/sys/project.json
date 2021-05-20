@@ -1,0 +1,66 @@
+{
+    "title": "项目",
+    "collectionName": "project",
+    "projectName": "system",
+    "description": "",
+    "column": 2,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "_id": {
+                "title": "编号",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "createdAt": {
+                "title": "创建时间",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updatedAt": {
+                "title": "更新时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "deletedAt": {
+                "title": "删除时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "createdAy": {
+                "title": "创建者",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updatedBy": {
+                "title": "修改者",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "title": {
+                "title": "项目名称",
+                "type": "string",
+                "required": true
+            },
+            "name": {
+                "title": "项目ID",
+                "type": "string",
+                "unique": true,
+                "required": true,
+                "pattern": "^([a-z]{1,})(_[a-z0-9]{1,})*$"
+            },
+            "description": {
+                "title": "项目描述",
+                "type": "string",
+                "format": "textarea"
+            },
+            "cover": {
+                "title": "封面",
+                "type": "string",
+                "format": "image"
+            }
+        }
+    }
+}

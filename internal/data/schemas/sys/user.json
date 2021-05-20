@@ -1,0 +1,75 @@
+{
+    "title": "用户",
+    "collectionName": "user",
+    "projectName": "system",
+    "description": "",
+    "column": 2,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "_id": {
+                "title": "编号",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "createdAt": {
+                "title": "创建时间",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updatedAt": {
+                "title": "更新时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "deletedAt": {
+                "title": "删除时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "createdAy": {
+                "title": "创建者",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updatedBy": {
+                "title": "修改者",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "username": {
+                "title": "用户名字",
+                "type": "string",
+                "unique": true,
+                "required": true
+            },
+            "phone": {
+                "title": "手机号",
+                "type": "string",
+                "format": "phone",
+                "unique": true
+            },
+            "email": {
+                "title": "邮箱",
+                "type": "string",
+                "format": "email",
+                "unique": true
+            },
+            "password": {
+                "title": "密码",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "isBlocked": {
+                "title": "是否停用",
+                "type": "boolean"
+            },
+            "isSysUser": {
+                "title": "是否系统用户",
+                "type": "boolean"
+            }
+        }
+    }
+}

@@ -1,0 +1,60 @@
+{
+    "title": "文件",
+    "collectionName": "file",
+    "projectName": "system",
+    "description": "",
+    "column": 2,
+    "schema": {
+        "type": "object",
+        "properties": {
+            "_id": {
+                "title": "编号",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "createdAt": {
+                "title": "创建时间",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updatedAt": {
+                "title": "更新时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "deletedAt": {
+                "title": "删除时间",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "createdAy": {
+                "title": "创建者",
+                "type": "string",
+                "index": true,
+                "ui:hidden": true
+            },
+            "updatedBy": {
+                "title": "修改者",
+                "type": "string",
+                "ui:hidden": true
+            },
+            "name": {
+                "title": "文件名",
+                "type": "string"
+            },
+            "size": {
+                "title": "文件大小",
+                "type": "string",
+                "format": "int",
+                "ui:readonly": true
+            },
+            "url": {
+                "title": "链接",
+                "type": "string",
+                "unique": true,
+                "ui:readonly": true
+            }
+        }
+    }
+}
