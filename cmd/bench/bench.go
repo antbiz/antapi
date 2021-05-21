@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/antbiz/antapi/cmd/bench/execute"
+	"github.com/antbiz/antapi/cmd/bench/sync"
 	"github.com/gogf/gf/os/gcmd"
 )
 
@@ -42,6 +43,8 @@ func main() {
 		help(gcmd.GetArg(2))
 	case "execute":
 		execute.Run()
+	case "sync":
+		sync.Run()
 	default:
 		fmt.Println(helpContent)
 	}
