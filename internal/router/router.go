@@ -35,4 +35,21 @@ func init() {
 	})
 	// 文件预览或下载
 	s.BindHandler("GET:/upload/{year}/{month}/{day}/{filename}", api.File.Preview)
+
+	// 用户登录
+	// TODO: 集成三方登录
+	s.Group("/api/login", func(group *ghttp.RouterGroup) {
+		// 账号登录
+		group.POST("/account", api.User.LoginByAccount)
+	})
+
+	// 用户个人相关的接口，需要做auth鉴权
+	s.Group("/api/user", func(group *ghttp.RouterGroup) {
+		group.Middleware(middleware.Auth)
+		// 退出登录
+		group.ALL("/logout", api.User.LogOut)
+		// 个人信息
+		group.GET("/info", api.User.Info)
+	})
+
 }

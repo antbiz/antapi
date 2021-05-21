@@ -10,48 +10,48 @@
             "_id": {
                 "title": "编号",
                 "type": "string",
-                "ui:hidden": true
+                "hidden": true
             },
             "createdAt": {
                 "title": "创建时间",
                 "type": "string",
                 "index": true,
-                "ui:hidden": true
+                "hidden": true
             },
             "updatedAt": {
                 "title": "更新时间",
                 "type": "string",
-                "ui:hidden": true
+                "hidden": true
             },
             "createdAy": {
                 "title": "创建者",
                 "type": "string",
                 "index": true,
-                "ui:hidden": true
+                "hidden": true
             },
             "updatedBy": {
                 "title": "修改者",
                 "type": "string",
-                "ui:hidden": true
+                "hidden": true
             },
             "title": {
                 "title": "模型名称",
                 "type": "string",
-                "ui:readonly": true
+                "readonly": true
             },
-            "project_name": {
+            "projectName": {
                 "title": "项目ID",
                 "type": "string",
                 "index": true,
-                "ui:hidden": true
+                "hidden": true
             },
-            "collection_name": {
+            "collectionName": {
                 "title": "模型ID",
                 "type": "string",
                 "index": true,
-                "ui:hidden": true
+                "hidden": true
             },
-            "create_level": {
+            "createLevel": {
                 "title": "创建权限等级",
                 "type": "number",
                 "format": "int",
@@ -59,7 +59,7 @@
                 "min": 0,
                 "max": 3
             },
-            "read_level": {
+            "readLevel": {
                 "title": "查询权限等级",
                 "type": "number",
                 "format": "int",
@@ -67,7 +67,7 @@
                 "min": 0,
                 "max": 3
             },
-            "update_level": {
+            "updateLevel": {
                 "title": "更新权限等级",
                 "type": "number",
                 "format": "int",
@@ -75,7 +75,7 @@
                 "min": 0,
                 "max": 3
             },
-            "delete_level": {
+            "deleteLevel": {
                 "title": "删除权限等级",
                 "type": "number",
                 "format": "int",

@@ -4,7 +4,7 @@ import { request } from 'umi';
 
 /** 获取内容模型列表 GET `/api/biz/schema?projectName=${projectName}` */
 export async function getSchemas(params: { projectName: string }) {
-  return request<{ data: API.Schema[] }>(`/api/biz/schema?projectName[eq]${params.projectName}`, {
+  return request<{ data: API.Schema[] }>(`/api/biz/schema?filter={"projectName":"${params.projectName}"}`, {
     method: 'GET',
   });
 }

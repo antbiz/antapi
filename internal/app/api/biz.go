@@ -11,6 +11,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
+	"github.com/gogf/gf/util/gconv"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -36,6 +37,7 @@ func (bizApi) List(r *ghttp.Request) {
 		Limit:   r.GetInt64("pageSize"),
 		Sort:    gstr.SplitAndTrimSpace(r.GetString("sort"), ","),
 		CtxUser: ctxUser,
+		Filter:  gconv.Map(r.GetString("filter")),
 	}
 	opt.Offset = opt.Limit * (r.GetInt64("pageNum", 1) - 1)
 

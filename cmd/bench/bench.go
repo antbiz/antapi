@@ -14,6 +14,7 @@ USAGE
 	bench COMMAND [ARGUMENT] [OPTION]
 COMMAND
 	execute	   execute patch file
+	sync	   sync schemas/projects/defaults
 OPTION
 	-y         all yes for all command without prompt ask 
 	-?,-h      show this help or detail for specified command

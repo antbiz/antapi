@@ -10,29 +10,29 @@
             "_id": {
                 "title": "编号",
                 "type": "string",
-                "ui:hidden": true
+                "hidden": true
             },
             "createdAt": {
                 "title": "创建时间",
                 "type": "string",
                 "index": true,
-                "ui:hidden": true
+                "hidden": true
             },
             "updatedAt": {
                 "title": "更新时间",
                 "type": "string",
-                "ui:hidden": true
+                "hidden": true
             },
             "createdAy": {
                 "title": "创建者",
                 "type": "string",
                 "index": true,
-                "ui:hidden": true
+                "hidden": true
             },
             "updatedBy": {
                 "title": "修改者",
                 "type": "string",
-                "ui:hidden": true
+                "hidden": true
             },
             "name": {
                 "title": "文件名",
@@ -42,13 +42,13 @@
                 "title": "文件大小",
                 "type": "string",
                 "format": "int",
-                "ui:readonly": true
+                "readOnly": true
             },
             "url": {
                 "title": "链接",
                 "type": "string",
                 "unique": true,
-                "ui:readonly": true
+                "readOnly": true
             }
         }
     }

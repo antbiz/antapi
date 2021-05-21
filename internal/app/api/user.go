@@ -15,9 +15,9 @@ var User = userApi{}
 
 type userApi struct{}
 
-// SignInByUser 用户账号（用户名/手机号/邮箱）登录
-func (userApi) SignInByUser(r *ghttp.Request) {
-	var req *dto.UserSignInReq
+// LoginByAccount 用户账号（用户名/手机号/邮箱）登录
+func (userApi) LoginByAccount(r *ghttp.Request) {
+	var req *dto.UserLoginReq
 	if err := r.Parse(&req); err != nil {
 		resp.Error(r, errors.InvalidArgument(err.Error()))
 	}
@@ -35,8 +35,8 @@ func (userApi) SignInByUser(r *ghttp.Request) {
 	resp.OK(r, jsonDoc)
 }
 
-// SignOut 退出登录
-func (userApi) SignOut(r *ghttp.Request) {
+// LogOut 退出登录
+func (userApi) LogOut(r *ghttp.Request) {
 	if err := r.Session.Remove(r.GetSessionId()); err != nil {
 		resp.Error(r, errors.InternalServer("", ""))
 	}

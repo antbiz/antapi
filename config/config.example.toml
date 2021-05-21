@@ -23,6 +23,7 @@
     [mongo.default]
         debug = true
         uri = "mongodb://localhost:27017"
+        database = "antapi"
 
 # Redis数据库配置
 [redis]

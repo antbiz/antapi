@@ -23,7 +23,7 @@ OPTION
 EXAMPLES
 	go run cmd/bench/bench.go sync
 DESCRIPTION
-    The "sync" command is used for sync schema/projects/defaults`)
+    The "sync" command is used for sync schemas/projects/defaults`)
 }
 
 // Run .

@@ -20,9 +20,9 @@ export async function getFakeCaptcha(
   });
 }
 
-/** 登录接口 POST /api/login/outLogin */
+/** 登出接口 POST /api/user/logout */
 export async function outLogin(options?: { [key: string]: any }) {
-  return request<Record<string, any>>('/api/login/outLogin', {
+  return request<Record<string, any>>('/api/user/logout', {
     method: 'GET',
     ...(options || {}),
   });

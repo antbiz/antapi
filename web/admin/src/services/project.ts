@@ -4,7 +4,7 @@ import { request } from 'umi';
 
 /** 获取项目列表 GET /api/biz/project */
 export async function getProjects() {
-  return request<{ data: API.Project[] }>('/api/biz/project?name[neq]=system', {
+  return request<{ data: API.Project[] }>('/api/biz/project?filter={"name":"system"}', {
     method: 'GET',
   });
 }

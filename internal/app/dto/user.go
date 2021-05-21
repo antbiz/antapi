@@ -1,8 +1,8 @@
 package dto
 
-// UserSignInReq 用户注册请求
+// UserLoginReq 用户注册请求
 // TODO: 用户登录密码加密传输
-type UserSignInReq struct {
+type UserLoginReq struct {
 	Login string `v:"required#请输入用户名/手机号/邮箱"` // 支持用户名/手机号/邮箱
 	Pwd   string `v:"required#请输入密码"`
 }
