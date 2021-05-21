@@ -1,9 +1,14 @@
 package service
 
 import (
+	"context"
+
 	"github.com/antbiz/antapi/internal/app/dto"
 	"github.com/antbiz/antapi/internal/app/global"
+	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
+	"github.com/gogf/gf/errors/gerror"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var Permission = &permissionSrv{
@@ -21,6 +26,29 @@ func (srv *permissionSrv) CollectionName() string {
 
 // CheckDuplicatePermission 不允许创建 collection&role 名称均相同的权限
 func (srv *permissionSrv) CheckDuplicatePermission(data *gjson.Json) error {
+	collectionName := data.GetString("collectionName")
+	roleName := data.GetString("roleName")
+	if collectionName == "" || roleName == "" {
+		return nil
+	}
+	id := data.GetString("_id")
+
+	filter := bson.M{}
+	if id == "" {
+		filter["collectionName"] = collectionName
+	} else {
+		filter["collectionName"] = collectionName
+		filter["$neq"] = bson.M{
+			"_id": id,
+		}
+	}
+
+	if total, err := db.DB().Collection(srv.collectionName).Find(context.Background(), filter).Count(); err != nil {
+		return err
+	} else if total > 0 {
+		return gerror.New("Duplicate Error")
+	}
+
 	return nil
 }
 
@@ -34,7 +62,7 @@ type canDo struct {
 	PermissionVal int
 }
 
-func (c *canDo) CanNot() bool {
+func (c *canDo) CanDoOnlySysUser() bool {
 	return c.PermissionVal == 0
 }
 

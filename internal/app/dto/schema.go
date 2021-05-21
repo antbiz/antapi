@@ -44,7 +44,7 @@ type EnumOption struct {
 }
 
 // DefaultFieldNames : 所有默认的字段
-var DefaultFieldNames = []string{"_id", "createdAt", "updatedAt", "deletedAt", "createdBy", "updatedBy"}
+var DefaultFieldNames = []string{"_id", "createdAt", "updatedAt", "createdBy", "updatedBy"}
 
 // GetFieldNames 获取字段名
 // includeHidden: 包括 is_hidden 的字段

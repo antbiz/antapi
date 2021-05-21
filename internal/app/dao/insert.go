@@ -43,6 +43,8 @@ func Insert(ctx context.Context, collectionName string, doc interface{}, opts ..
 	}
 	newDoc["createdAt"] = time.Now().Unix()
 	newDoc["updatedAt"] = newDoc["createdAt"]
+	newDoc["createdBy"] = opt.CtxUser.ID
+	newDoc["updatedBy"] = opt.CtxUser.ID
 
 	result, err := db.DB().Collection(collectionName).InsertOne(ctx, newDoc)
 	if err != nil {

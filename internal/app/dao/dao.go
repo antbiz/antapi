@@ -1,5 +1,7 @@
 package dao
 
+import "github.com/antbiz/antapi/internal/common/types"
+
 // ListOptions .
 type ListOptions struct {
 	Filter              interface{}
@@ -10,6 +12,7 @@ type ListOptions struct {
 	IgnoreFieldsCheck   bool
 	IncludeHiddenField  bool
 	IncludePrivateField bool
+	CtxUser             types.ContextUser
 }
 
 // GetOptions .
@@ -20,6 +23,7 @@ type GetOptions struct {
 	IncludeHiddenField  bool
 	IncludePrivateField bool
 	RaiseNotFound       bool
+	CtxUser             types.ContextUser
 }
 
 // InsertOptions .
@@ -27,6 +31,7 @@ type InsertOptions struct {
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
+	CtxUser               types.ContextUser
 }
 
 // UpsertOptions .
@@ -35,6 +40,7 @@ type UpsertOptions struct {
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
+	CtxUser               types.ContextUser
 }
 
 // UpdateOptions .
@@ -43,10 +49,12 @@ type UpdateOptions struct {
 	IgnoreFieldValueCheck bool
 	IncludeHiddenField    bool
 	IncludePrivateField   bool
+	CtxUser               types.ContextUser
 }
 
 // DeleteOptions .
 type DeleteOptions struct {
 	Filter        interface{}
 	RaiseNotFound bool
+	CtxUser       types.ContextUser
 }

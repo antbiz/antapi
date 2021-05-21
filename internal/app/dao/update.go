@@ -40,6 +40,7 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 		newDoc[field.Name] = val
 	}
 	newDoc["updatedAt"] = time.Now().Unix()
+	newDoc["updatedBy"] = opt.CtxUser.ID
 
 	if err := db.DB().Collection(collectionName).UpdateOne(ctx, opt.Filter, doc); err != nil {
 		return err
