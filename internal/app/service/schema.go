@@ -7,9 +7,11 @@ import (
 
 	"github.com/antbiz/antapi/internal/app/dto"
 	"github.com/antbiz/antapi/internal/app/global"
+	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gfile"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 var Schema = &schemaSrv{
@@ -33,7 +35,6 @@ func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) err
 			hasIDField        = false
 			hasCreatedAtField = false
 			hasUpdatedAtField = false
-			hasDeletedAtField = false
 			hasCreatedByField = false
 			hasUpdatedByField = false
 		)
@@ -43,17 +44,15 @@ func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) err
 				hasField = true
 			}
 			switch fieldName {
-			case "id":
+			case "_id":
 				hasIDField = true
-			case "created_at":
+			case "createdAt":
 				hasCreatedAtField = true
-			case "updated_at":
+			case "updatedAt":
 				hasUpdatedAtField = true
-			case "deleted_at":
-				hasDeletedAtField = true
-			case "created_by":
+			case "createdBy":
 				hasCreatedByField = true
-			case "updated_by":
+			case "updatedBy":
 				hasUpdatedByField = true
 			}
 
@@ -62,14 +61,14 @@ func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) err
 			}
 
 			if !hasIDField {
-				data.Set(fmt.Sprintf("%s.%s", propPath, "id"), g.Map{
+				data.Set(fmt.Sprintf("%s.%s", propPath, "_id"), g.Map{
 					"title":  "编号",
 					"type":   "string",
 					"hidden": true,
 				})
 			}
 			if !hasCreatedAtField {
-				data.Set(fmt.Sprintf("%s.%s", propPath, "created_at"), g.Map{
+				data.Set(fmt.Sprintf("%s.%s", propPath, "createdAt"), g.Map{
 					"title":  "创建时间",
 					"type":   "string",
 					"index":  true,
@@ -77,21 +76,14 @@ func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) err
 				})
 			}
 			if !hasUpdatedAtField {
-				data.Set(fmt.Sprintf("%s.%s", propPath, "updated_at"), g.Map{
+				data.Set(fmt.Sprintf("%s.%s", propPath, "updatedAt"), g.Map{
 					"title":  "更新时间",
 					"type":   "string",
 					"hidden": true,
 				})
 			}
-			if !hasDeletedAtField {
-				data.Set(fmt.Sprintf("%s.%s", propPath, "deleted_at"), g.Map{
-					"title":  "删除时间",
-					"type":   "string",
-					"hidden": true,
-				})
-			}
 			if !hasCreatedByField {
-				data.Set(fmt.Sprintf("%s.%s", propPath, "created_by"), g.Map{
+				data.Set(fmt.Sprintf("%s.%s", propPath, "createdBy"), g.Map{
 					"title":  "创建者",
 					"type":   "string",
 					"index":  true,
@@ -99,7 +91,7 @@ func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) err
 				})
 			}
 			if !hasUpdatedByField {
-				data.Set(fmt.Sprintf("%s.%s", propPath, "updated_by"), g.Map{
+				data.Set(fmt.Sprintf("%s.%s", propPath, "updatedBy"), g.Map{
 					"title":  "修改者",
 					"type":   "string",
 					"hidden": true,
@@ -125,12 +117,32 @@ func (srv *schemaSrv) ReloadGlobalSchemas(ctx context.Context, data *gjson.Json)
 
 // AutoCreateCollectionPermission 新建模型后初始化权限设置
 func (srv *schemaSrv) AutoCreateCollectionPermission(ctx context.Context, data *gjson.Json) error {
-	return nil
+	_, err := db.
+		DB().
+		Collection(srv.collectionName).
+		Upsert(
+			ctx,
+			bson.M{"collectionName": data.GetString("collectionName")},
+			g.Map{
+				"title":          data.GetString("title"),
+				"projectName":    data.GetString("projectName"),
+				"collectionName": data.GetString("collectionName"),
+				"createLevel":    0,
+				"readLevel":      0,
+				"updateLevel":    0,
+				"deleteLevel":    0,
+			},
+		)
+	return err
 }
 
 // AutoDeleteCollectionPermission 删除模型后移除对应的权限设置
 func (srv *schemaSrv) AutoDeleteCollectionPermission(ctx context.Context, data *gjson.Json) error {
-	return nil
+	_, err := db.
+		DB().
+		Collection(srv.collectionName).
+		RemoveAll(ctx, bson.M{"collectionName": data.GetString("collectionName")})
+	return err
 }
 
 // GetJSONFilePath 获取文件备份导出路径
