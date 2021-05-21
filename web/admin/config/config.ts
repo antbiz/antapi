@@ -7,8 +7,6 @@ import routes from './routes';
 
 const { REACT_APP_ENV } = process.env;
 
-const WebpackPluginFrTheme = require('webpack-plugin-fr-theme');
-
 export default defineConfig({
   hash: true,
   antd: {},
@@ -58,13 +56,6 @@ export default defineConfig({
     // eslint-disable-next-line
     require('autoprefixer'),
   ],
-  // openAPI: {
-  //   requestLibPath: "import { request } from 'umi'",
-  //   // 或者使用在线的版本
-  //   // schemaPath: "https://gw.alipayobjects.com/os/antfincdn/M%24jrzTTYJN/oneapi.json"
-  //   schemaPath: join(__dirname, 'oneapi.json'),
-  //   mock: false,
-  // },
   chainWebpack: (memo, { env, webpack, createCSSRule  }) => {
     // memo.plugin('monaco-editor').use(MonacoWebpackPlugin, [
     //   {
@@ -72,6 +63,5 @@ export default defineConfig({
     //     languages: ['json', 'sql']
     //   }
     // ]);
-    memo.plugin('WebpackPluginFrTheme').use(WebpackPluginFrTheme);
   },
 });

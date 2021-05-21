@@ -122,9 +122,10 @@ declare namespace API {
     title: string;
     collectionName: string;
     description: string;
-    schema: object;
     displayType?: string;
     showDescIcon?: boolean;
+    type?: string;
+    properties?: object;
   };
 
   /**

@@ -137,7 +137,7 @@ export default (): React.ReactNode => {
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}
         visible={editModalVisible}
-        cancelText="取消"
+        cancelText="关闭"
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
@@ -158,6 +158,58 @@ export default (): React.ReactNode => {
           ref={genRef}
           extraButtons={[true, true, false, false]}
           defaultValue={currentSchema}
+          globalSettings={{
+            type: 'object',
+            properties: {
+              title: {
+                title: '标题',
+                description: '模型展示名称',
+                type: 'string',
+                required: true,
+              },
+              collectionName: {
+                title: '模型名称/英文',
+                description: '',
+                type: 'string',
+                required: true,
+              },
+              projectName: {
+                title: '项目名称/英文',
+                type: 'string',
+                required: true,
+              },
+              description: {
+                title: '模型描述',
+                type: 'string',
+                format: "textarea",
+              },
+              column: {
+                title: '整体布局',
+                type: 'number',
+                enum: [1, 2, 3],
+                enumNames: ['一行一列', '一行二列', '一行三列'],
+                props: {
+                  placeholder: '默认一行一列',
+                },
+              },
+              labelWidth: {
+                title: '标签宽度',
+                type: 'number',
+                widget: 'slider',
+                max: 300,
+                props: {
+                  hideNumber: true,
+                },
+              },
+              displayType: {
+                title: '标签展示模式',
+                type: 'string',
+                enum: ['row', 'column'],
+                enumNames: ['同行', '单独一行'],
+                widget: 'radio',
+              },
+            }
+          }}
         />
       </Modal>
     </SourceCtx.Provider>

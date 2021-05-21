@@ -77,7 +77,7 @@ export default (): React.ReactNode => {
   const { currentSchema } = useSourceCtx();
   const form = useForm();
 
-  let columns: ProColumns<Record<string, unknown>>[] = frSchema2ProTableCols(currentSchema.schema);
+  let columns: ProColumns<Record<string, unknown>>[] = frSchema2ProTableCols(currentSchema);
   columns = columns.concat([
     {
       title: '操作',
@@ -140,7 +140,7 @@ export default (): React.ReactNode => {
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}
         visible={editModalVisible}
-        cancelText="取消"
+        cancelText="关闭"
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
@@ -158,7 +158,13 @@ export default (): React.ReactNode => {
       >
         <FormRender
           form={form}
-          schema={currentSchema.schema}
+          schema={{
+            type: 'object',
+            column: currentSchema.column,
+            displayType: currentSchema.displayType,
+            showDescIcon: currentSchema.showDescIcon,
+            properties: currentSchema.properties
+          }}
           formData={currentItem}
           onChange={setCurrentItem}
         />
