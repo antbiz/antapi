@@ -20,7 +20,7 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 
 	// 执行 BeforeSaveHooks 勾子
 	for _, hook := range global.GetBeforeSaveHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return "", err
 		}
 	}
@@ -59,7 +59,7 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 		if jsonNewDoc == nil {
 			jsonNewDoc = gjson.New(newDoc)
 		}
-		if err := hook(jsonNewDoc); err != nil {
+		if err := hook(ctx, jsonNewDoc); err != nil {
 			return "", err
 		}
 	}

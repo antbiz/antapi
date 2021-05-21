@@ -31,7 +31,7 @@ func List(ctx context.Context, collectionName string, opts ...*ListOptions) (*gj
 
 	// 执行 AfterFindHooks 勾子
 	for _, hook := range global.GetAfterFindHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return nil, 0, err
 		}
 	}
@@ -54,7 +54,7 @@ func Get(ctx context.Context, collectionName string, opts ...*GetOptions) (*gjso
 
 	// 执行 AfterFindHooks 勾子
 	for _, hook := range global.GetAfterFindHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return nil, err
 		}
 	}

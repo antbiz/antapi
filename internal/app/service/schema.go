@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
@@ -25,7 +26,7 @@ func (srv *schemaSrv) CollectionName() string {
 }
 
 // CheckJSONSchema 检验 JSONSchema 并填充系统必要字段
-func (srv *schemaSrv) CheckJSONSchema(data *gjson.Json) error {
+func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) error {
 	checkJSONSchema := func(propPath string) error {
 		var (
 			hasField          = false
@@ -117,18 +118,18 @@ func (srv *schemaSrv) CheckJSONSchema(data *gjson.Json) error {
 }
 
 // ReloadGlobalSchemas 当某个Collection的Schema插入/更新/删除后，重新加载数据到内存
-func (srv *schemaSrv) ReloadGlobalSchemas(_ *gjson.Json) error {
+func (srv *schemaSrv) ReloadGlobalSchemas(ctx context.Context, data *gjson.Json) error {
 	global.SchemaChan <- struct{}{}
 	return nil
 }
 
 // AutoCreateCollectionPermission 新建模型后初始化权限设置
-func (srv *schemaSrv) AutoCreateCollectionPermission(data *gjson.Json) error {
+func (srv *schemaSrv) AutoCreateCollectionPermission(ctx context.Context, data *gjson.Json) error {
 	return nil
 }
 
 // AutoDeleteCollectionPermission 删除模型后移除对应的权限设置
-func (srv *schemaSrv) AutoDeleteCollectionPermission(data *gjson.Json) error {
+func (srv *schemaSrv) AutoDeleteCollectionPermission(ctx context.Context, data *gjson.Json) error {
 	return nil
 }
 
@@ -138,7 +139,7 @@ func (srv *schemaSrv) GetJSONFilePath(collectionName string) string {
 }
 
 // AutoExportSchemaData 保存数据到 boot/schemas/biz 以便项目初始化
-func (srv *schemaSrv) AutoExportJSONFile(data *gjson.Json) error {
+func (srv *schemaSrv) AutoExportJSONFile(ctx context.Context, data *gjson.Json) error {
 	g.Log().Info("Auto Export Schema Data To internal/data/schemas/biz")
 	jsonFilePath := srv.GetJSONFilePath(data.GetString("collectionName"))
 
@@ -161,7 +162,7 @@ func (srv *schemaSrv) AutoExportJSONFile(data *gjson.Json) error {
 }
 
 // AutoDeleteJSONFile 删除导出的json文件
-func (srv *schemaSrv) AutoDeleteJSONFile(data *gjson.Json) error {
+func (srv *schemaSrv) AutoDeleteJSONFile(ctx context.Context, data *gjson.Json) error {
 	g.Log().Info("Auto Delete Exported Json File From internal/data/schemas/biz")
 	jsonFilePath := srv.GetJSONFilePath(data.GetString("collectionName"))
 

@@ -25,7 +25,7 @@ func (srv *permissionSrv) CollectionName() string {
 }
 
 // CheckDuplicatePermission 不允许创建 collection&role 名称均相同的权限
-func (srv *permissionSrv) CheckDuplicatePermission(data *gjson.Json) error {
+func (srv *permissionSrv) CheckDuplicatePermission(ctx context.Context, data *gjson.Json) error {
 	collectionName := data.GetString("collectionName")
 	roleName := data.GetString("roleName")
 	if collectionName == "" || roleName == "" {
@@ -53,7 +53,7 @@ func (srv *permissionSrv) CheckDuplicatePermission(data *gjson.Json) error {
 }
 
 // ReloadGlobalPermissions 重新加载所有 权限 到内存
-func (srv *permissionSrv) ReloadGlobalPermissions(_ *gjson.Json) error {
+func (srv *permissionSrv) ReloadGlobalPermissions(ctx context.Context, data *gjson.Json) error {
 	global.PermissionChan <- struct{}{}
 	return nil
 }

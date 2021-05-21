@@ -23,7 +23,7 @@ func Delete(ctx context.Context, collectionName string, opts ...*DeleteOptions) 
 
 	// 执行 BeforeDelete 勾子
 	for _, hook := range global.GetBeforeDeleteHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return err
 		}
 	}
@@ -34,7 +34,7 @@ func Delete(ctx context.Context, collectionName string, opts ...*DeleteOptions) 
 
 	// 执行 AfterDelete 勾子
 	for _, hook := range global.GetAfterDeleteHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return err
 		}
 	}

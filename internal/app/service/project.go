@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/antbiz/antapi/internal/app/dto"
@@ -28,7 +29,7 @@ func (srv *projectSrv) GetJSONFilePath(projectName string) string {
 }
 
 // AutoExportJSONFile 保存数据到 app/model/project/biz 以便项目初始化
-func (srv *projectSrv) AutoExportJSONFile(data *gjson.Json) error {
+func (srv *projectSrv) AutoExportJSONFile(ctx context.Context, data *gjson.Json) error {
 	g.Log().Info("Auto Export Project Data To app/model/project/biz")
 	jsonFilePath := srv.GetJSONFilePath(data.GetString("name"))
 
@@ -47,7 +48,7 @@ func (srv *projectSrv) AutoExportJSONFile(data *gjson.Json) error {
 }
 
 // AutoDeleteExportedJsonFile 删除导出的json文件
-func (srv *projectSrv) AutoDeleteJSONFile(data *gjson.Json) error {
+func (srv *projectSrv) AutoDeleteJSONFile(ctx context.Context, data *gjson.Json) error {
 	g.Log().Info("Auto Delete Exported Json File From app/model/project/biz")
 	jsonFilePath := srv.GetJSONFilePath(data.GetString("name"))
 

@@ -18,12 +18,12 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 
 	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
 	for _, hook := range global.GetBeforeUpdateHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return err
 		}
 	}
 	for _, hook := range global.GetBeforeSaveHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return err
 		}
 	}
@@ -48,12 +48,12 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 
 	// 执行 AfterUpdateHooks, AfterSaveHooks 勾子
 	for _, hook := range global.GetAfterUpdateHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return err
 		}
 	}
 	for _, hook := range global.GetAfterSaveHooksByCollectionName(collectionName) {
-		if err := hook(jsonDoc); err != nil {
+		if err := hook(ctx, jsonDoc); err != nil {
 			return err
 		}
 	}
