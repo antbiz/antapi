@@ -23,11 +23,6 @@
                 "type": "string",
                 "ui:hidden": true
             },
-            "deletedAt": {
-                "title": "删除时间",
-                "type": "string",
-                "ui:hidden": true
-            },
             "createdAy": {
                 "title": "创建者",
                 "type": "string",
