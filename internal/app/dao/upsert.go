@@ -8,11 +8,10 @@ import (
 	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Upsert 保存单个数据
-func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ...*UpsertOptions) (string, error) {
+func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ...*UpsertOptions) error {
 	opt := &UpsertOptions{
 		Filter: bson.M{},
 	}
@@ -24,7 +23,7 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 	// 执行 BeforeSaveHooks 勾子
 	for _, hook := range global.GetBeforeSaveHooksByCollectionName(collectionName) {
 		if err := hook(ctx, jsonDoc); err != nil {
-			return "", err
+			return err
 		}
 	}
 
@@ -37,7 +36,7 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 			val := jsonDoc.Get(field.Name)
 			if !opt.IgnoreFieldValueCheck {
 				if validErr := field.CheckFieldValue(val); validErr != nil {
-					return "", validErr
+					return validErr
 				}
 			}
 			newDoc[field.Name] = val
@@ -52,13 +51,13 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 		newDoc["createdBy"] = opt.CtxUser.ID
 	}
 
-	res, err := db.DB().Collection(collectionName).Upsert(ctx, opt.Filter, newDoc)
+	_, err := db.DB().Collection(collectionName).Upsert(ctx, opt.Filter, newDoc)
 	if err != nil {
-		return "", err
+		return err
 	}
 	// FIXME: UpsertedID 可能为空
-	id := res.UpsertedID.(primitive.ObjectID).Hex()
-	newDoc["_id"] = id
+	// id := res.UpsertedID.(primitive.ObjectID).Hex()
+	// newDoc["_id"] = id
 
 	// 执行 AfterSaveHooks 勾子
 	var jsonNewDoc *gjson.Json
@@ -67,9 +66,9 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 			jsonNewDoc = gjson.New(newDoc)
 		}
 		if err := hook(ctx, jsonNewDoc); err != nil {
-			return "", err
+			return err
 		}
 	}
 
-	return id, nil
+	return nil
 }

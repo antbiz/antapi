@@ -35,6 +35,8 @@ func ParseFormRenderSchema(data *gjson.Json) *dto.Schema {
 		}
 		field.Enum = data.GetStrings(fmt.Sprintf("properties.%s.enum", fieldName))
 		field.EnumNames = data.GetStrings(fmt.Sprintf("properties.%s.enumNames", fieldName), field.Enum)
+		field.IsSysField = dto.IsSysField(field.Name)
+
 		schema.Fields = append(schema.Fields, field)
 	}
 

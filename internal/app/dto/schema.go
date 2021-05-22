@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/util/gvalid"
 )
 
@@ -26,6 +27,7 @@ type SchemaField struct {
 	IsUnique          bool
 	IsPrivate         bool
 	IsIndexField      bool
+	IsSysField        bool
 	Default           string
 	ConnectCollection string
 	ConnectField      string
@@ -36,17 +38,29 @@ type SchemaField struct {
 	Description       string
 }
 
+// IsSysField 是否为系统默认字段
+func IsSysField(fieldName string) bool {
+	return garray.NewStrArrayFrom(
+		[]string{
+			"_id", "createdAt", "updatedAt",
+			"createdBy", "updatedBy",
+		},
+	).Contains(fieldName)
+}
+
 // GetFieldNames 获取字段名
 // includeHidden: 包括 is_hidden 的字段
 // includePrivate: 包括 is_private 的字段
 func (schema *Schema) GetFieldNames(includeHidden, includePrivate bool) []string {
 	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
-		if field.IsHidden && !includeHidden {
-			continue
-		}
-		if field.IsPrivate && !includePrivate {
-			continue
+		if !field.IsSysField {
+			if field.IsHidden && !includeHidden {
+				continue
+			}
+			if field.IsPrivate && !includePrivate {
+				continue
+			}
 		}
 		fieldNames = append(fieldNames, field.Name)
 	}
@@ -57,11 +71,13 @@ func (schema *Schema) GetFieldNames(includeHidden, includePrivate bool) []string
 func (schema *Schema) GetFields(includeHidden, includePrivate bool) []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
-		if field.IsHidden && !includeHidden {
-			continue
-		}
-		if field.IsPrivate && !includePrivate {
-			continue
+		if !field.IsSysField {
+			if field.IsHidden && !includeHidden {
+				continue
+			}
+			if field.IsPrivate && !includePrivate {
+				continue
+			}
 		}
 		fields = append(fields, field)
 	}
@@ -72,7 +88,7 @@ func (schema *Schema) GetFields(includeHidden, includePrivate bool) []*SchemaFie
 func (schema *Schema) GetHiddenFieldNames() []string {
 	fieldNames := make([]string, 0)
 	for _, field := range schema.Fields {
-		if field.IsHidden {
+		if !field.IsSysField && field.IsHidden {
 			fieldNames = append(fieldNames, field.Name)
 		}
 	}
@@ -83,7 +99,7 @@ func (schema *Schema) GetHiddenFieldNames() []string {
 func (schema *Schema) GetHiddenFields() []*SchemaField {
 	fields := make([]*SchemaField, 0)
 	for _, field := range schema.Fields {
-		if field.IsHidden {
+		if !field.IsSysField && field.IsHidden {
 			fields = append(fields, field)
 		}
 	}

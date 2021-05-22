@@ -54,7 +54,7 @@ func syncSchemas(ctx context.Context) {
 				g.Log().Fatalf("Sync Schema Data %s Error: %v", fileName, err)
 			}
 
-			_, err = dao.Upsert(ctx, "schema", jsonDoc, &dao.UpsertOptions{
+			err = dao.Upsert(ctx, "schema", jsonDoc, &dao.UpsertOptions{
 				Filter: bson.M{"name": jsonDoc.GetString("name")},
 			})
 			if err != nil {
@@ -83,7 +83,7 @@ func syncProjects(ctx context.Context) {
 				g.Log().Fatalf("Sync Project Data %s Error: %v", fileName, err)
 			}
 
-			_, err = dao.Upsert(ctx, "project", jsonDoc, &dao.UpsertOptions{
+			err = dao.Upsert(ctx, "project", jsonDoc, &dao.UpsertOptions{
 				Filter: bson.M{"name": jsonDoc.GetString("name")},
 			})
 			if err != nil {

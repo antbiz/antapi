@@ -57,6 +57,19 @@
             "type": "string",
             "hidden": true
         },
+        "language": {
+            "title": "语言",
+            "type": "string",
+            "widget": "select",
+            "default": "zh-CN",
+            "enum": ["zh-CN", "en"],
+            "required": true
+        },
+        "avatar": {
+            "title": "头像",
+            "type": "string",
+            "widget": "upload"
+        },
         "isBlocked": {
             "title": "是否停用",
             "type": "boolean"
