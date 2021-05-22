@@ -6,11 +6,14 @@ import (
 	"github.com/antbiz/antapi/internal/app/global"
 	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // List 获取列表数据
 func List(ctx context.Context, collectionName string, opts ...*ListOptions) (*gjson.Json, int, error) {
-	var opt *ListOptions
+	opt := &ListOptions{
+		Filter: bson.M{},
+	}
 	if len(opts) > 0 {
 		opt = opts[0]
 	}
@@ -41,7 +44,9 @@ func List(ctx context.Context, collectionName string, opts ...*ListOptions) (*gj
 
 // Get 获取单个数据
 func Get(ctx context.Context, collectionName string, opts ...*GetOptions) (*gjson.Json, error) {
-	var opt *GetOptions
+	opt := &GetOptions{
+		Filter: bson.M{},
+	}
 	if len(opts) > 0 {
 		opt = opts[0]
 	}

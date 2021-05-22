@@ -5,11 +5,14 @@ import (
 
 	"github.com/antbiz/antapi/internal/app/global"
 	"github.com/antbiz/antapi/internal/db"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Delete 删除单个数据
 func Delete(ctx context.Context, collectionName string, opts ...*DeleteOptions) error {
-	var opt *DeleteOptions
+	opt := &DeleteOptions{
+		Filter: bson.M{},
+	}
 	if len(opts) > 0 {
 		opt = opts[0]
 	}

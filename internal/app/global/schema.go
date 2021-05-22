@@ -8,9 +8,8 @@ import (
 	"github.com/antbiz/antapi/internal/app/utils"
 	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/os/glog"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/gogf/gf/frame/g"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // schema 常驻内存数据
@@ -20,20 +19,17 @@ var (
 )
 
 // LoadSchemas 加载全部Collection的Schema
-func LoadSchemas() error {
-	schemas := ([]*dto.Schema)(nil)
-
+func LoadSchemas() {
 	docs := make([]map[string]interface{}, 0)
-	if err := db.DB().Collection("schema").Find(context.Background(), nil).All(&docs); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil
-		}
-		return gerror.Wrap(err, "LoadSchemas schema read fail")
+	if err := db.DB().Collection("schema").Find(context.Background(), bson.M{}).All(&docs); err != nil {
+		g.Log().Errorf("LoadSchemas schema read fail: %v", err)
+		return
 	}
 
-	for _, doc := range docs {
+	schemas := make([]*dto.Schema, len(docs))
+	for i, doc := range docs {
 		jsonDoc := gjson.New(doc)
-		schemas = append(schemas, utils.ParseFormRenderSchema(jsonDoc))
+		schemas[i] = utils.ParseFormRenderSchema(jsonDoc)
 	}
 
 	schemaLocker.Lock()
@@ -44,8 +40,7 @@ func LoadSchemas() error {
 		schemasMap[schema.Name] = schema
 	}
 
-	glog.Info("LoadSchemas successfully!")
-	return nil
+	g.Log().Debug("LoadSchemas successfully!")
 }
 
 // GetSchema : 从内存中获取某个Collection的Schema

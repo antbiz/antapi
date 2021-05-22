@@ -56,9 +56,6 @@ func (bizApi) List(r *ghttp.Request) {
 
 	docs, total, err := dao.List(ctx, collectionName, opt)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			resp.PageOK(r, 0, make(g.Array, 0))
-		}
 		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBQuery)).WithOrigErr(err))
 	} else {
 		resp.PageOK(r, total, docs)

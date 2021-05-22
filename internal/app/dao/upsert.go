@@ -7,12 +7,15 @@ import (
 	"github.com/antbiz/antapi/internal/app/global"
 	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // Upsert 保存单个数据
 func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ...*UpsertOptions) (string, error) {
-	var opt *UpsertOptions
+	opt := &UpsertOptions{
+		Filter: bson.M{},
+	}
 	if len(opts) > 0 {
 		opt = opts[0]
 	}

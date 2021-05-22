@@ -6,11 +6,14 @@ import (
 
 	"github.com/antbiz/antapi/internal/app/global"
 	"github.com/antbiz/antapi/internal/db"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // Update 更新单个数据
 func Update(ctx context.Context, collectionName string, doc interface{}, opts ...*UpdateOptions) error {
-	var opt *UpdateOptions
+	opt := &UpdateOptions{
+		Filter: bson.M{},
+	}
 	if len(opts) > 0 {
 		opt = opts[0]
 	}

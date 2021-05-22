@@ -6,9 +6,8 @@ import (
 
 	"github.com/antbiz/antapi/internal/app/dto"
 	"github.com/antbiz/antapi/internal/db"
-	"github.com/gogf/gf/errors/gerror"
-	"github.com/gogf/gf/os/glog"
-	"go.mongodb.org/mongo-driver/mongo"
+	"github.com/gogf/gf/frame/g"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // permission 常驻内存数据
@@ -18,14 +17,11 @@ var (
 )
 
 // LoadPermissions 将所有 权限 加载到内存
-func LoadPermissions() error {
+func LoadPermissions() {
 	permissions := ([]*dto.Permission)(nil)
-
-	if err := db.DB().Collection("permission").Find(context.Background(), nil).All(&permissions); err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil
-		}
-		return gerror.Wrap(err, "LoadPermissions permission read fail")
+	if err := db.DB().Collection("permission").Find(context.Background(), bson.M{}).All(&permissions); err != nil {
+		g.Log().Errorf("LoadPermissions permission read fail: %v", err)
+		return
 	}
 
 	permissionLocker.Lock()
@@ -36,8 +32,7 @@ func LoadPermissions() error {
 		permissionsMap[perm.CollectionName] = perm
 	}
 
-	glog.Info("LoadPermissions successfully!")
-	return nil
+	g.Log().Debug("LoadPermissions successfully!")
 }
 
 // GetPermission 从内存中获取某个Collection的权限
