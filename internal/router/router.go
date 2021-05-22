@@ -10,7 +10,7 @@ import (
 
 func init() {
 	s := g.Server()
-	s.Use(middlewares.CORS, middleware.Ctx, middleware.ErrorHandler)
+	s.Use(middlewares.CORS, middleware.Ctx)
 
 	// 通用的biz增删改查
 	// TODO: 后台可配置鉴权

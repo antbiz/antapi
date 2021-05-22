@@ -38,7 +38,7 @@ func DB(database ...string) *qmgo.Database {
 	if len(database) > 0 {
 		dbName = database[0]
 	} else {
-		dbName = g.Cfg().GetString("mongo.default.database")
+		dbName = g.Cfg().GetString("mongo.default")
 	}
 	if cli == nil {
 		Init()
