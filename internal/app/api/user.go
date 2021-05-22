@@ -39,6 +39,7 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 		resp.Error(r, errors.Unauthorized(errmsg.IncorrectPassword, g.I18n().T(errmsg.IncorrectPassword)))
 	}
 
+	jsonDoc.Remove("password")
 	jsonDoc.Set("sid", r.Session.Id())
 	r.Session.SetMap(jsonDoc.Map())
 	resp.OK(r, jsonDoc)

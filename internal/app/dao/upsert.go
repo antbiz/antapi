@@ -56,6 +56,7 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 	if err != nil {
 		return "", err
 	}
+	// FIXME: UpsertedID 可能为空
 	id := res.UpsertedID.(primitive.ObjectID).Hex()
 	newDoc["_id"] = id
 

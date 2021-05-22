@@ -7,6 +7,33 @@
     "displayType": "column",
     "type": "object",
     "properties": {
+        "_id": {
+            "title": "ID",
+            "type": "string",
+            "hidden": true
+        },
+        "createdAt": {
+            "title": "创建时间",
+            "type": "string",
+            "index": true,
+            "hidden": true
+        },
+        "updatedAt": {
+            "title": "更新时间",
+            "type": "string",
+            "hidden": true
+        },
+        "createdBy": {
+            "title": "创建者",
+            "type": "string",
+            "index": true,
+            "hidden": true
+        },
+        "updatedBy": {
+            "title": "修改者",
+            "type": "string",
+            "hidden": true
+        },
         "title": {
             "title": "项目名称",
             "type": "string",
