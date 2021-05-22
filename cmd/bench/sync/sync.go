@@ -55,7 +55,7 @@ func syncSchemas(ctx context.Context) {
 			}
 
 			_, err = dao.Upsert(ctx, "schema", jsonDoc, &dao.UpsertOptions{
-				Filter: bson.M{"collectionName": jsonDoc.GetString("collectionName")},
+				Filter: bson.M{"name": jsonDoc.GetString("name")},
 			})
 			if err != nil {
 				g.Log().Fatal(err)

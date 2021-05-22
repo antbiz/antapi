@@ -32,14 +32,18 @@ func Insert(ctx context.Context, collectionName string, doc interface{}, opts ..
 
 	newDoc := make(map[string]interface{})
 	schema := global.GetSchema(collectionName)
-	for _, field := range schema.GetFields(opt.IncludeHiddenField, opt.IncludePrivateField) {
-		val := jsonDoc.Get(field.Name)
-		if !opt.IgnoreFieldValueCheck {
-			if validErr := field.CheckFieldValue(val); validErr != nil {
-				return "", validErr
+	if schema == nil {
+		newDoc = jsonDoc.Map()
+	} else {
+		for _, field := range schema.GetFields(opt.IncludeHiddenField, opt.IncludePrivateField) {
+			val := jsonDoc.Get(field.Name)
+			if !opt.IgnoreFieldValueCheck {
+				if validErr := field.CheckFieldValue(val); validErr != nil {
+					return "", validErr
+				}
 			}
+			newDoc[field.Name] = val
 		}
-		newDoc[field.Name] = val
 	}
 	newDoc["createdAt"] = time.Now().Unix()
 	newDoc["updatedAt"] = newDoc["createdAt"]
