@@ -24,7 +24,7 @@ ARGUMENT
     OPTION  
 OPTION
 EXAMPLES
-	go run cmd/bench/bench.go execute patches/system InitAdminAccount
+	go run cmd/bench/bench.go execute patches initAdminAccount
 DESCRIPTION
     The "execute" command is used for execute patch`)
 }
