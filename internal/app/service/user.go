@@ -26,7 +26,7 @@ func (srv *userSrv) EncryptPwd(username, password string) string {
 // GetUserByLogin 根据 用户名/手机号/邮箱 查询用户信息
 func (srv *userSrv) GetUserByLogin(ctx context.Context, login string) (*gjson.Json, error) {
 	return dao.Get(ctx, srv.CollectionName(), &dao.GetOptions{
-		Filter:              bson.D{{"$or", bson.D{{"username", login}, {"phone", login}, {"email", login}}}},
+		Filter:              bson.M{"$or": []bson.M{{"username": login}, {"phone": login}, {"email": login}}},
 		IncludeHiddenField:  true,
 		IncludePrivateField: true,
 	})
