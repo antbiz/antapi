@@ -1,4 +1,4 @@
-export const globalSettings={{
+export const globalSettings={
   type: 'object',
   properties: {
     title: {
@@ -52,26 +52,6 @@ export const globalSettings={{
 };
 
 export const commonSettings = {
-  _id: {
-    type: 'string',
-    hidden: true,
-  },
-  createdAt: {
-    type: 'string',
-    hidden: true,
-  },
-  updatedAt: {
-    type: 'string',
-    hidden: true,
-  },
-  createdBy: {
-    type: 'string',
-    hidden: true,
-  },
-  updatedBy: {
-    type: 'string',
-    hidden: true,
-  },
   $id: {
     title: 'ID',
     description: '字段名称/英文',
@@ -138,4 +118,20 @@ export const commonSettings = {
       hideNumber: true,
     },
   },
+  unique: {
+    title: '唯一',
+    type: 'boolean',
+  },
+  private: {
+    title: '字段在api中不可见',
+    type: 'boolean'
+  },
+  indexField: {
+    title: '索引',
+    type: 'boolean'
+  },
+  validator: {
+    title: '校验器',
+    type: 'string'
+  }
 }

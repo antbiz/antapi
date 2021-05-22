@@ -3,7 +3,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import React from 'react';
 import { useModel, SelectLang } from 'umi';
 import Avatar from './AvatarDropdown';
-import NoticeIconView from '../NoticeIcon';
+// import NoticeIconView from '../NoticeIcon';
 import styles from './index.less';
 
 export type SiderTheme = 'light' | 'dark';
@@ -37,7 +37,7 @@ const GlobalHeaderRight: React.FC = () => {
       >
         <QuestionCircleOutlined />
       </span>
-      <NoticeIconView />
+      {/* <NoticeIconView /> */}
       <Avatar />
       {REACT_APP_ENV && (
         <span>
