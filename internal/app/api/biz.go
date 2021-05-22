@@ -14,6 +14,7 @@ import (
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -75,7 +76,10 @@ func (bizApi) Get(r *ghttp.Request) {
 		ctxUser = *localCtx.User
 	}
 	collectionName := r.GetString("collection")
-	id := r.GetString("id")
+	id, err := primitive.ObjectIDFromHex(r.GetString("id"))
+	if err != nil {
+		resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+	}
 	opt := &dao.GetOptions{
 		Filter:  bson.M{"_id": id},
 		CtxUser: ctxUser,
@@ -152,7 +156,10 @@ func (bizApi) Update(r *ghttp.Request) {
 		ctxUser = *localCtx.User
 	}
 	collectionName := r.GetString("collection")
-	id := r.GetString("id")
+	id, err := primitive.ObjectIDFromHex(r.GetString("id"))
+	if err != nil {
+		resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+	}
 	opt := &dao.UpdateOptions{
 		Filter:  bson.M{"_id": id},
 		CtxUser: ctxUser,
@@ -169,7 +176,7 @@ func (bizApi) Update(r *ghttp.Request) {
 		}
 	}
 
-	err := dao.Update(ctx, collectionName, r.GetFormMap(), opt)
+	err = dao.Update(ctx, collectionName, r.GetFormMap(), opt)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
@@ -193,7 +200,10 @@ func (bizApi) Delete(r *ghttp.Request) {
 		ctxUser = *localCtx.User
 	}
 	collectionName := r.GetString("collection")
-	id := r.GetString("id")
+	id, err := primitive.ObjectIDFromHex(r.GetString("id"))
+	if err != nil {
+		resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+	}
 	opt := &dao.DeleteOptions{
 		Filter:  bson.M{"_id": id},
 		CtxUser: ctxUser,
@@ -210,7 +220,7 @@ func (bizApi) Delete(r *ghttp.Request) {
 		}
 	}
 
-	err := dao.Delete(ctx, collectionName, opt)
+	err = dao.Delete(ctx, collectionName, opt)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
