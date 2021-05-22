@@ -6,7 +6,9 @@ import (
 
 	"github.com/antbiz/antapi/internal/app/dto"
 	"github.com/antbiz/antapi/internal/db"
+	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/os/glog"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // permission 常驻内存数据
@@ -20,8 +22,10 @@ func LoadPermissions() error {
 	permissions := ([]*dto.Permission)(nil)
 
 	if err := db.DB().Collection("permission").Find(context.Background(), nil).All(&permissions); err != nil {
-		glog.Error("LoadPermissions permission read fail:", err)
-		return err
+		if err == mongo.ErrNoDocuments {
+			return nil
+		}
+		return gerror.Wrap(err, "LoadPermissions permission read fail")
 	}
 
 	permissionLocker.Lock()

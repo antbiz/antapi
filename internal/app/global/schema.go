@@ -8,8 +8,9 @@ import (
 	"github.com/antbiz/antapi/internal/app/utils"
 	"github.com/antbiz/antapi/internal/db"
 	"github.com/gogf/gf/encoding/gjson"
-	"github.com/gogf/gf/frame/g"
+	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/os/glog"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // schema 常驻内存数据
@@ -24,7 +25,10 @@ func LoadSchemas() error {
 
 	docs := make([]map[string]interface{}, 0)
 	if err := db.DB().Collection("schema").Find(context.Background(), nil).All(&docs); err != nil {
-		g.Log().Error("LoadSchemas schema read fail:", err)
+		if err == mongo.ErrNoDocuments {
+			return nil
+		}
+		return gerror.Wrap(err, "LoadSchemas schema read fail")
 	}
 
 	for _, doc := range docs {
