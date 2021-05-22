@@ -1,0 +1,24 @@
+# Database
+err_db_query = "Query failed, please try again"
+err_db_get = "Failed to get details, please try again"
+err_db_insert = "Creation failed, please try again"
+err_db_update = "Failed to update, please try again"
+err_db_delete = "Deletion failed, please try again"
+err_db_count = "Statistical failure"
+err_db_not_found = "The resource does not exist or has been deleted"
+err_db_check_duplicate = "Repetitive check failed, please try again"
+err_db_duplicate = "Failed to create / update, the resource already exists, please modify and submit"
+
+# System
+unknown_error = "Unknown error"
+api_not_found = "API not found: %s"
+unauthorized = "Not logged in or illegally accessed"
+permission_denied = "Permission denied"
+
+# User
+account_not_found = "Account not found"
+incorrect_password = "Incorrect account or password"
+err_logout = "Falied to logout"
+
+# File
+err_file_upload = "Failed to upload this files(s), please try again"

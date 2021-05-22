@@ -1,0 +1,82 @@
+{
+    "title": "用户",
+    "name": "user",
+    "projectName": "system",
+    "description": "",
+    "column": 2,
+    "displayType": "column",
+    "type": "object",
+    "properties": {
+        "_id": {
+            "title": "ID",
+            "type": "string",
+            "hidden": true
+        },
+        "createdAt": {
+            "title": "创建时间",
+            "type": "string",
+            "index": true,
+            "hidden": true
+        },
+        "updatedAt": {
+            "title": "更新时间",
+            "type": "string",
+            "hidden": true
+        },
+        "createdBy": {
+            "title": "创建者",
+            "type": "string",
+            "index": true,
+            "hidden": true
+        },
+        "updatedBy": {
+            "title": "修改者",
+            "type": "string",
+            "hidden": true
+        },
+        "username": {
+            "title": "用户名字",
+            "type": "string",
+            "unique": true,
+            "required": true
+        },
+        "phone": {
+            "title": "手机号",
+            "type": "string",
+            "format": "phone",
+            "unique": true
+        },
+        "email": {
+            "title": "邮箱",
+            "type": "string",
+            "format": "email",
+            "unique": true
+        },
+        "password": {
+            "title": "密码",
+            "type": "string",
+            "hidden": true
+        },
+        "language": {
+            "title": "语言",
+            "type": "string",
+            "widget": "select",
+            "default": "zh-CN",
+            "enum": ["zh-CN", "en"],
+            "required": true
+        },
+        "avatar": {
+            "title": "头像",
+            "type": "string",
+            "widget": "upload"
+        },
+        "isBlocked": {
+            "title": "是否停用",
+            "type": "boolean"
+        },
+        "isSysUser": {
+            "title": "是否系统用户",
+            "type": "boolean"
+        }
+    }
+}

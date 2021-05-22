@@ -1,0 +1,36 @@
+# HTTP Server
+[server]
+    address = ":8199"
+    dumpRouterMap = false
+    logPath = "./log/server"
+    serverAgent = "antbiz"
+    serverRoot = "public"
+    sessionIdName = "x-api-sid"
+    sessionPath = "./tmp/gsession"
+
+# Logger.
+[logger]
+    level = "all"
+    path = "./log"
+    stdout = true
+
+# mongo.
+[mongo]
+    [mongo.logger]
+        level = "all"
+        path = "./log/sql"
+        stdout = true
+    [mongo.default]
+        debug = true
+        uri = "mongodb://localhost:27017"
+        database = "antapi"
+
+# Redis数据库配置
+[redis]
+    cache = "127.0.0.1:6379,1,123456?idleTimeout=600"
+    default = "127.0.0.1:6379,0"
+
+# Admin 超级管理员配置
+[admin]
+    username = "admin"
+    password = "admin123"
