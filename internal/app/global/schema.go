@@ -37,7 +37,7 @@ func LoadSchemas() error {
 
 	schemasMap = make(map[string]*dto.Schema)
 	for _, schema := range schemas {
-		schemasMap[schema.CollectionName] = schema
+		schemasMap[schema.Name] = schema
 	}
 
 	glog.Info("LoadSchemas successfully!")

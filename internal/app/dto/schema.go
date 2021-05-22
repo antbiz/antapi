@@ -2,26 +2,24 @@ package dto
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/gogf/gf/util/gvalid"
 )
 
 // Schema .
 type Schema struct {
-	Title          string
-	CollectionName string
-	ProjectName    string
-	Description    string
-	Schema         map[string]interface{}
-	Column         int
-	Fields         []*SchemaField
+	Name        string
+	Title       string
+	ProjectName string
+	Description string
+	Fields      []*SchemaField
 }
 
 // SchemaField .
 type SchemaField struct {
-	DisplayName       string
 	Name              string
-	Description       string
+	Title             string
 	IsRequired        bool
 	IsHidden          bool
 	IsReadOnly        bool
@@ -33,18 +31,10 @@ type SchemaField struct {
 	ConnectField      string
 	ConnectMany       bool
 	Validator         string
-	EnumOptions       *EnumOption
-	EnumType          string
+	Enum              []string
+	EnumNames         []string
+	Description       string
 }
-
-// EnumOption .
-type EnumOption struct {
-	Labels []string
-	Values []string
-}
-
-// DefaultFieldNames : 所有默认的字段
-var DefaultFieldNames = []string{"_id", "createdAt", "updatedAt", "createdBy", "updatedBy"}
 
 // GetFieldNames 获取字段名
 // includeHidden: 包括 is_hidden 的字段
@@ -178,14 +168,20 @@ func (field *SchemaField) CheckFieldValue(value interface{}) *gvalid.Error {
 	var (
 		err  *gvalid.Error
 		rule string
-		msg  string = fmt.Sprintf("%s格式不正确：%v", field.DisplayName, value)
+		msg  string = fmt.Sprintf("%s格式不正确：%v", field.Title, value)
 	)
 
 	// 检验必填
 	if field.IsRequired {
-		if err = gvalid.Check(value, "required", fmt.Sprintf("%s不能为空", field.DisplayName)); err != nil {
+		if err = gvalid.Check(value, "required", fmt.Sprintf("%s不能为空", field.Title)); err != nil {
 			return err
 		}
+	}
+
+	// 校验选项值
+	if len(field.Enum) > 0 {
+		rule = fmt.Sprintf("in:%s", strings.Join(field.Enum, ","))
+		msg = fmt.Sprintf("%s支持的选项: %s", field.Title, strings.Join(field.EnumNames, ","))
 	}
 
 	if rule != "" {

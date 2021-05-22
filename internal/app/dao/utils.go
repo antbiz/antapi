@@ -73,7 +73,7 @@ func IsDuplicate(ctx context.Context, collectionName string, doc *gjson.Json, ex
 
 	fieldNameMap := map[string]string{}
 	for _, field := range schema.GetUniqueFields() {
-		fieldNameMap[field.Name] = field.DisplayName
+		fieldNameMap[field.Name] = field.Title
 		filters = append(filters, bson.M{field.Name: doc.Get(field.Name)})
 	}
 
