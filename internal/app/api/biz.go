@@ -6,6 +6,7 @@ import (
 	"github.com/BeanWei/apikit/resp"
 	"github.com/antbiz/antapi/internal/app/dao"
 	"github.com/antbiz/antapi/internal/app/service"
+	"github.com/antbiz/antapi/internal/common/errmsg"
 	"github.com/antbiz/antapi/internal/common/types"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
@@ -13,6 +14,7 @@ import (
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Biz 公共接口管理
@@ -43,19 +45,19 @@ func (bizApi) List(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		if perm, err := service.Permission.GetReadPermission(collectionName); err != nil {
-			resp.Error(r, errors.UnknownError("err_permission_check"))
+			resp.Error(r, errors.InternalServer(errmsg.ErrPermissionCheck, g.I18n().T(errmsg.ErrPermissionCheck)))
 		} else if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden("permission_denied", "Permission Denied"))
+			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
 		} else if perm.CanDoOnlyOwner() {
 			opt.Filter = bson.M{"createdBy": ctxUser.ID}
 		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized("unauthorized", "Please Login"))
+			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
 		}
 	}
 
 	docs, total, err := dao.List(r.Context(), collectionName, opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBQuery)).WithOrigErr(err))
 	} else {
 		resp.PageOK(r, total, docs)
 	}
@@ -82,19 +84,22 @@ func (bizApi) Get(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		if perm, err := service.Permission.GetReadPermission(collectionName); err != nil {
-			resp.Error(r, errors.UnknownError("err_permission_check"))
+			resp.Error(r, errors.InternalServer(errmsg.ErrPermissionCheck, g.I18n().T(errmsg.ErrPermissionCheck)))
 		} else if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden("permission_denied", "Permission Denied"))
+			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
 		} else if perm.CanDoOnlyOwner() {
 			opt.Filter = bson.M{"createdBy": ctxUser.ID}
 		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized("unauthorized", "Please Login"))
+			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
 		}
 	}
 
 	doc, err := dao.Get(r.Context(), collectionName, opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		}
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)).WithOrigErr(err))
 	} else {
 		resp.OK(r, doc)
 	}
@@ -119,17 +124,17 @@ func (bizApi) Create(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		if perm, err := service.Permission.GetCreatePermission(collectionName); err != nil {
-			resp.Error(r, errors.UnknownError("err_permission_check"))
+			resp.Error(r, errors.InternalServer(errmsg.ErrPermissionCheck, g.I18n().T(errmsg.ErrPermissionCheck)))
 		} else if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden("permission_denied", "Permission Denied"))
+			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
 		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized("unauthorized", "Please Login"))
+			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
 		}
 	}
 
 	id, err := dao.Insert(r.Context(), collectionName, r.GetFormMap(), opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBInsert)).WithOrigErr(err))
 	} else {
 		resp.OK(r, g.Map{
 			"_id": id,
@@ -158,19 +163,22 @@ func (bizApi) Update(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		if perm, err := service.Permission.GetUpdatePermission(collectionName); err != nil {
-			resp.Error(r, errors.UnknownError("err_permission_check"))
+			resp.Error(r, errors.InternalServer(errmsg.ErrPermissionCheck, g.I18n().T(errmsg.ErrPermissionCheck)))
 		} else if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden("permission_denied", "Permission Denied"))
+			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
 		} else if perm.CanDoOnlyOwner() {
 			opt.Filter = bson.M{"createdBy": ctxUser.ID}
 		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized("unauthorized", "Please Login"))
+			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
 		}
 	}
 
 	err := dao.Update(r.Context(), collectionName, r.GetFormMap(), opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		}
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBUpdate)).WithOrigErr(err))
 	} else {
 		resp.OK(r)
 	}
@@ -197,19 +205,22 @@ func (bizApi) Delete(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		if perm, err := service.Permission.GetDeletePermission(collectionName); err != nil {
-			resp.Error(r, errors.UnknownError("err_permission_check"))
+			resp.Error(r, errors.InternalServer(errmsg.ErrPermissionCheck, g.I18n().T(errmsg.ErrPermissionCheck)))
 		} else if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden("permission_denied", "Permission Denied"))
+			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
 		} else if perm.CanDoOnlyOwner() {
 			opt.Filter = bson.M{"createdBy": ctxUser.ID}
 		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized("unauthorized", "Please Login"))
+			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
 		}
 	}
 
 	err := dao.Delete(r.Context(), collectionName, opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		}
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBDelete)).WithOrigErr(err))
 	} else {
 		resp.OK(r)
 	}

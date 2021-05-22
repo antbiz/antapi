@@ -8,6 +8,7 @@ import (
 	"github.com/BeanWei/apikit/resp"
 	"github.com/antbiz/antapi/internal/app/dao"
 	"github.com/antbiz/antapi/internal/app/service"
+	"github.com/antbiz/antapi/internal/common/errmsg"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/os/gfile"
@@ -17,6 +18,7 @@ import (
 	"github.com/gogf/gf/util/gconv"
 	"github.com/gogf/gf/util/guid"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // File 文件上传下载接口
@@ -42,7 +44,7 @@ func (fileApi) Upload(r *ghttp.Request) {
 	}
 	savePath := gfile.Join(savePathNodes...)
 	if _, err := file.Save(savePath); err != nil {
-		resp.Error(r, errors.InternalServer("err_file_upload", "err_file_upload"))
+		resp.Error(r, errors.InternalServer(errmsg.ErrFileUpload, g.I18n().T(errmsg.ErrFileUpload)).WithOrigErr(err))
 	}
 
 	opt := &dao.InsertOptions{
@@ -55,7 +57,7 @@ func (fileApi) Upload(r *ghttp.Request) {
 		"size": file.Size,
 	}
 	if id, err := dao.Insert(r.Context(), service.File.CollectionName(), data, opt); err != nil {
-		resp.Error(r, errors.DatabaseError("err_file_insert"))
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrFileUpload)).WithOrigErr(err))
 	} else {
 		var thumbURL string
 		if gregex.IsMatchString(`\.(gif|png|jpg|jpeg|webp)`, oriFileName) {
@@ -77,10 +79,10 @@ func (fileApi) Preview(r *ghttp.Request) {
 	}
 	data, err := dao.Get(r.Context(), service.File.CollectionName(), opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError("err_file_get"))
-	}
-	if data == nil {
-		resp.Error(r, errors.NotFound("file_not_found", "file_not_found"))
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		}
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)))
 	}
 
 	filepath := gfile.Join(gstr.SplitAndTrimSpace(fmt.Sprintf("%s/%s", gfile.Pwd(), r.RequestURI), "/")...)

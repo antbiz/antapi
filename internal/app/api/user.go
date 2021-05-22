@@ -6,8 +6,11 @@ import (
 	"github.com/antbiz/antapi/internal/app/dao"
 	"github.com/antbiz/antapi/internal/app/dto"
 	"github.com/antbiz/antapi/internal/app/service"
+	"github.com/antbiz/antapi/internal/common/errmsg"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // User 用户接口
@@ -22,12 +25,18 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 		resp.Error(r, errors.InvalidArgument(err.Error()))
 	}
 
-	jsonDoc, err := service.User.GetUserByLogin(r.Context(), req.Login, req.Pwd)
+	jsonDoc, err := service.User.GetUserByLogin(r.Context(), req.Login)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.AccountNotFound, g.I18n().T(errmsg.AccountNotFound)))
+		}
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)).WithOrigErr(err))
 	}
-	if jsonDoc == nil {
-		resp.Error(r, errors.Unauthorized("incorrect username or password", "incorrect username or password"))
+
+	username := jsonDoc.GetString("username")
+	userpwd := jsonDoc.GetString("password")
+	if req.Pwd != service.User.EncryptPwd(username, userpwd) {
+		resp.Error(r, errors.Unauthorized(errmsg.IncorrectPassword, g.I18n().T(errmsg.IncorrectPassword)))
 	}
 
 	jsonDoc.Set("sid", r.Session.Id())
@@ -38,7 +47,7 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 // LogOut 退出登录
 func (userApi) LogOut(r *ghttp.Request) {
 	if err := r.Session.Remove(r.GetSessionId()); err != nil {
-		resp.Error(r, errors.InternalServer("", ""))
+		resp.Error(r, errors.UnknownError(g.I18n().T(errmsg.ErrLogout)).WithOrigErr(err))
 	}
 	resp.OK(r)
 }
@@ -50,7 +59,10 @@ func (userApi) Info(r *ghttp.Request) {
 		Filter: bson.M{"_id": userID},
 	})
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(""))
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.AccountNotFound, g.I18n().T(errmsg.AccountNotFound)))
+		}
+		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)).WithOrigErr(err))
 	}
 	resp.OK(r, jsonDoc)
 }
