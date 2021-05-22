@@ -40,5 +40,8 @@ func DB(database ...string) *qmgo.Database {
 	} else {
 		dbName = g.Cfg().GetString("mongo.default.database")
 	}
+	if cli == nil {
+		Init()
+	}
 	return cli.Database(dbName)
 }

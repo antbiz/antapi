@@ -11,7 +11,6 @@ import (
 
 // initAdminAccount 初始化超级管理员账号
 func initAdminAccount() {
-	db.Init()
 	username := g.Cfg().GetString("admin.username")
 	password := g.Cfg().GetString("admin.password")
 	if username == "" || password == "" {
