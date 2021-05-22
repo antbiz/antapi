@@ -1,6 +1,7 @@
 package main
 
 import (
+	_ "github.com/antbiz/antapi/internal/boot"
 	_ "github.com/antbiz/antapi/internal/router"
 	"github.com/gogf/gf/frame/g"
 )

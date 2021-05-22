@@ -5,6 +5,8 @@ import (
 
 	"github.com/BeanWei/apikit/errors"
 	"github.com/BeanWei/apikit/resp"
+	"github.com/antbiz/antapi/internal/common/errmsg"
+	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 )
 
@@ -18,6 +20,6 @@ func ErrorHandler(r *ghttp.Request) {
 		resp.Error(r, errors.NotFound("api_not_found", "api_not_found"))
 	case http.StatusInternalServerError:
 		r.Response.ClearBuffer()
-		resp.Error(r, errors.UnknownError("unknown_error"))
+		resp.Error(r, errors.UnknownError(g.I18n().T(errmsg.UnknownError)))
 	}
 }

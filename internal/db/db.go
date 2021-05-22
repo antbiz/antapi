@@ -13,19 +13,22 @@ var (
 	initCli sync.Once
 )
 
-// Init  初始化数据库连接
+// Init 初始化数据库连接
+// 这里不直接使用 init 的方法的原因：方便单测和patches执行
 func Init() (err error) {
+	mongoURI := g.Cfg().GetString("mongo.uri")
 	initCli.Do(func() {
 		cli, err = qmgo.NewClient(
 			context.Background(),
 			&qmgo.Config{
-				Uri: g.Cfg().GetString("mongo.default.uri"),
+				Uri: mongoURI,
 			},
 		)
 		if err != nil {
 			return
 		}
 	})
+	g.Log().Debugf("Connected mongodb: %s", mongoURI)
 	return
 }
 
