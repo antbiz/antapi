@@ -34,9 +34,16 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 	newDoc := make(map[string]interface{})
 	schema := global.GetSchema(collectionName)
 	if schema == nil {
+		jsonDoc.Remove("_id")
 		newDoc = jsonDoc.Map()
 	} else {
 		for _, field := range schema.GetFields(opt.IncludeHiddenField, opt.IncludePrivateField) {
+			if field.IsSysField {
+				continue
+			}
+			if !jsonDoc.Contains(field.Name) {
+				continue
+			}
 			val := jsonDoc.Get(field.Name)
 			if !opt.IgnoreFieldValueCheck {
 				if validErr := field.CheckFieldValue(val); validErr != nil {
@@ -49,7 +56,7 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 	newDoc["updatedAt"] = time.Now().Unix()
 	newDoc["updatedBy"] = opt.CtxUser.ID
 
-	if err := db.DB().Collection(collectionName).UpdateOne(ctx, opt.Filter, doc); err != nil {
+	if err := db.DB().Collection(collectionName).UpdateOne(ctx, opt.Filter, bson.M{"$set": doc}); err != nil {
 		return err
 	}
 
