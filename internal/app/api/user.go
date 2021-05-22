@@ -35,7 +35,7 @@ func (userApi) LoginByAccount(r *ghttp.Request) {
 
 	username := jsonDoc.GetString("username")
 	userpwd := jsonDoc.GetString("password")
-	if req.Pwd != service.User.EncryptPwd(username, userpwd) {
+	if userpwd != service.User.EncryptPwd(username, req.Pwd) {
 		resp.Error(r, errors.Unauthorized(errmsg.IncorrectPassword, g.I18n().T(errmsg.IncorrectPassword)))
 	}
 
