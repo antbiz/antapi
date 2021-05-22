@@ -70,32 +70,35 @@ func (c *canDo) CanDoOnlyLogin() bool {
 	return c.PermissionVal == 2
 }
 
-func (c *canDo) CanDo() bool {
+func (c *canDo) CanDoAll() bool {
 	return c.PermissionVal == 3
 }
 
 // getPermission 从内存中获取权限等级。0-没有权限，1-仅创建者，2-仅登录者, 3-所有人
-func (srv *permissionSrv) getPermission(permName dto.PermissionName, collectionName string) (*canDo, error) {
+func (srv *permissionSrv) getPermission(permName dto.PermissionName, collectionName string) *canDo {
 	perm := global.GetPermission(collectionName)
-	return &canDo{PermissionVal: perm.GetPermissionLevel(permName)}, nil
+	if perm == nil {
+		return &canDo{}
+	}
+	return &canDo{PermissionVal: perm.GetPermissionLevel(permName)}
 }
 
 // GetCreatePermission 增
-func (srv *permissionSrv) GetCreatePermission(collectionName string) (*canDo, error) {
+func (srv *permissionSrv) GetCreatePermission(collectionName string) *canDo {
 	return srv.getPermission(dto.CreateLevel, collectionName)
 }
 
 // GetReadPermission 查
-func (srv *permissionSrv) GetReadPermission(collectionName string) (*canDo, error) {
+func (srv *permissionSrv) GetReadPermission(collectionName string) *canDo {
 	return srv.getPermission(dto.ReadLevel, collectionName)
 }
 
 // GetUpdatePermission 改
-func (srv *permissionSrv) GetUpdatePermission(collectionName string) (*canDo, error) {
+func (srv *permissionSrv) GetUpdatePermission(collectionName string) *canDo {
 	return srv.getPermission(dto.UpdateLevel, collectionName)
 }
 
 // GetDeletePermission 删
-func (srv *permissionSrv) GetDeletePermission(collectionName string) (*canDo, error) {
+func (srv *permissionSrv) GetDeletePermission(collectionName string) *canDo {
 	return srv.getPermission(dto.DeleteLevel, collectionName)
 }

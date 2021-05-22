@@ -14,7 +14,6 @@ unknown_error = "Unknown error"
 api_not_found = "API not found: %s"
 unauthorized = "Not logged in or illegally accessed"
 permission_denied = "Permission denied"
-err_permission_check = "Falid to check permission, please try again"
 
 # User
 account_not_found = "Account not found"

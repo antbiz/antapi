@@ -15,11 +15,10 @@ const (
 
 // System
 const (
-	UnknownError       = "unknown_error"
-	APINotFound        = "api_not_found"
-	Unauthorized       = "unauthorized"
-	PermissionDenied   = "permission_denied"
-	ErrPermissionCheck = "err_permission_check"
+	UnknownError     = "unknown_error"
+	APINotFound      = "api_not_found"
+	Unauthorized     = "unauthorized"
+	PermissionDenied = "permission_denied"
 )
 
 // User

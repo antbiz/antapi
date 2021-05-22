@@ -14,7 +14,6 @@ unknown_error = "未知错误"
 api_not_found = "你迷路了，当前请求: %s"
 unauthorized = "未登录或非法访问"
 permission_denied = "你没有权限访问该资源"
-err_permission_check = "权限检查失败，请重试"
 
 # User
 account_not_found = "该账号尚未注册"
