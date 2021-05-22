@@ -45,8 +45,8 @@ func Upsert(ctx context.Context, collectionName string, doc interface{}, opts ..
 	if jsonDoc.GetString("createdAt") == "" {
 		newDoc["createdAt"] = newDoc["updatedAt"]
 	}
-	if jsonDoc.GetString("cratedBy") == "" {
-		newDoc["cratedBy"] = opt.CtxUser.ID
+	if jsonDoc.GetString("createdBy") == "" {
+		newDoc["createdBy"] = opt.CtxUser.ID
 	}
 
 	res, err := db.DB().Collection(collectionName).Upsert(ctx, opt.Filter, newDoc)
