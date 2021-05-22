@@ -55,7 +55,7 @@ func (bizApi) List(r *ghttp.Request) {
 		}
 	}
 
-	docs, total, err := dao.List(r.Context(), collectionName, opt)
+	docs, total, err := dao.List(ctx, collectionName, opt)
 	if err != nil {
 		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBQuery)).WithOrigErr(err))
 	} else {
@@ -94,7 +94,7 @@ func (bizApi) Get(r *ghttp.Request) {
 		}
 	}
 
-	doc, err := dao.Get(r.Context(), collectionName, opt)
+	doc, err := dao.Get(ctx, collectionName, opt)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
@@ -132,7 +132,7 @@ func (bizApi) Create(r *ghttp.Request) {
 		}
 	}
 
-	id, err := dao.Insert(r.Context(), collectionName, r.GetFormMap(), opt)
+	id, err := dao.Insert(ctx, collectionName, r.GetFormMap(), opt)
 	if err != nil {
 		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBInsert)).WithOrigErr(err))
 	} else {
@@ -173,7 +173,7 @@ func (bizApi) Update(r *ghttp.Request) {
 		}
 	}
 
-	err := dao.Update(r.Context(), collectionName, r.GetFormMap(), opt)
+	err := dao.Update(ctx, collectionName, r.GetFormMap(), opt)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
@@ -215,7 +215,7 @@ func (bizApi) Delete(r *ghttp.Request) {
 		}
 	}
 
-	err := dao.Delete(r.Context(), collectionName, opt)
+	err := dao.Delete(ctx, collectionName, opt)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
