@@ -8,14 +8,15 @@ import (
 	"github.com/gogf/gf/os/gfile"
 )
 
-var Project = &projectSrv{
-	baseSysSrv{
-		collectionName: "project",
-	},
-}
+var Project = &projectSrv{}
 
 type projectSrv struct {
 	baseSysSrv
+}
+
+// CollectionName .
+func (srv *projectSrv) CollectionName() string {
+	return "project"
 }
 
 // GetJSONFilePath 获取文件备份导出路径

@@ -8,17 +8,13 @@ import (
 	"github.com/gogf/gf/os/gfile"
 )
 
-var File = &fileSrv{
-	collectionName: "file",
-}
+var File = &fileSrv{}
 
-type fileSrv struct {
-	collectionName string
-}
+type fileSrv struct{}
 
 // CollectionName .
 func (srv *fileSrv) CollectionName() string {
-	return srv.collectionName
+	return "file"
 }
 
 // GenCropImage 生成裁剪图片

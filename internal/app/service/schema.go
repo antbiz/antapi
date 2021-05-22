@@ -12,14 +12,15 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var Schema = &schemaSrv{
-	baseSysSrv{
-		collectionName: "schema",
-	},
-}
+var Schema = &schemaSrv{}
 
 type schemaSrv struct {
 	baseSysSrv
+}
+
+// CollectionName .
+func (srv *schemaSrv) CollectionName() string {
+	return "schema"
 }
 
 // CheckJSONSchema 检验 JSONSchema
@@ -37,7 +38,7 @@ func (srv *schemaSrv) ReloadGlobalSchemas(ctx context.Context, data *gjson.Json)
 func (srv *schemaSrv) AutoCreateCollectionPermission(ctx context.Context, data *gjson.Json) error {
 	_, err := db.
 		DB().
-		Collection(srv.collectionName).
+		Collection(Permission.CollectionName()).
 		Upsert(
 			ctx,
 			bson.M{"collectionName": data.GetString("collectionName")},
@@ -58,7 +59,7 @@ func (srv *schemaSrv) AutoCreateCollectionPermission(ctx context.Context, data *
 func (srv *schemaSrv) AutoDeleteCollectionPermission(ctx context.Context, data *gjson.Json) error {
 	_, err := db.
 		DB().
-		Collection(Permission.collectionName).
+		Collection(Permission.CollectionName()).
 		RemoveAll(ctx, bson.M{"collectionName": data.GetString("name")})
 	return err
 }

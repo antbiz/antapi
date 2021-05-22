@@ -11,17 +11,13 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-var Permission = &permissionSrv{
-	collectionName: "permission",
-}
+var Permission = &permissionSrv{}
 
-type permissionSrv struct {
-	collectionName string
-}
+type permissionSrv struct{}
 
 // CollectionName .
 func (srv *permissionSrv) CollectionName() string {
-	return srv.collectionName
+	return "permission"
 }
 
 // CheckDuplicatePermission 不允许创建 collection&role 名称均相同的权限
@@ -43,7 +39,7 @@ func (srv *permissionSrv) CheckDuplicatePermission(ctx context.Context, data *gj
 		}
 	}
 
-	if total, err := db.DB().Collection(srv.collectionName).Find(context.Background(), filter).Count(); err != nil {
+	if total, err := db.DB().Collection(srv.CollectionName()).Find(context.Background(), filter).Count(); err != nil {
 		return err
 	} else if total > 0 {
 		return gerror.New("Duplicate Error")

@@ -6,16 +6,9 @@ import (
 	"github.com/gogf/gf/os/gfile"
 )
 
-type baseSysSrv struct {
-	collectionName string
-}
+type baseSysSrv struct{}
 
-// CollectionName .
-func (srv *baseSysSrv) CollectionName() string {
-	return srv.collectionName
-}
-
-func (srv *baseSysSrv) DefaultFieldNames() []string {
+func (srv *baseSysSrv) defaultFieldNames() []string {
 	return []string{"_id", "createdAt", "updatedAt", "createdBy", "updatedBy"}
 }
 
@@ -24,7 +17,7 @@ func (srv *baseSysSrv) ExportJSONFile(data *gjson.Json, path string) error {
 	// 将data复制一份
 	_data := new(gjson.Json)
 	*_data = *data
-	for _, fieldName := range srv.DefaultFieldNames() {
+	for _, fieldName := range srv.defaultFieldNames() {
 		_data.Remove(fieldName)
 	}
 	if err := gfile.PutContents(path, _data.MustToJsonIndentString()); err != nil {
