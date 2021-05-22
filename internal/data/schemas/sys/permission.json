@@ -1,88 +1,64 @@
 {
     "title": "权限",
-    "collectionName": "permission",
+    "name": "permission",
     "projectName": "system",
     "description": "",
     "column": 2,
-    "schema": {
-        "type": "object",
-        "properties": {
-            "_id": {
-                "title": "编号",
-                "type": "string",
-                "hidden": true
-            },
-            "createdAt": {
-                "title": "创建时间",
-                "type": "string",
-                "index": true,
-                "hidden": true
-            },
-            "updatedAt": {
-                "title": "更新时间",
-                "type": "string",
-                "hidden": true
-            },
-            "createdAy": {
-                "title": "创建者",
-                "type": "string",
-                "index": true,
-                "hidden": true
-            },
-            "updatedBy": {
-                "title": "修改者",
-                "type": "string",
-                "hidden": true
-            },
-            "title": {
-                "title": "模型名称",
-                "type": "string",
-                "readonly": true
-            },
-            "projectName": {
-                "title": "项目ID",
-                "type": "string",
-                "index": true,
-                "hidden": true
-            },
-            "collectionName": {
-                "title": "模型ID",
-                "type": "string",
-                "index": true,
-                "hidden": true
-            },
-            "createLevel": {
-                "title": "创建权限等级",
-                "type": "number",
-                "format": "int",
-                "default": 0,
-                "min": 0,
-                "max": 3
-            },
-            "readLevel": {
-                "title": "查询权限等级",
-                "type": "number",
-                "format": "int",
-                "default": 0,
-                "min": 0,
-                "max": 3
-            },
-            "updateLevel": {
-                "title": "更新权限等级",
-                "type": "number",
-                "format": "int",
-                "default": 0,
-                "min": 0,
-                "max": 3
-            },
-            "deleteLevel": {
-                "title": "删除权限等级",
-                "type": "number",
-                "format": "int",
-                "default": 0,
-                "min": 0,
-                "max": 3
-            }
+    "displayType": "column",
+    "type": "object",
+    "properties": {
+        "title": {
+            "title": "模型名称",
+            "type": "string",
+            "readOnly": true
+        },
+        "projectName": {
+            "title": "项目ID",
+            "type": "string",
+            "index": true,
+            "hidden": true
+        },
+        "collectionName": {
+            "title": "模型ID",
+            "type": "string",
+            "index": true,
+            "hidden": true
+        },
+        "createLevel": {
+            "title": "创建权限等级",
+            "type": "number",
+            "format": "int",
+            "widget": "select",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "enumNames": ["仅系统用户", "仅创建者", "仅登录用户", "所有用户"]
+        },
+        "readLevel": {
+            "title": "查询权限等级",
+            "type": "number",
+            "format": "int",
+            "widget": "select",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "enumNames": ["仅系统用户", "仅创建者", "仅登录用户", "所有用户"]
+        },
+        "updateLevel": {
+            "title": "更新权限等级",
+            "type": "number",
+            "format": "int",
+            "widget": "select",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "enumNames": ["仅系统用户", "仅创建者", "仅登录用户", "所有用户"]
+        },
+        "deleteLevel": {
+            "title": "删除权限等级",
+            "type": "number",
+            "format": "int",
+            "widget": "select",
+            "default": 0,
+            "enum": [0, 1, 2, 3],
+            "enumNames": ["仅系统用户", "仅创建者", "仅登录用户", "所有用户"]
         }
     }
 }
