@@ -4,6 +4,7 @@ import (
 	"github.com/BeanWei/apikit/ctxsrv"
 	"github.com/BeanWei/apikit/errors"
 	"github.com/BeanWei/apikit/resp"
+	"github.com/antbiz/antapi/internal/common/errmsg"
 	"github.com/antbiz/antapi/internal/common/types"
 	"github.com/gogf/gf/errors/gerror"
 	"github.com/gogf/gf/frame/g"
@@ -19,7 +20,7 @@ func Auth(r *ghttp.Request) {
 		g.Log().Async().Error(gerror.Wrap(err, "Auth Middleare: err conv r.Context to types.Context"))
 	}
 	if err != nil || localCtx == nil || localCtx.User == nil || localCtx.User.ID == "" {
-		resp.Error(r, errors.Unauthorized("unauthorized", "unauthorized"))
+		resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
 	}
 
 	r.Middleware.Next()
