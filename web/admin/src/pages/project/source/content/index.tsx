@@ -64,8 +64,6 @@ const handleDelete = async (collectionName: string, id: string) => {
     return true;
   } catch (error) {
     hide();
-    message.error('删除失败，请重试');
-    return false;
   }
 };
 
@@ -90,7 +88,7 @@ export default (): React.ReactNode => {
           okText="是"
           cancelText="否"
           onConfirm={() => {
-            handleDelete(currentSchema.collectionName, record.id);
+            handleDelete(currentSchema.name, record._id);
           }}
         >
           <a style={{ color: '#ff7875' }} href="#">
@@ -114,7 +112,7 @@ export default (): React.ReactNode => {
     <>
       <ProTable<Record<string, unknown>, API.PageParams>
         actionRef={actionRef}
-        rowKey="id"
+        rowKey="_id"
         search={{
           labelWidth: 120,
         }}
@@ -130,12 +128,12 @@ export default (): React.ReactNode => {
             新建
           </Button>,
         ]}
-        params={{ collectionName: currentSchema.collectionName }}
+        params={{ collectionName: currentSchema.name }}
         request={getMany}
         columns={columns}
       />
       <Modal
-        title={currentItem?.id ? `更新${currentSchema.title}` : `新建${currentSchema.title}`}
+        title={currentItem?._id ? `更新${currentSchema.title}` : `新建${currentSchema.title}`}
         width="90%"
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}
@@ -144,9 +142,9 @@ export default (): React.ReactNode => {
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
-          const success = currentItem?.id
-            ? await handleUpdate(currentSchema.collectionName, currentItem as API.Schema)
-            : await handleAdd(currentSchema.collectionName, currentItem as API.Schema);
+          const success = currentItem?._id
+            ? await handleUpdate(currentSchema.name, currentItem._id, currentItem)
+            : await handleAdd(currentSchema.name, currentItem);
           if (success) {
             handleEditModalVisible(false);
             if (actionRef.current) {
