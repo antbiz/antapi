@@ -4,11 +4,20 @@ import (
 	"fmt"
 
 	"github.com/antbiz/antapi/internal/app/dto"
+	"github.com/gogf/gf/container/gset"
 	"github.com/gogf/gf/encoding/gjson"
 )
 
 // ParseFormRenderSchema 将 FormRender 的 schema 结构化
 func ParseFormRenderSchema(data *gjson.Json) *dto.Schema {
+	defaultSysFieldNames := gset.NewStrSetFrom(
+		[]string{
+			"_id", "createdAt", "updatedAt",
+			"createdBy", "updatedBy",
+		},
+	)
+	existsSysFieldNames := gset.NewStrSet()
+
 	schema := &dto.Schema{
 		Name:        data.GetString("name"),
 		Title:       data.GetString("title"),
@@ -35,9 +44,19 @@ func ParseFormRenderSchema(data *gjson.Json) *dto.Schema {
 		}
 		field.Enum = data.GetStrings(fmt.Sprintf("properties.%s.enum", fieldName))
 		field.EnumNames = data.GetStrings(fmt.Sprintf("properties.%s.enumNames", fieldName), field.Enum)
-		field.IsSysField = dto.IsSysField(field.Name)
-
+		if defaultSysFieldNames.Contains(fieldName) {
+			field.IsSysField = true
+			existsSysFieldNames.AddIfNotExist(fieldName)
+		}
 		schema.Fields = append(schema.Fields, field)
+	}
+
+	for _, fieldName := range defaultSysFieldNames.Diff(existsSysFieldNames).Slice() {
+		schema.Fields = append(schema.Fields, &dto.SchemaField{
+			Name:       fieldName,
+			Title:      fieldName,
+			IsSysField: true,
+		})
 	}
 
 	return schema

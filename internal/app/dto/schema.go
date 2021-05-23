@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/util/gvalid"
 )
 
@@ -36,16 +35,6 @@ type SchemaField struct {
 	Enum              []string
 	EnumNames         []string
 	Description       string
-}
-
-// IsSysField 是否为系统默认字段
-func IsSysField(fieldName string) bool {
-	return garray.NewStrArrayFrom(
-		[]string{
-			"_id", "createdAt", "updatedAt",
-			"createdBy", "updatedBy",
-		},
-	).Contains(fieldName)
 }
 
 // GetFieldNames 获取字段名

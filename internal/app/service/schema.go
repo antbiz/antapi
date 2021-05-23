@@ -25,68 +25,6 @@ func (srv *schemaSrv) CollectionName() string {
 
 // CheckJSONSchema 检验 JSONSchema
 func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) error {
-	const propPath = "properties"
-	var (
-		hasIDField        = false
-		hasCreatedAtField = false
-		hasUpdatedAtField = false
-		hasCreatedByField = false
-		hasUpdatedByField = false
-	)
-
-	for fieldName := range data.GetMap(propPath) {
-		switch fieldName {
-		case "_id":
-			hasIDField = true
-		case "createdAt":
-			hasCreatedAtField = true
-		case "updatedAt":
-			hasUpdatedAtField = true
-		case "createdBy":
-			hasCreatedByField = true
-		case "updatedBy":
-			hasUpdatedByField = true
-		}
-	}
-
-	if !hasIDField {
-		data.Set(fmt.Sprintf("%s.%s", propPath, "_id"), g.Map{
-			"title":  "ID",
-			"type":   "string",
-			"hidden": true,
-		})
-	}
-	if !hasCreatedAtField {
-		data.Set(fmt.Sprintf("%s.%s", propPath, "createdAt"), g.Map{
-			"title":  "创建时间",
-			"type":   "string",
-			"index":  true,
-			"hidden": true,
-		})
-	}
-	if !hasUpdatedAtField {
-		data.Set(fmt.Sprintf("%s.%s", propPath, "updatedAt"), g.Map{
-			"title":  "更新时间",
-			"type":   "string",
-			"hidden": true,
-		})
-	}
-	if !hasCreatedByField {
-		data.Set(fmt.Sprintf("%s.%s", propPath, "createdBy"), g.Map{
-			"title":  "创建者",
-			"type":   "string",
-			"index":  true,
-			"hidden": true,
-		})
-	}
-	if !hasUpdatedByField {
-		data.Set(fmt.Sprintf("%s.%s", propPath, "updatedBy"), g.Map{
-			"title":  "修改者",
-			"type":   "string",
-			"hidden": true,
-		})
-	}
-
 	return nil
 }
 
