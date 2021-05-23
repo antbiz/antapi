@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { ProColumns } from '@ant-design/pro-table';
 import { EditableProTable } from '@ant-design/pro-table';
-import { getPermissions } from '@/services/project';
+import { getPermissions, updatePermission } from '@/services/project';
 import { Skeleton, Alert, message } from 'antd';
 import { getProjectName } from '@/utils';
 
@@ -81,7 +81,7 @@ export default (): React.ReactNode => {
         <a
           key="editable"
           onClick={() => {
-            action?.startEditable?.(record.id);
+            action?.startEditable?.(record._id);
           }}
         >
           编辑
@@ -104,8 +104,6 @@ export default (): React.ReactNode => {
       return true;
     } catch (error) {
       hide();
-      message.error('更新失败请重试！');
-      return false;
     }
   }
 
@@ -119,7 +117,7 @@ export default (): React.ReactNode => {
 
   return (
     <EditableProTable<API.Permission>
-      rowKey="id"
+      rowKey="_id"
       headerTitle="API 访问权限"
       maxLength={20}
       recordCreatorProps={false}
@@ -131,10 +129,18 @@ export default (): React.ReactNode => {
           <a
             key="save"
             onClick={async () => {
-              const perm = (await config?.form?.validateFields()) as API.Permission;
-              const success = await savePermission(row.id, perm);
+              const data = (await config?.form?.validateFields()) as API.Permission;
+              const success = await savePermission(row._id, data[row._id]);
               if (success) {
-                await config?.onSave?.(config.recordKey, { ...row, ...values });
+                const perms = [];
+                permissions.forEach((v) => {
+                  if (v._id === row._id) {
+                    v = {...v, ...data[row._id]}
+                  }
+                  perms.push(v);
+                })
+                setPermissions(perms)
+                await config?.onSave?.(config.recordKey);
               }
             }}
           >

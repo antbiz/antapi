@@ -26,14 +26,14 @@ export default (): React.ReactNode => {
 
   return schemas.length ? (
     <Menu
-      defaultSelectedKeys={[schemas[0].collectionName]}
+      defaultSelectedKeys={[schemas[0].name]}
       mode="inline"
       onClick={(item) => {
-        setCurrentSchema(schemas.find((schema) => schema.collectionName === item.key));
+        setCurrentSchema(schemas.find((schema) => schema.name === item.key));
       }}
     >
       {schemas.map((schema) => {
-        return <Menu.Item key={schema.collectionName}>{schema.title}</Menu.Item>;
+        return <Menu.Item key={schema.name}>{schema.title}</Menu.Item>;
       })}
     </Menu>
   ) : (

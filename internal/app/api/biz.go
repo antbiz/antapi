@@ -47,12 +47,14 @@ func (bizApi) List(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		perm := service.Permission.GetReadPermission(collectionName)
-		if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
-		} else if perm.CanDoOnlyOwner() {
-			opt.Filter = bson.M{"createdBy": ctxUser.ID}
-		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		if !perm.CanDoAll() {
+			if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+				resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+			} else if perm.CanDoOnlyOwner() {
+				opt.Filter = bson.M{"createdBy": ctxUser.ID}
+			} else if perm.CanDoOnlySysUser() {
+				resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+			}
 		}
 	}
 
@@ -88,12 +90,14 @@ func (bizApi) Get(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		perm := service.Permission.GetReadPermission(collectionName)
-		if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
-		} else if perm.CanDoOnlyOwner() {
-			opt.Filter = bson.M{"createdBy": ctxUser.ID}
-		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		if !perm.CanDoAll() {
+			if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+				resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+			} else if perm.CanDoOnlyOwner() {
+				opt.Filter = bson.M{"createdBy": ctxUser.ID}
+			} else if perm.CanDoOnlySysUser() {
+				resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+			}
 		}
 	}
 
@@ -126,12 +130,14 @@ func (bizApi) Find(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		perm := service.Permission.GetReadPermission(collectionName)
-		if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
-		} else if perm.CanDoOnlyOwner() {
-			filter["createdBy"] = ctxUser.ID
-		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		if !perm.CanDoAll() {
+			if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+				resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+			} else if perm.CanDoOnlyOwner() {
+				filter["createdBy"] = ctxUser.ID
+			} else if perm.CanDoOnlySysUser() {
+				resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+			}
 		}
 	}
 
@@ -170,10 +176,12 @@ func (bizApi) Create(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		perm := service.Permission.GetCreatePermission(collectionName)
-		if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
-		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		if !perm.CanDoAll() {
+			if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+				resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+			} else if perm.CanDoOnlySysUser() {
+				resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+			}
 		}
 	}
 
@@ -220,12 +228,14 @@ func (bizApi) Update(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		perm := service.Permission.GetUpdatePermission(collectionName)
-		if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
-		} else if perm.CanDoOnlyOwner() {
-			opt.Filter = bson.M{"createdBy": ctxUser.ID}
-		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		if !perm.CanDoAll() {
+			if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+				resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+			} else if perm.CanDoOnlyOwner() {
+				opt.Filter = bson.M{"createdBy": ctxUser.ID}
+			} else if perm.CanDoOnlySysUser() {
+				resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+			}
 		}
 	}
 
@@ -272,12 +282,14 @@ func (bizApi) Delete(r *ghttp.Request) {
 
 	if !ctxUser.IsSysUser {
 		perm := service.Permission.GetDeletePermission(collectionName)
-		if perm.CanDoOnlySysUser() {
-			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
-		} else if perm.CanDoOnlyOwner() {
-			opt.Filter = bson.M{"createdBy": ctxUser.ID}
-		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
-			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		if !perm.CanDoAll() {
+			if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+				resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+			} else if perm.CanDoOnlyOwner() {
+				opt.Filter = bson.M{"createdBy": ctxUser.ID}
+			} else if perm.CanDoOnlySysUser() {
+				resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+			}
 		}
 	}
 

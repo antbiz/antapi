@@ -34,7 +34,7 @@ func (srv *permissionSrv) CheckDuplicatePermission(ctx context.Context, data *gj
 		filter["collectionName"] = collectionName
 	} else {
 		filter["collectionName"] = collectionName
-		filter["$neq"] = bson.M{
+		filter["$ne"] = bson.M{
 			"_id": id,
 		}
 	}
@@ -75,7 +75,7 @@ func (c *canDo) CanDoAll() bool {
 }
 
 // getPermission 从内存中获取权限等级。0-没有权限，1-仅创建者，2-仅登录者, 3-所有人
-func (srv *permissionSrv) getPermission(permName dto.PermissionName, collectionName string) *canDo {
+func (srv *permissionSrv) getPermission(permName string, collectionName string) *canDo {
 	perm := global.GetPermission(collectionName)
 	if perm == nil {
 		return &canDo{}

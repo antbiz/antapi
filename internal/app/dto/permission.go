@@ -11,23 +11,20 @@ type Permission struct {
 	DeleteLevel    int
 }
 
-// PermissionName 权限等级字段
-type PermissionName string
-
 // 权限等级分为 4 个等级
 // 0: 无权限
 // 1: 仅创建者
 // 2: 仅登录者
 // 3: 所有人
 const (
-	CreateLevel PermissionName = "createLevel"
-	ReadLevel   PermissionName = "readLevel"
-	UpdateLevel PermissionName = "updateLevel"
-	DeleteLevel PermissionName = "deleteLevel"
+	CreateLevel = "createLevel"
+	ReadLevel   = "readLevel"
+	UpdateLevel = "updateLevel"
+	DeleteLevel = "deleteLevel"
 )
 
 // GetPermissionLevel 获取权限等级
-func (p *Permission) GetPermissionLevel(name PermissionName) int {
+func (p *Permission) GetPermissionLevel(name string) int {
 	switch name {
 	case CreateLevel:
 		return p.CreateLevel

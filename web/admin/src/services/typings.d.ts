@@ -116,11 +116,12 @@ declare namespace API {
     updatedAt: string;
     projectName: string;
     title: string;
-    collectionName: string;
+    name: string;
     description: string;
     displayType?: string;
     showDescIcon?: boolean;
     type?: string;
+    column?: number;
     properties?: object;
   };
 

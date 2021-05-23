@@ -1,12 +1,14 @@
 import React, { useState, useRef } from 'react';
+import { history } from 'umi';
 import ProCard from '@ant-design/pro-card';
 import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Spin } from 'antd';
+import Generator from 'fr-generator';
+import { getProjectName } from '@/utils';
+import { updateSchema, createSchema, deleteSchema } from '@/services/schema';
 import SourceMenu from './menu';
 import Content from './content';
 import { SourceCtx } from './context';
-import { updateSchema, createSchema, deleteSchema } from '@/services/schema';
-import Generator from 'fr-generator';
 import { globalSettings, commonSettings } from './settings';
 import './index.less';
 
@@ -37,7 +39,7 @@ const handleAdd = async (schema: API.Schema) => {
 const handleUpdate = async (schema: API.Schema) => {
   const hide = message.loading('正在更新');
   try {
-    await updateSchema({ ...schema });
+    await updateSchema(schema._id, schema);
     hide();
     message.success('更新成功');
     return true;
@@ -74,6 +76,7 @@ export default (): React.ReactNode => {
   const [currentSchema, setCurrentSchema] = useState<API.Schema>();
   const [editSchema, setEditSchema] = useState<API.Schema>();
   const genRef = useRef();
+  const projectName = getProjectName();
 
   return (
     <SourceCtx.Provider value={{ currentSchema, setCurrentSchema }}>
@@ -90,7 +93,7 @@ export default (): React.ReactNode => {
         >
           <SourceMenu />
         </ProCard>
-        {currentSchema?.id ? (
+        {currentSchema?._id ? (
           <ProCard
             bordered
             headerBordered
@@ -103,7 +106,7 @@ export default (): React.ReactNode => {
                   key="deleteSchema"
                   danger
                   onClick={() => {
-                    handleDelete(currentSchema.id);
+                    handleDelete(currentSchema._id);
                   }}
                 >
                   删除模型
@@ -121,7 +124,9 @@ export default (): React.ReactNode => {
                   key="addSchema"
                   type="primary"
                   onClick={() => {
-                    setEditSchema();
+                    setEditSchema({
+                      projectName
+                    });
                     handleEditModalVisible(true);
                   }}
                 >
@@ -145,7 +150,9 @@ export default (): React.ReactNode => {
               size="large"
               icon={<PlusOutlined />}
               onClick={() => {
-                setEditSchema();
+                setEditSchema({
+                  projectName
+                });
                 handleEditModalVisible(true);
               }}
             >
@@ -165,15 +172,12 @@ export default (): React.ReactNode => {
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
           const value = genRef.current.getValue();
-          console.log(value);
-          const success = value?.id
+          const success = value?._id
             ? await handleUpdate(value as API.Schema)
             : await handleAdd(value as API.Schema);
           if (success) {
             handleEditModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
+            history.push(history.location.pathname);
           }
         }}
       >

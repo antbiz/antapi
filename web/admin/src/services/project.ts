@@ -56,7 +56,7 @@ export async function getPermissions(params: { projectName: string }) {
 
 /** 更新项目权限 PUT `/api/biz/permission/${id}`*/
 export async function updatePermission(id: string, data?: { [key: string]: any }) {
-  return request<{ data: API.Permission }>(`/api/biz/permission/${schemaId}`, {
+  return request<{ data: API.Permission }>(`/api/biz/permission/${id}`, {
     method: 'PUT',
     data: data,
   });

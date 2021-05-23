@@ -1,20 +1,19 @@
 export const globalSettings={
   type: 'object',
   properties: {
-    title: {
-      title: '标题',
-      description: '模型展示名称',
+    projectName: {
+      title: '项目ID/英文',
       type: 'string',
+      disabled: true,
       required: true,
     },
     name: {
-      title: '模型名称/英文',
-      description: '',
+      title: '模型ID/英文',
       type: 'string',
       required: true,
     },
-    projectName: {
-      title: '项目名称/英文',
+    title: {
+      title: '模型名称',
       type: 'string',
       required: true,
     },
@@ -54,7 +53,7 @@ export const globalSettings={
 export const commonSettings = {
   $id: {
     title: 'ID',
-    description: '字段名称/英文',
+    description: '字段ID/英文',
     type: 'string',
     widget: 'idInput',
     required: true,

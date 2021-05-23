@@ -144,7 +144,6 @@ export default (): React.ReactNode => {
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
-          console.log(currentItem);
           const success = currentItem?.id
             ? await handleUpdate(currentSchema.collectionName, currentItem as API.Schema)
             : await handleAdd(currentSchema.collectionName, currentItem as API.Schema);

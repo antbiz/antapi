@@ -103,11 +103,11 @@ func (srv *schemaSrv) AutoCreateCollectionPermission(ctx context.Context, data *
 		Collection(Permission.CollectionName()).
 		Upsert(
 			ctx,
-			bson.M{"collectionName": data.GetString("collectionName")},
+			bson.M{"collectionName": data.GetString("name")},
 			g.Map{
 				"title":          data.GetString("title"),
 				"projectName":    data.GetString("projectName"),
-				"collectionName": data.GetString("collectionName"),
+				"collectionName": data.GetString("name"),
 				"createLevel":    0,
 				"readLevel":      0,
 				"updateLevel":    0,
