@@ -71,6 +71,7 @@ export default (): React.ReactNode => {
   /** 编辑模型窗口的弹窗 */
   const [editModalVisible, handleEditModalVisible] = useState<boolean>(false);
   const [currentSchema, setCurrentSchema] = useState<API.Schema>();
+  const [editSchema, setEditSchema] = useState<API.Schema>();
   const genRef = useRef();
 
   return (
@@ -109,6 +110,7 @@ export default (): React.ReactNode => {
                 <Button
                   key="updateSchema"
                   onClick={() => {
+                    setEditSchema(currentSchema);
                     handleEditModalVisible(true);
                   }}
                 >
@@ -118,6 +120,7 @@ export default (): React.ReactNode => {
                   key="addSchema"
                   type="primary"
                   onClick={() => {
+                    setEditSchema();
                     handleEditModalVisible(true);
                   }}
                 >
@@ -133,7 +136,7 @@ export default (): React.ReactNode => {
         )}
       </ProCard>
       <Modal
-        title={currentSchema?.id ? '更新模型' : '新建模型'}
+        title={editSchema?.id ? '更新模型' : '新建模型'}
         width="100%"
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}
@@ -158,7 +161,7 @@ export default (): React.ReactNode => {
         <Generator
           ref={genRef}
           extraButtons={[true, true, false, false]}
-          defaultValue={currentSchema}
+          defaultValue={editSchema}
           globalSettings={globalSettings}
           commonSettings={commonSettings}
         />

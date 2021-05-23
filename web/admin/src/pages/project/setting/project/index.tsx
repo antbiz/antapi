@@ -126,12 +126,12 @@ export default (): React.ReactNode => {
         }}
       >
         <Form.Item label="项目 ID">
-          <Typography.Paragraph copyable>{project.id}</Typography.Paragraph>
+          <Typography.Paragraph copyable>{project.name}</Typography.Paragraph>
         </Form.Item>
         <Form.Item
-          label="项目名"
+          label="项目名称"
           name="title"
-          rules={[{ required: true, message: '请输入项目名！' }]}
+          rules={[{ required: true, message: '请输入项目名称！' }]}
         >
           <Input placeholder="项目名，如官网" />
         </Form.Item>
