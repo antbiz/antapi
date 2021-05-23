@@ -9,7 +9,7 @@ const permFieldProps = {
   fieldProps: {
     options: [
       {
-        label: '无权限',
+        label: '仅系统用户',
         value: 0,
       },
       {
@@ -17,11 +17,11 @@ const permFieldProps = {
         value: 1,
       },
       {
-        label: '仅登录者',
+        label: '仅登录用户',
         value: 2,
       },
       {
-        label: '所有人',
+        label: '所有用户',
         value: 3,
       },
     ],

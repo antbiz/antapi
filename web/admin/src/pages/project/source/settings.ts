@@ -75,6 +75,22 @@ export const commonSettings = {
     title: '必填',
     type: 'boolean',
   },
+  unique: {
+    title: '唯一',
+    type: 'boolean',
+  },
+  private: {
+    title: '字段在api中不可见',
+    type: 'boolean'
+  },
+  indexField: {
+    title: '索引',
+    type: 'boolean'
+  },
+  validator: {
+    title: '校验器',
+    type: 'string'
+  },
   placeholder: {
     title: '占位符',
     type: 'string',
@@ -118,20 +134,4 @@ export const commonSettings = {
       hideNumber: true,
     },
   },
-  unique: {
-    title: '唯一',
-    type: 'boolean',
-  },
-  private: {
-    title: '字段在api中不可见',
-    type: 'boolean'
-  },
-  indexField: {
-    title: '索引',
-    type: 'boolean'
-  },
-  validator: {
-    title: '校验器',
-    type: 'string'
-  }
 }
