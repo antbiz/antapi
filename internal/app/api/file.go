@@ -22,7 +22,7 @@ import (
 )
 
 // File 文件上传下载接口
-var File = fileApi{}
+var File = &fileApi{}
 
 type fileApi struct{}
 

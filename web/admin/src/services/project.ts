@@ -16,6 +16,14 @@ export async function getProject(projectId: string) {
   });
 }
 
+/** 获取项目详情  GET /api/project/find */
+export async function findProject(params?: { [key: string]: any }) {
+  return request<{ data: API.Project }>('/api/biz/project/find', {
+    method: 'GET',
+    params: params,
+  });
+}
+
 /** 更新项目 PUT /api/biz/project */
 export async function updateProject(projectId: string, data?: { [key: string]: any }) {
   return request<{ data: API.Project }>(`/api/biz/project/${projectId}`, {
@@ -41,7 +49,7 @@ export async function deleteProject(projectId: string) {
 
 /** 获取项目权限 GET `/api/biz/permission?projectName=${projectName}` */
 export async function getPermissions(params: { projectName: string }) {
-  return request<{ data: API.Permission[] }>(`/api/biz/permission?projectName[eq]${params.projectName}`, {
+  return request<{ data: API.Permission[] }>(`/api/biz/permission?filter={"projectName":"${params.projectName}"}`, {
     method: 'GET',
   });
 }

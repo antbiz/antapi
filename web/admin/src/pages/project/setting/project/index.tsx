@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getProject, updateProject, deleteProject } from '@/services/project';
+import { findProject, updateProject, deleteProject } from '@/services/project';
 import { Divider, Button, Space, Typography, Form, Input, Skeleton, Modal, message } from 'antd';
 import { getProjectName } from '@/utils';
 import ProCard from '@ant-design/pro-card';
@@ -91,7 +91,7 @@ export default (): React.ReactNode => {
   const [changed, setChanged] = useState(false);
   const [project, setProject] = useState<API.Project>();
   const onLoadProject = async () => {
-    const { data } = await getProject(projectName);
+    const data = await findProject({"name": projectName});
     if (data) {
       setProject(data);
     }

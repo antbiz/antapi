@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import ProCard from '@ant-design/pro-card';
+import { PlusOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Spin } from 'antd';
 import SourceMenu from './menu';
 import Content from './content';
@@ -132,7 +133,25 @@ export default (): React.ReactNode => {
             <Content />
           </ProCard>
         ) : (
-          <Spin tip="Loading..." />
+          // <Spin tip="Loading..." />
+          <ProCard
+            layout="center"
+            direction="column"
+            style={{ height: '65vh' }}
+          >
+            <Button
+              key="addSchema"
+              type="primary"
+              size="large"
+              icon={<PlusOutlined />}
+              onClick={() => {
+                setEditSchema();
+                handleEditModalVisible(true);
+              }}
+            >
+              新建模型
+            </Button>
+          </ProCard>
         )}
       </ProCard>
       <Modal

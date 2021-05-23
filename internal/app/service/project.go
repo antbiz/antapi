@@ -21,7 +21,7 @@ func (srv *projectSrv) CollectionName() string {
 
 // GetJSONFilePath 获取文件备份导出路径
 func (srv *projectSrv) GetJSONFilePath(projectName string) string {
-	return gfile.Join(gfile.Pwd(), "internal", "data", "schemas", "biz", fmt.Sprintf("%s.json", projectName))
+	return gfile.Join(gfile.Pwd(), "internal", "data", "projects", "biz", fmt.Sprintf("%s.json", projectName))
 }
 
 // AutoExportJSONFile .

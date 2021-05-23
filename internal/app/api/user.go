@@ -15,7 +15,7 @@ import (
 )
 
 // User 用户接口
-var User = userApi{}
+var User = &userApi{}
 
 type userApi struct{}
 

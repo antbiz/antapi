@@ -20,7 +20,7 @@ import (
 )
 
 // Biz 公共接口管理
-var Biz = bizApi{}
+var Biz = &bizApi{}
 
 type bizApi struct{}
 
@@ -97,6 +97,48 @@ func (bizApi) Get(r *ghttp.Request) {
 		}
 	}
 
+	doc, err := dao.Get(ctx, collectionName, opt)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		} else {
+			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)).WithOrigErr(err))
+		}
+	} else {
+		resp.OK(r, doc)
+	}
+}
+
+// Find 详情查询
+func (bizApi) Find(r *ghttp.Request) {
+	var (
+		localCtx types.Context
+		ctxUser  types.ContextUser
+	)
+	ctx := r.Context()
+	if err := ctxsrv.GetVar(ctx).Struct(&localCtx); err != nil {
+		g.Log().Async().Error(gerror.Wrap(err, "error get user info from context"))
+	} else if localCtx.User != nil {
+		ctxUser = *localCtx.User
+	}
+	collectionName := r.GetString("collection")
+	filter := r.GetQueryMap()
+
+	if !ctxUser.IsSysUser {
+		perm := service.Permission.GetReadPermission(collectionName)
+		if perm.CanDoOnlySysUser() {
+			resp.Error(r, errors.Forbidden(errmsg.PermissionDenied, g.I18n().T(errmsg.PermissionDenied)))
+		} else if perm.CanDoOnlyOwner() {
+			filter["createdBy"] = ctxUser.ID
+		} else if perm.CanDoOnlyLogin() && ctxUser.ID == "" {
+			resp.Error(r, errors.Unauthorized(errmsg.Unauthorized, g.I18n().T(errmsg.Unauthorized)))
+		}
+	}
+
+	opt := &dao.GetOptions{
+		Filter:  filter,
+		CtxUser: ctxUser,
+	}
 	doc, err := dao.Get(ctx, collectionName, opt)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {

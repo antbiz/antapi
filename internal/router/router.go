@@ -19,6 +19,8 @@ func init() {
 		group.GET("/{collection}", api.Biz.List)
 		// 获取 {collection} 详情
 		group.GET("/{collection}/{id}", api.Biz.Get)
+		// 获取 {collection} 详情
+		group.GET("/{collection}/find", api.Biz.Find)
 		// 添加 {collection}
 		group.POST("/{collection}", api.Biz.Create)
 		// 修改 {collection}
