@@ -38,13 +38,16 @@ const Login: React.FC = () => {
     try {
       // 登录
       const { sid } = await login({ ...values });
-      message.success('登录成功！');
-      localStorage.setItem('x-api-sid', sid);
-      await fetchUserInfo();
-      goto();
+      if (sid) {
+        message.success('登录成功！');
+        localStorage.setItem('x-api-sid', sid);
+        await fetchUserInfo();
+        goto();
+      }
       return;
     } catch (error) {
-      message.error(error.data.message);
+      // FIXME: Cannot read property 'message' of undefined
+      // message.error(error.data.message);
     }
     setSubmitting(false);
   };

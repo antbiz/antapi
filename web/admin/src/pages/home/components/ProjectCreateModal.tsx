@@ -15,7 +15,6 @@ const ProjectCreateModal: React.FC<{
     },
     {
       manual: true,
-      onError: () => message.error('创建项目失败'),
       onSuccess: () => message.success('创建项目成功'),
     },
   );

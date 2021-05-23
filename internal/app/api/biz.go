@@ -13,6 +13,7 @@ import (
 	"github.com/gogf/gf/net/ghttp"
 	"github.com/gogf/gf/text/gstr"
 	"github.com/gogf/gf/util/gconv"
+	"github.com/gogf/gf/util/gvalid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -136,10 +137,15 @@ func (bizApi) Create(r *ghttp.Request) {
 
 	id, err := dao.Insert(ctx, collectionName, r.GetFormMap(), opt)
 	if err != nil {
-		if mongo.IsDuplicateKeyError(err) {
-			resp.Error(r, errors.AlreadyExists(g.I18n().T(errmsg.ErrDBDuplicate)))
-		} else {
-			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBInsert)).WithOrigErr(err))
+		switch err.(type) {
+		case *gvalid.Error:
+			resp.Error(r, errors.InvalidArgument(err.Error()))
+		default:
+			if mongo.IsDuplicateKeyError(err) {
+				resp.Error(r, errors.AlreadyExists(g.I18n().T(errmsg.ErrDBDuplicate)))
+			} else {
+				resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBInsert)).WithOrigErr(err))
+			}
 		}
 	} else {
 		resp.OK(r, g.Map{
@@ -183,12 +189,17 @@ func (bizApi) Update(r *ghttp.Request) {
 
 	err = dao.Update(ctx, collectionName, r.GetFormMap(), opt)
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
-		} else if mongo.IsDuplicateKeyError(err) {
-			resp.Error(r, errors.AlreadyExists(g.I18n().T(errmsg.ErrDBDuplicate)))
-		} else {
-			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBUpdate)).WithOrigErr(err))
+		switch err.(type) {
+		case *gvalid.Error:
+			resp.Error(r, errors.InvalidArgument(err.Error()))
+		default:
+			if err == mongo.ErrNoDocuments {
+				resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+			} else if mongo.IsDuplicateKeyError(err) {
+				resp.Error(r, errors.AlreadyExists(g.I18n().T(errmsg.ErrDBDuplicate)))
+			} else {
+				resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBUpdate)).WithOrigErr(err))
+			}
 		}
 	} else {
 		resp.OK(r)

@@ -10,6 +10,7 @@ import (
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/net/ghttp"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -55,7 +56,10 @@ func (userApi) LogOut(r *ghttp.Request) {
 
 // Info 当前回话用户的信息
 func (userApi) Info(r *ghttp.Request) {
-	userID := r.Session.GetString("_id")
+	userID, err := primitive.ObjectIDFromHex(r.Session.GetString("_id"))
+	if err != nil {
+		resp.Error(r, errors.NotFound(errmsg.AccountNotFound, g.I18n().T(errmsg.AccountNotFound)))
+	}
 	jsonDoc, err := dao.Get(r.Context(), service.User.CollectionName(), &dao.GetOptions{
 		Filter: bson.M{"_id": userID},
 	})
