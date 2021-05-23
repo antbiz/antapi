@@ -89,7 +89,7 @@ const ProjectDangerAction: React.FC<{ project: API.Project }> = ({ project }) =>
 export default (): React.ReactNode => {
   const projectName = getProjectName();
   const [changed, setChanged] = useState(false);
-  const [project, setProject] = useState<API.Project>({});
+  const [project, setProject] = useState<API.Project>();
   const onLoadProject = async () => {
     const { data } = await getProject(projectName);
     if (data) {
