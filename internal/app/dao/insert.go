@@ -36,6 +36,9 @@ func Insert(ctx context.Context, collectionName string, doc interface{}, opts ..
 		newDoc = jsonDoc.Map()
 	} else {
 		for _, field := range schema.GetFields(opt.IncludeHiddenField, opt.IncludePrivateField) {
+			if field.IsSysField || !jsonDoc.Contains(field.Name) {
+				continue
+			}
 			val := jsonDoc.Get(field.Name)
 			if !opt.IgnoreFieldValueCheck {
 				if validErr := field.CheckFieldValue(val); validErr != nil {

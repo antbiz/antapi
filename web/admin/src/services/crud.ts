@@ -30,19 +30,19 @@ export async function getOne(collectionName: string, id: string, options?: { [ke
 export async function updateOne(
   collectionName: string,
   id: string,
-  options?: { [key: string]: any },
+  data?: { [key: string]: any },
 ) {
   return request<{ data: object }>(`/api/biz/${collectionName}/${id}`, {
     method: 'PUT',
-    ...(options || {}),
+    data: data,
   });
 }
 
 /** 新建 */
-export async function createOne(collectionName: string, options?: { [key: string]: any }) {
+export async function createOne(collectionName: string, data?: { [key: string]: any }) {
   return request<{ data: object }>(`/api/biz/${collectionName}`, {
     method: 'POST',
-    ...(options || {}),
+    data: data,
   });
 }
 

@@ -10,6 +10,7 @@ err_db_check_duplicate = "重复性检查失败，请重试"
 err_db_duplicate = "创建/更新失败，该资源已存在，请修改后提交"
 
 # System
+server_error = "Oops，服务器居然开小差了，请稍后再试吧！"
 unknown_error = "未知错误"
 api_not_found = "你迷路了，当前请求: %s"
 unauthorized = "未登录或非法访问"

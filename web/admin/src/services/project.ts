@@ -17,18 +17,18 @@ export async function getProject(projectId: string) {
 }
 
 /** 更新项目 PUT /api/biz/project */
-export async function updateProject(projectId: string, options?: { [key: string]: any }) {
+export async function updateProject(projectId: string, data?: { [key: string]: any }) {
   return request<{ data: API.Project }>(`/api/biz/project/${projectId}`, {
     method: 'PUT',
-    ...(options || {}),
+    data: data,
   });
 }
 
 /** 新建项目 POST /api/project */
-export async function createProject(options?: { [key: string]: any }) {
+export async function createProject(data?: { [key: string]: any }) {
   return request<{ data: API.Project }>('/api/biz/project', {
     method: 'POST',
-    ...(options || {}),
+    data: data,
   });
 }
 
@@ -47,9 +47,9 @@ export async function getPermissions(params: { projectName: string }) {
 }
 
 /** 更新项目权限 PUT `/api/biz/permission/${id}`*/
-export async function updatePermission(id: string, options?: { [key: string]: any }) {
+export async function updatePermission(id: string, data?: { [key: string]: any }) {
   return request<{ data: API.Permission }>(`/api/biz/permission/${schemaId}`, {
     method: 'PUT',
-    ...(options || {}),
+    data: data,
   });
 }

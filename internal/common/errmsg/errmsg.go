@@ -15,6 +15,7 @@ const (
 
 // System
 const (
+	ServerError      = "server_error"
 	UnknownError     = "unknown_error"
 	APINotFound      = "api_not_found"
 	Unauthorized     = "unauthorized"

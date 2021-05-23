@@ -38,10 +38,7 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 		newDoc = jsonDoc.Map()
 	} else {
 		for _, field := range schema.GetFields(opt.IncludeHiddenField, opt.IncludePrivateField) {
-			if field.IsSysField {
-				continue
-			}
-			if !jsonDoc.Contains(field.Name) {
+			if field.IsSysField || !jsonDoc.Contains(field.Name) {
 				continue
 			}
 			val := jsonDoc.Get(field.Name)

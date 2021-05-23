@@ -10,6 +10,7 @@ err_db_check_duplicate = "Repetitive check failed, please try again"
 err_db_duplicate = "Failed to create / update, the resource already exists, please modify and submit"
 
 # System
+server_error = "Internal server error, please try again later"
 unknown_error = "Unknown error"
 api_not_found = "API not found: %s"
 unauthorized = "Not logged in or illegally accessed"

@@ -17,18 +17,18 @@ export async function getSchema(schemaId: string) {
 }
 
 /** 新建内容模型 PUT `/api/biz/schema/${schemaId}`*/
-export async function updateSchema(schemaId: string, options?: { [key: string]: any }) {
+export async function updateSchema(schemaId: string, data?: { [key: string]: any }) {
   return request<{ data: API.Schema }>(`/api/biz/schema/${schemaId}`, {
     method: 'PUT',
-    ...(options || {}),
+    data: data,
   });
 }
 
 /** 新建内容模型 POST `/api/biz/schema`*/
-export async function createSchema(options?: { [key: string]: any }) {
+export async function createSchema(data?: { [key: string]: any }) {
   return request<{ data: API.Schema }>(`/api/biz/schema`, {
     method: 'POST',
-    ...(options || {}),
+    data: data,
   });
 }
 
