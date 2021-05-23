@@ -74,20 +74,20 @@ declare namespace API {
   };
 
   type User = {
-    id: string;
+    _id: string;
     username: string;
     // 创建时间
     createdAt: number;
     // 用户角色
     roles: UserRole[];
     // uuid
-    uuid: string;
+    uu_id: string;
     // 是否为 root 用户
     root?: boolean;
   };
 
   type UserRole = {
-    id: string;
+    _id: string;
     // 角色名
     roleName: string;
     // 角色描述
@@ -98,7 +98,7 @@ declare namespace API {
   };
 
   type Project = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
     title: string;
@@ -111,7 +111,7 @@ declare namespace API {
    * 模型描述
    */
   type Schema = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
     projectName: string;
@@ -128,7 +128,7 @@ declare namespace API {
    * 权限
    */
   type Permission = {
-    id: string;
+    _id: string;
     createdAt: string;
     updatedAt: string;
     title: string;

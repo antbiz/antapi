@@ -12,14 +12,12 @@ import ProCard from '@ant-design/pro-card';
 const handleUpdate = async (project: API.Project) => {
   const hide = message.loading('正在更新');
   try {
-    await updateProject(project.id, project);
+    await updateProject(project._id, project);
     hide();
     message.success('更新成功');
     return true;
   } catch (error) {
-    hide();
-    message.error('更新失败请重试！');
-    return false;
+
   }
 };
 
@@ -125,7 +123,16 @@ export default (): React.ReactNode => {
           }
         }}
       >
-        <Form.Item label="项目 ID">
+        <Form.Item
+          label="项目编号"
+          name="_id"
+        >
+          <Typography.Paragraph copyable>{project._id}</Typography.Paragraph>
+        </Form.Item>
+        <Form.Item
+          label="项目 ID"
+          name="name"
+        >
           <Typography.Paragraph copyable>{project.name}</Typography.Paragraph>
         </Form.Item>
         <Form.Item

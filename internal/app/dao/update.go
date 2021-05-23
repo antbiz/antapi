@@ -53,7 +53,7 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 	newDoc["updatedAt"] = time.Now().Unix()
 	newDoc["updatedBy"] = opt.CtxUser.ID
 
-	if err := db.DB().Collection(collectionName).UpdateOne(ctx, opt.Filter, bson.M{"$set": doc}); err != nil {
+	if err := db.DB().Collection(collectionName).UpdateOne(ctx, opt.Filter, bson.M{"$set": newDoc}); err != nil {
 		return err
 	}
 

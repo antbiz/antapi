@@ -19,3 +19,6 @@ config/config.toml
 main
 .vscode
 go.sum
+
+internal/data/schemas/biz/*.json
+internal/data/projects/biz/*.json
