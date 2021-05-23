@@ -2,10 +2,10 @@ export default {
   'pages.layouts.userLayout.title':
     'Ant Design is the most influential web design specification in Xihu district',
   'pages.login.accountLogin.tab': 'Account Login',
-  'pages.login.accountLogin.errorMessage': 'Incorrect username/password（admin/antapi)',
-  'pages.login.username.placeholder': 'Username: admin or user',
+  'pages.login.accountLogin.errorMessage': 'Incorrect username/password',
+  'pages.login.username.placeholder': 'Username',
   'pages.login.username.required': 'Please input your username!',
-  'pages.login.password.placeholder': 'Password: antapi',
+  'pages.login.password.placeholder': 'Password',
   'pages.login.password.required': 'Please input your password!',
   'pages.login.phoneLogin.tab': 'Phone Login',
   'pages.login.phoneLogin.errorMessage': 'Verification Code Error',

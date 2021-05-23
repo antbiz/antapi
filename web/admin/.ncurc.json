@@ -1,0 +1,7 @@
+{
+  "upgrade": true,
+  "reject": [
+    "tailwindcss",
+    "postcss-import"
+  ]
+}
