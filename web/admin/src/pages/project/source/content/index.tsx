@@ -141,29 +141,25 @@ export default (): React.ReactNode => {
         cancelText="关闭"
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
-        onOk={async () => {
-          const success = currentItem?._id
-            ? await handleUpdate(currentSchema.name, currentItem._id, currentItem)
-            : await handleAdd(currentSchema.name, currentItem);
-          if (success) {
-            handleEditModalVisible(false);
-            if (actionRef.current) {
-              actionRef.current.reload();
-            }
-          }
-        }}
+        onOk={form.submit}
       >
         <FormRender
           form={form}
-          schema={{
-            type: 'object',
-            column: currentSchema.column,
-            displayType: currentSchema.displayType,
-            showDescIcon: currentSchema.showDescIcon,
-            properties: currentSchema.properties
-          }}
+          schema={currentSchema}
           formData={currentItem}
-          onChange={setCurrentItem}
+          onFinish={async(data, errors) => {
+            if (errors.length == 0) {
+              const success = currentItem?._id
+                ? await handleUpdate(currentSchema.name, currentItem._id, data)
+                : await handleAdd(currentSchema.name, data);
+              if (success) {
+                handleEditModalVisible(false);
+                if (actionRef.current) {
+                  actionRef.current.reload();
+                }
+              }
+            }
+          }}
         />
       </Modal>
     </>
