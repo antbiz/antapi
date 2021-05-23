@@ -1,12 +1,9 @@
 package dao
 
 import (
-	"context"
-
 	"github.com/antbiz/antapi/internal/app/global"
 	"github.com/gogf/gf/container/garray"
 	"github.com/gogf/gf/encoding/gjson"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -70,24 +67,4 @@ func Docs2GJson(collectionName string, docs []map[string]interface{}, includeHid
 		newDocs = append(newDocs, newDoc)
 	}
 	return gjson.New(newDocs)
-}
-
-// IsDuplicate .
-func IsDuplicate(ctx context.Context, collectionName string, doc *gjson.Json, excludeID ...string) (bool, error) {
-	schema := global.GetSchema(collectionName)
-	fields := schema.GetUniqueFieldNames()
-	if len(fields) == 0 {
-		return false, nil
-	}
-	fields = append(fields, "_id")
-	filters := make([]bson.M, 0)
-
-	fieldNameMap := map[string]string{}
-	for _, field := range schema.GetUniqueFields() {
-		fieldNameMap[field.Name] = field.Title
-		filters = append(filters, bson.M{field.Name: doc.Get(field.Name)})
-	}
-
-	return false, nil
-	// results, err := db.DB().Collection(collectionName).Find(ctx, bson.M{"$or": filters}).One()
 }

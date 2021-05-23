@@ -100,8 +100,9 @@ func (bizApi) Get(r *ghttp.Request) {
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		} else {
+			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)).WithOrigErr(err))
 		}
-		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBGet)).WithOrigErr(err))
 	} else {
 		resp.OK(r, doc)
 	}
@@ -135,7 +136,11 @@ func (bizApi) Create(r *ghttp.Request) {
 
 	id, err := dao.Insert(ctx, collectionName, r.GetFormMap(), opt)
 	if err != nil {
-		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBInsert)).WithOrigErr(err))
+		if mongo.IsDuplicateKeyError(err) {
+			resp.Error(r, errors.AlreadyExists(g.I18n().T(errmsg.ErrDBDuplicate)))
+		} else {
+			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBInsert)).WithOrigErr(err))
+		}
 	} else {
 		resp.OK(r, g.Map{
 			"_id": id,
@@ -180,8 +185,11 @@ func (bizApi) Update(r *ghttp.Request) {
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		} else if mongo.IsDuplicateKeyError(err) {
+			resp.Error(r, errors.AlreadyExists(g.I18n().T(errmsg.ErrDBDuplicate)))
+		} else {
+			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBUpdate)).WithOrigErr(err))
 		}
-		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBUpdate)).WithOrigErr(err))
 	} else {
 		resp.OK(r)
 	}
@@ -224,8 +232,9 @@ func (bizApi) Delete(r *ghttp.Request) {
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			resp.Error(r, errors.NotFound(errmsg.ErrDBNotFound, g.I18n().T(errmsg.ErrDBNotFound)))
+		} else {
+			resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBDelete)).WithOrigErr(err))
 		}
-		resp.Error(r, errors.DatabaseError(g.I18n().T(errmsg.ErrDBDelete)).WithOrigErr(err))
 	} else {
 		resp.OK(r)
 	}
