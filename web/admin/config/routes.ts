@@ -18,6 +18,19 @@
     menuRender: false,
   },
   {
+    name: 'account',
+    path: '/account',
+    hideInMenu: true,
+    menuRender: false,
+    routes: [
+      {
+        name: 'settings',
+        path: '/account/settings',
+        component: './account/settings',
+      }
+    ]
+  },
+  {
     name: 'overview',
     icon: 'eye',
     path: '/project/:projectName/overview',

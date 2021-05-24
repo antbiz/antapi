@@ -38,7 +38,7 @@ const GlobalHeaderRight: React.FC = () => {
         <QuestionCircleOutlined />
       </span>
       {/* <NoticeIconView /> */}
-      <Avatar />
+      <Avatar menu={true} />
       {REACT_APP_ENV && (
         <span>
           <Tag color={ENVTagColor[REACT_APP_ENV]}>{REACT_APP_ENV}</Tag>
