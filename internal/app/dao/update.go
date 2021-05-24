@@ -19,7 +19,7 @@ func Update(ctx context.Context, collectionName string, doc interface{}, opts ..
 	}
 	jsonDoc := transToGJson(doc)
 
-	// 执行 BeforeInsertHooks, BeforeSaveHooks 勾子
+	// 执行 BeforeUpdateHooks, BeforeSaveHooks 勾子
 	for _, hook := range global.GetBeforeUpdateHooksByCollectionName(collectionName) {
 		if err := hook(ctx, jsonDoc); err != nil {
 			return err

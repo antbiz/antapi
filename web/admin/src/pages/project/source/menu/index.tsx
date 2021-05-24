@@ -4,16 +4,32 @@ import { getProjectName } from '@/utils';
 import { Menu, Spin, Empty } from 'antd';
 import { useSourceCtx } from '../context';
 
+const parseSchema = (schema: Record<string, unknown>): Record<string, unknown> => {
+  if (schema._properties) {
+    schema.properties = JSON.parse(schema._properties);
+    delete schema._properties;
+  }
+  return schema;
+};
+
 export default (): React.ReactNode => {
   const { setCurrentSchema } = useSourceCtx();
   const [schemas, setSchemas] = useState<API.Schema[]>(null);
   const projectName = getProjectName();
   const onLoadSchemas = async () => {
     const { data = [] } = await getSchemas({ projectName });
-    if (data.length > 0) {
-      setCurrentSchema(data[0]);
+    const schemas = [];
+    data.forEach((item) => {
+      try {
+        schemas.push(parseSchema(item));
+      } catch(error) {
+        console.error(error);
+      }
+    });
+    if (schemas.length > 0) {
+      setCurrentSchema(schemas[0]);
     }
-    setSchemas(data);
+    setSchemas(schemas);
   };
 
   useEffect(() => {

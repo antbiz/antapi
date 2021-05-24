@@ -8,7 +8,7 @@ export const isUrl = (path: string): boolean => reg.test(path);
 /**
  * 从 url 中获取项目名
  */
-export const getProjectName = () => {
+export const getProjectName = (): string => {
   const match = matchPath<{ projectName?: string }>(history.location.pathname, {
     path: '/project/:projectName/*',
     exact: true,

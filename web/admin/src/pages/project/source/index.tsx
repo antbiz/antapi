@@ -171,7 +171,9 @@ export default (): React.ReactNode => {
         okText="保存"
         onCancel={() => handleEditModalVisible(false)}
         onOk={async () => {
-          const value = genRef.current.getValue();
+          const value = genRef.current && genRef.current.getValue();
+          // 后端无法保证字段顺序，这里由前端复制一份原始的结构提交过去保存起来
+          value._properties = JSON.stringify(value.properties);
           const success = value?._id
             ? await handleUpdate(value as API.Schema)
             : await handleAdd(value as API.Schema);
