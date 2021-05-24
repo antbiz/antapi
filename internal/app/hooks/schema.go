@@ -14,6 +14,7 @@ func registerSchemaHooks() {
 	)
 	global.RegisterAfterSaveHooks(
 		collectionName,
+		service.Schema.CreateIndexes,
 		service.Schema.ReloadGlobalSchemas,
 		service.Schema.AutoExportJSONFile,
 		service.Schema.AutoCreateCollectionPermission,

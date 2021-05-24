@@ -9,6 +9,7 @@ import (
 	"github.com/gogf/gf/encoding/gjson"
 	"github.com/gogf/gf/frame/g"
 	"github.com/gogf/gf/os/gfile"
+	"github.com/qiniu/qmgo/options"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
@@ -25,6 +26,46 @@ func (srv *schemaSrv) CollectionName() string {
 
 // CheckJSONSchema 检验 JSONSchema
 func (srv *schemaSrv) CheckJSONSchema(ctx context.Context, data *gjson.Json) error {
+	return nil
+}
+
+// CreateIndexes 创建索引
+func (srv *schemaSrv) CreateIndexes(ctx context.Context, data *gjson.Json) error {
+	uniqueIndexes := make([]options.IndexModel, 0)
+	normalIndexes := make([]options.IndexModel, 0)
+	for fieldName := range data.GetMap("properties") {
+		isUnique := data.GetBool(fmt.Sprintf("properties.%s.unique", fieldName))
+		isIndexField := data.GetBool(fmt.Sprintf("properties.%s.index", fieldName))
+		if isUnique {
+			uniqueIndexes = append(uniqueIndexes, options.IndexModel{
+				Key: []string{fieldName}, Unique: true,
+			})
+		}
+		if isIndexField {
+			normalIndexes = append(normalIndexes, options.IndexModel{
+				Key: []string{fieldName},
+			})
+		}
+	}
+
+	uniqueIndexesLen := len(uniqueIndexes)
+	normalIndexesLen := len(normalIndexes)
+	if uniqueIndexesLen == 0 && normalIndexesLen == 0 {
+		return nil
+	}
+	cli := db.DB().Collection(data.GetString("name"))
+
+	if uniqueIndexesLen > 0 {
+		if err := cli.CreateIndexes(ctx, uniqueIndexes); err != nil {
+			return err
+		}
+	}
+	if normalIndexesLen > 0 {
+		if err := cli.CreateIndexes(ctx, normalIndexes); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
