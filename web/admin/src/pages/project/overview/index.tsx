@@ -5,7 +5,7 @@ export default (): React.ReactNode => {
   return (
     <Card>
       <Typography.Title level={2} style={{ textAlign: 'center' }}>
-        这是overview页面
+        欢迎使用 AntApi
       </Typography.Title>
     </Card>
   );
