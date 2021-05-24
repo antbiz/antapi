@@ -33,7 +33,7 @@ export default (): React.ReactNode => {
       }}
     >
       {schemas.map((schema) => {
-        return <Menu.Item key={schema.name}>{schema.title}</Menu.Item>;
+        return <Menu.Item key={schema.name}>{schema.displayName}</Menu.Item>;
       })}
     </Menu>
   ) : (

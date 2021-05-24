@@ -21,7 +21,7 @@ const fakeSchemas = [
     updatedAt: '2021-03-28',
     projectName: 'example1',
     collectionName: 'test_a',
-    title: '测试A',
+    displayName: '测试A',
     description: '这是一个测试'
   },
   {
@@ -46,7 +46,7 @@ const fakeSchemas = [
     updatedAt: '2021-03-28',
     projectName: 'example1',
     collectionName: 'test_b',
-    title: '测试B',
+    displayName: '测试B',
     description: '这是一个测试'
   },
 ]

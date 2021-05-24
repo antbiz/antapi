@@ -133,7 +133,7 @@ export default (): React.ReactNode => {
         columns={columns}
       />
       <Modal
-        title={currentItem?._id ? `更新${currentSchema.title}` : `新建${currentSchema.title}`}
+        title={currentItem?._id ? `更新${currentSchema.displayName}` : `新建${currentSchema.displayName}`}
         width="90%"
         bodyStyle={{ height: '70vh' }}
         maskClosable={false}

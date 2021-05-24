@@ -28,7 +28,7 @@ func ParseFormRenderSchema(data *gjson.Json) *dto.Schema {
 	for fieldName := range data.GetMap("properties") {
 		field := &dto.SchemaField{
 			Name:              fieldName,
-			Title:             data.GetString(fmt.Sprintf("properties.%s.title", fieldName)),
+			Title:             data.GetString(fmt.Sprintf("properties.%s.displayName", fieldName)),
 			IsRequired:        data.GetBool(fmt.Sprintf("properties.%s.required", fieldName)),
 			IsHidden:          data.GetBool(fmt.Sprintf("properties.%s.hidden", fieldName)),
 			IsReadOnly:        data.GetBool(fmt.Sprintf("properties.%s.readOnly", fieldName)),

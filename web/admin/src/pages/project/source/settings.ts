@@ -12,7 +12,7 @@ export const globalSettings={
       type: 'string',
       required: true,
     },
-    title: {
+    displayName: {
       title: '模型名称',
       type: 'string',
       required: true,
