@@ -39,13 +39,18 @@ func Insert(ctx context.Context, collectionName string, doc interface{}, opts ..
 			if field.IsSysField || !jsonDoc.Contains(field.Name) {
 				continue
 			}
-			val := jsonDoc.Get(field.Name)
-			if !opt.IgnoreFieldValueCheck {
-				if validErr := field.CheckFieldValue(val); validErr != nil {
-					return "", validErr
+			if field.HasDefault && jsonDoc.GetString(field.Name) == "" {
+				jsonDoc.Set(field.Name, field.Default)
+				newDoc[field.Name] = field.Default
+			} else {
+				val := jsonDoc.Get(field.Name)
+				if !opt.IgnoreFieldValueCheck {
+					if validErr := field.CheckFieldValue(val); validErr != nil {
+						return "", validErr
+					}
 				}
+				newDoc[field.Name] = val
 			}
-			newDoc[field.Name] = val
 		}
 	}
 	newDoc["createdAt"] = time.Now().Unix()

@@ -35,7 +35,7 @@ func ParseFormRenderSchema(data *gjson.Json) *dto.Schema {
 			IsUnique:          data.GetBool(fmt.Sprintf("properties.%s.unique", fieldName)),
 			IsPrivate:         data.GetBool(fmt.Sprintf("properties.%s.private", fieldName)),
 			IsIndexField:      data.GetBool(fmt.Sprintf("properties.%s.index", fieldName)),
-			Default:           data.GetString(fmt.Sprintf("properties.%s.default", fieldName)),
+			Default:           data.Get(fmt.Sprintf("properties.%s.default", fieldName)),
 			ConnectCollection: data.GetString(fmt.Sprintf("properties.%s.connectCollection", fieldName)),
 			ConnectField:      data.GetString(fmt.Sprintf("properties.%s.connectField", fieldName)),
 			ConnectMany:       data.GetBool(fmt.Sprintf("properties.%s.connectMany", fieldName)),
@@ -48,6 +48,7 @@ func ParseFormRenderSchema(data *gjson.Json) *dto.Schema {
 			field.IsSysField = true
 			existsSysFieldNames.AddIfNotExist(fieldName)
 		}
+		field.HasDefault = field.Default != nil && fmt.Sprintf("%v", field.Default) != ""
 		schema.Fields = append(schema.Fields, field)
 	}
 

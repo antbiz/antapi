@@ -27,7 +27,8 @@ type SchemaField struct {
 	IsPrivate         bool
 	IsIndexField      bool
 	IsSysField        bool
-	Default           string
+	Default           interface{}
+	HasDefault        bool
 	ConnectCollection string
 	ConnectField      string
 	ConnectMany       bool
