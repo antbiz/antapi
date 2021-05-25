@@ -19,6 +19,7 @@ permission_denied = "Permission denied"
 # User
 account_not_found = "Account not found"
 incorrect_password = "Incorrect account or password"
+incorrect_old_password = "Incorrect Old Password"
 err_logout = "Falied to logout"
 
 # File
