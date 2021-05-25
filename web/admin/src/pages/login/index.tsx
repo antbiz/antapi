@@ -114,7 +114,7 @@ const Login: React.FC = () => {
               ]}
             />
             <ProFormText.Password
-              name="pwd"
+              name="password"
               fieldProps={{
                 size: 'large',
                 prefix: <LockOutlined className={styles.prefixIcon} />,

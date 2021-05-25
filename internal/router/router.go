@@ -50,8 +50,12 @@ func init() {
 		group.Middleware(middleware.Auth)
 		// 退出登录
 		group.ALL("/logout", api.User.LogOut)
-		// 个人信息
-		group.GET("/info", api.User.Info)
+		// 获取个人信息
+		group.GET("/info", api.User.GetInfo)
+		// 修改个人信息
+		group.POST("/info", api.User.UpdateInfo)
+		// 修改个人密码
+		group.POST("/update_password", api.User.UpdatePassword)
 	})
 
 }

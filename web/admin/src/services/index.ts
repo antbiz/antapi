@@ -7,10 +7,12 @@ import * as login from './login';
 import * as project from './project';
 import * as schema from './schema';
 import * as crud from './crud';
+import * as account from './account';
 export default {
   api,
   login,
   project,
   schema,
   crud,
+  account,
 };

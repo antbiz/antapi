@@ -125,7 +125,7 @@ export default (): React.ReactNode => {
                   type="primary"
                   onClick={() => {
                     setEditSchema({
-                      projectName
+                      projectName,
                     });
                     handleEditModalVisible(true);
                   }}
@@ -139,11 +139,7 @@ export default (): React.ReactNode => {
           </ProCard>
         ) : (
           // <Spin tip="Loading..." />
-          <ProCard
-            layout="center"
-            direction="column"
-            style={{ height: '65vh' }}
-          >
+          <ProCard layout="center" direction="column" style={{ height: '65vh' }}>
             <Button
               key="addSchema"
               type="primary"
@@ -151,7 +147,7 @@ export default (): React.ReactNode => {
               icon={<PlusOutlined />}
               onClick={() => {
                 setEditSchema({
-                  projectName
+                  projectName,
                 });
                 handleEditModalVisible(true);
               }}

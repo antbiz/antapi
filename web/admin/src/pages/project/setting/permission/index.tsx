@@ -34,7 +34,7 @@ const permFieldProps = {
       },
     ],
   },
-}
+};
 
 export default (): React.ReactNode => {
   const [permissions, setPermissions] = useState<API.Permission[]>(null);
@@ -105,7 +105,7 @@ export default (): React.ReactNode => {
     } catch (error) {
       hide();
     }
-  }
+  };
 
   useEffect(() => {
     onLoadPermissions();
@@ -135,11 +135,11 @@ export default (): React.ReactNode => {
                 const perms = [];
                 permissions.forEach((v) => {
                   if (v._id === row._id) {
-                    v = {...v, ...data[row._id]}
+                    v = { ...v, ...data[row._id] };
                   }
                   perms.push(v);
-                })
-                setPermissions(perms)
+                });
+                setPermissions(perms);
                 await config?.onSave?.(config.recordKey);
               }
             }}
@@ -156,7 +156,7 @@ export default (): React.ReactNode => {
             type="info"
             showIcon
             closable
-          />
+          />,
         ];
       }}
     />

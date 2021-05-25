@@ -139,5 +139,5 @@ declare namespace API {
     readLevel: int;
     updateLevel: int;
     deleteLevel: int;
-  }
+  };
 }

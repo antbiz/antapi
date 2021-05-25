@@ -3,8 +3,8 @@ package dto
 // UserLoginReq 用户注册请求
 // TODO: 用户登录密码加密传输
 type UserLoginReq struct {
-	Login string `v:"required#请输入用户名/手机号/邮箱"` // 支持用户名/手机号/邮箱
-	Pwd   string `v:"required#请输入密码"`
+	Login    string `v:"required#请输入用户名/手机号/邮箱"` // 支持用户名/手机号/邮箱
+	Password string `v:"required#请输入密码"`
 }
 
 // UserSignUpWithPhoneReq 用户手机号注册请求
@@ -23,6 +23,12 @@ type UserSignUpWithEmailReq struct {
 	Password2 string `v:"required|length:6,16|same:Password#请输入确认密码|密码长度应当在:min到:max之间|两次密码输入不相等"`
 	Email     string `v:"required|email#请输入邮箱|邮箱格式不正确"`
 	Captcha   string `v:"required#请输入验证码"`
+}
+
+// UserUpdateInfoReq 用户更新个人信息请求
+type UserUpdateInfoReq struct {
+	Avatar   string
+	Language string `v:"required|in:zh-CN,en#请选择语言|请选择中文或者英文"`
 }
 
 // UserUpdatePasswordReq 用户更新密码请求

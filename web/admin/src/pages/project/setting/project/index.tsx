@@ -17,7 +17,7 @@ const handleUpdate = async (project: API.Project) => {
     message.success('更新成功');
     return true;
   } catch (error) {
-
+    hide();
   }
 };
 
@@ -89,7 +89,7 @@ export default (): React.ReactNode => {
   const [changed, setChanged] = useState(false);
   const [project, setProject] = useState<API.Project>();
   const onLoadProject = async () => {
-    const data = await findProject({"name": projectName});
+    const data = await findProject({ name: projectName });
     if (data) {
       setProject(data);
     }
@@ -123,16 +123,10 @@ export default (): React.ReactNode => {
           }
         }}
       >
-        <Form.Item
-          label="项目编号"
-          name="_id"
-        >
+        <Form.Item label="项目编号" name="_id">
           <Typography.Paragraph copyable>{project._id}</Typography.Paragraph>
         </Form.Item>
-        <Form.Item
-          label="项目 ID"
-          name="name"
-        >
+        <Form.Item label="项目 ID" name="name">
           <Typography.Paragraph copyable>{project.name}</Typography.Paragraph>
         </Form.Item>
         <Form.Item

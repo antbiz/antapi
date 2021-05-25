@@ -4,9 +4,12 @@ import { request } from 'umi';
 
 /** 获取内容模型列表 GET `/api/biz/schema?projectName=${projectName}` */
 export async function getSchemas(params: { projectName: string }) {
-  return request<{ data: API.Schema[] }>(`/api/biz/schema?filter={"projectName":"${params.projectName}"}`, {
-    method: 'GET',
-  });
+  return request<{ data: API.Schema[] }>(
+    `/api/biz/schema?filter={"projectName":"${params.projectName}"}`,
+    {
+      method: 'GET',
+    },
+  );
 }
 
 /** 获取内容模型详情  GET `/api/biz/schema/${schemaId}` */

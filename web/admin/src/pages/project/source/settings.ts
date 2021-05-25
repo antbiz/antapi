@@ -1,4 +1,4 @@
-export const globalSettings={
+export const globalSettings = {
   type: 'object',
   properties: {
     projectName: {
@@ -20,7 +20,7 @@ export const globalSettings={
     description: {
       title: '模型描述',
       type: 'string',
-      format: "textarea",
+      format: 'textarea',
     },
     column: {
       title: '整体布局',
@@ -47,7 +47,7 @@ export const globalSettings={
       enumNames: ['同行', '单独一行'],
       widget: 'radio',
     },
-  }
+  },
 };
 
 export const commonSettings = {
@@ -80,15 +80,15 @@ export const commonSettings = {
   },
   private: {
     title: '字段在api中不可见',
-    type: 'boolean'
+    type: 'boolean',
   },
   indexField: {
     title: '索引',
-    type: 'boolean'
+    type: 'boolean',
   },
   validator: {
     title: '校验器',
-    type: 'string'
+    type: 'string',
   },
   placeholder: {
     title: '占位符',
@@ -133,4 +133,4 @@ export const commonSettings = {
       hideNumber: true,
     },
   },
-}
+};

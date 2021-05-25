@@ -27,11 +27,7 @@ export async function getOne(collectionName: string, id: string, options?: { [ke
 }
 
 /** 更新 */
-export async function updateOne(
-  collectionName: string,
-  id: string,
-  data?: { [key: string]: any },
-) {
+export async function updateOne(collectionName: string, id: string, data?: { [key: string]: any }) {
   return request<{ data: object }>(`/api/biz/${collectionName}/${id}`, {
     method: 'PUT',
     data: data,

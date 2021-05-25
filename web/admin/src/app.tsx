@@ -46,7 +46,7 @@ export async function getInitialState(): Promise<{
     fetchUserInfo,
     settings: {},
   };
-};
+}
 
 // https://umijs.org/zh-CN/plugins/plugin-request
 export const request: RequestConfig = {
@@ -56,6 +56,11 @@ export const request: RequestConfig = {
     if (data && data.message) {
       notification.error({
         description: data.message,
+      });
+    } else if (response && response.status == 404) {
+      // TODO: 这里需要优化下后端部分判断接口404的错误处理
+      notification.error({
+        description: '发出的请求针对的是不存在的记录，服务器没有进行操作。',
       });
     }
 

@@ -1,13 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import { message } from 'antd';
-import ProForm, { ProFormSelect, ProFormUploadButton } from "@ant-design/pro-form";
+import { useModel } from 'umi';
+import ProForm, { ProFormSelect, ProFormUploadButton } from '@ant-design/pro-form';
+import { updateInfo } from '@/services/account';
 
 export default (): React.ReactNode => {
+  const { initialState, setInitialState } = useModel('@@initialState');
+  const { currentUser } = initialState;
+  // FIXME: 用户头像修改
+  currentUser.avatar = null;
+
   return (
     <ProForm
-      onFinish={async () => {
-        await waitTime(2000);
-        message.success('提交成功');
+      initialValues={currentUser}
+      onFinish={async (values) => {
+        const hide = message.loading('正在更新');
+        try {
+          await updateInfo(values);
+          hide();
+          message.success('更新成功');
+          setInitialState({
+            ...initialState,
+            currentUser: {
+              ...currentUser,
+              ...values,
+            },
+          });
+        } catch (error) {
+          hide();
+        }
       }}
       submitter={{
         searchConfig: {
@@ -38,9 +59,9 @@ export default (): React.ReactNode => {
         ]}
         options={[
           { label: '中文', value: 'zh-CN' },
-          { label: 'EN', value: 'en' }
+          { label: 'EN', value: 'en' },
         ]}
       />
     </ProForm>
-  )
-}
+  );
+};

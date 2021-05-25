@@ -22,7 +22,7 @@ export default (): React.ReactNode => {
     data.forEach((item) => {
       try {
         schemas.push(parseSchema(item));
-      } catch(error) {
+      } catch (error) {
         console.error(error);
       }
     });

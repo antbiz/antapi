@@ -49,9 +49,12 @@ export async function deleteProject(projectId: string) {
 
 /** 获取项目权限 GET `/api/biz/permission?projectName=${projectName}` */
 export async function getPermissions(params: { projectName: string }) {
-  return request<{ data: API.Permission[] }>(`/api/biz/permission?filter={"projectName":"${params.projectName}"}`, {
-    method: 'GET',
-  });
+  return request<{ data: API.Permission[] }>(
+    `/api/biz/permission?filter={"projectName":"${params.projectName}"}`,
+    {
+      method: 'GET',
+    },
+  );
 }
 
 /** 更新项目权限 PUT `/api/biz/permission/${id}`*/

@@ -24,9 +24,10 @@ const (
 
 // User
 const (
-	AccountNotFound   = "account_not_found"
-	IncorrectPassword = "incorrect_password"
-	ErrLogout         = "err_logout"
+	AccountNotFound      = "account_not_found"
+	IncorrectPassword    = "incorrect_password"
+	IncorrectOldPassword = "incorrect_old_password"
+	ErrLogout            = "err_logout"
 )
 
 // File
