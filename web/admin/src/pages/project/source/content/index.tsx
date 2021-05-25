@@ -70,7 +70,6 @@ const handleDelete = async (collectionName: string, id: string) => {
 export default (): React.ReactNode => {
   /** 新建窗口的弹窗 */
   const [editModalVisible, handleEditModalVisible] = useState<boolean>(false);
-  const [currentItem, setCurrentItem] = useState<API.Schema>({});
   const actionRef = useRef<ActionType>();
   const { currentSchema } = useSourceCtx();
   const form = useForm();
@@ -98,7 +97,7 @@ export default (): React.ReactNode => {
         <a
           key="update"
           onClick={() => {
-            setCurrentItem(record);
+            form.setValues(record);
             handleEditModalVisible(true);
           }}
         >
@@ -121,6 +120,7 @@ export default (): React.ReactNode => {
             type="primary"
             key="primary"
             onClick={() => {
+              form.setValues({});
               handleEditModalVisible(true);
             }}
           >
@@ -134,7 +134,7 @@ export default (): React.ReactNode => {
       />
       <Modal
         title={
-          currentItem?._id ? `更新${currentSchema.displayName}` : `新建${currentSchema.displayName}`
+          form.getValues()?._id ? `更新${currentSchema.displayName}` : `新建${currentSchema.displayName}`
         }
         width="90%"
         bodyStyle={{ height: '70vh' }}
@@ -148,11 +148,10 @@ export default (): React.ReactNode => {
         <FormRender
           form={form}
           schema={currentSchema}
-          formData={currentItem}
           onFinish={async (data, errors) => {
             if (errors.length == 0) {
-              const success = currentItem?._id
-                ? await handleUpdate(currentSchema.name, currentItem._id, data)
+              const success = data?._id
+                ? await handleUpdate(currentSchema.name, data._id, data)
                 : await handleAdd(currentSchema.name, data);
               if (success) {
                 handleEditModalVisible(false);
