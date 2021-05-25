@@ -23,8 +23,6 @@ const handleAdd = async (collectionName: string, data: Record<string, unknown>) 
     return true;
   } catch (error) {
     hide();
-    message.error('添加失败请重试！');
-    return false;
   }
 };
 
@@ -43,8 +41,6 @@ const handleUpdate = async (collectionName: string, id: string, data: Record<str
     return true;
   } catch (error) {
     hide();
-    message.error('更新失败请重试！');
-    return false;
   }
 };
 
