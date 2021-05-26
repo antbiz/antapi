@@ -16,14 +16,8 @@
 
 # mongo.
 [mongo]
-    [mongo.logger]
-        level = "all"
-        path = "./log/sql"
-        stdout = true
-    [mongo.default]
-        debug = true
-        uri = "mongodb://localhost:27017"
-        database = "antapi"
+    uri = "mongodb://localhost:27017"
+    default = "antapi"
 
 # Redis数据库配置
 [redis]
