@@ -7,8 +7,8 @@ import (
 )
 
 func init() {
-	if err := db.Init(); err != nil {
-		g.Log().Fatalf("init mongo failed: %v", err)
+	if err := db.Cli().Ping(10); err != nil {
+		g.Log().Fatalf("ping mongo failed: %v", err)
 	}
 	ServerBackground()
 }

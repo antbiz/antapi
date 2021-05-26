@@ -9,15 +9,15 @@ import (
 )
 
 var (
-	cli     *qmgo.Client
-	initCli sync.Once
+	cli  *qmgo.Client
+	once sync.Once
 )
 
-// Init 初始化数据库连接
-// 这里不直接使用 init 的方法的原因：方便单测和patches执行
-func Init() (err error) {
-	mongoURI := g.Cfg().GetString("mongo.uri")
-	initCli.Do(func() {
+// Cli is mongo client
+func Cli() *qmgo.Client {
+	once.Do(func() {
+		var err error
+		mongoURI := g.Cfg().GetString("mongo.uri")
 		cli, err = qmgo.NewClient(
 			context.Background(),
 			&qmgo.Config{
@@ -25,11 +25,12 @@ func Init() (err error) {
 			},
 		)
 		if err != nil {
-			return
+			g.Log().Errorf("failed to connect mongo: %s", mongoURI)
+		} else {
+			g.Log().Debugf("connected mongo: %s", mongoURI)
 		}
 	})
-	g.Log().Debugf("Connected mongodb: %s", mongoURI)
-	return
+	return cli
 }
 
 // DB 数据库实例
@@ -40,8 +41,5 @@ func DB(database ...string) *qmgo.Database {
 	} else {
 		dbName = g.Cfg().GetString("mongo.default")
 	}
-	if cli == nil {
-		Init()
-	}
-	return cli.Database(dbName)
+	return Cli().Database(dbName)
 }
