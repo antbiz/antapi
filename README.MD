@@ -23,6 +23,11 @@ AntApi 是一款免费开源的无头 CMS, 帮助您轻松构建 API 并同时�
 | Form-Render | 阿里开源的基于schema的表单构建框架 |
 
 
+说明
+----------
+AntApi 仍处于开发阶段，不适合在生产环境中使用。
+
+
 ## 预览图
 <div>
   <img src="./docs/assets/admin_panel/1.png" alt="Administration panel" width=400 />
