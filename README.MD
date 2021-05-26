@@ -1,6 +1,6 @@
 <h3 align="center">
   <a href="">AntApi</a>
-  <p align="center" styles="margin-top: 12px;">🚀开源Golang无头CMS, 轻松构建可定制API</p>
+  <p align="center" style="margin-top: 12px;">🚀开源Golang无头CMS, 轻松构建可定制API</p>
 </h3>
 <p align="center">无需写代码，通过后台拖拽表单即可轻松构建 高效、安全、快速 的接口</p>
 <p align="center"><a href="">在线体验</a></p>
