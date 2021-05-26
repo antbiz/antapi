@@ -25,16 +25,16 @@ AntApi 是一款免费开源的无头 CMS, 帮助您轻松构建 API 并同时�
 
 ## 预览图
 <div>
-  <img src="./docs/assets/admin_panel/1.png" alt="Administration panel" width=440 />
-  <img src="./docs/assets/admin_panel/2.png" alt="Administration panel" width=440 />
+  <img src="./docs/assets/admin_panel/1.png" alt="Administration panel" width=400 />
+  <img src="./docs/assets/admin_panel/2.png" alt="Administration panel" width=400 />
 </div>
 <div>
-  <img src="./docs/assets/admin_panel/3.png" alt="Administration panel" width=440 />
-  <img src="./docs/assets/admin_panel/4.png" alt="Administration panel" width=440 />
+  <img src="./docs/assets/admin_panel/3.png" alt="Administration panel" width=400 />
+  <img src="./docs/assets/admin_panel/4.png" alt="Administration panel" width=400 />
 </div>
 <div>
-  <img src="./docs/assets/admin_panel/5.png" alt="Administration panel" width=440 />
-  <img src="./docs/assets/admin_panel/6.png" alt="Administration panel" width=440 />
+  <img src="./docs/assets/admin_panel/5.png" alt="Administration panel" width=400 />
+  <img src="./docs/assets/admin_panel/6.png" alt="Administration panel" width=400 />
 </div>
 
 
