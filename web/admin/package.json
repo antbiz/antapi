@@ -32,7 +32,7 @@
     "test:all": "node ./tests/run-tests.js",
     "test:component": "umi test ./src/components",
     "tsc": "tsc --noEmit",
-    "ncu": "ncu -u --configFileName .ncurc.json"
+    "ncu": "ncu -u --configFileName .ncurc.json && yarn"
   },
   "lint-staged": {
     "**/*.less": "stylelint --syntax less",
